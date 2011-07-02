@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<MIRCdocument display="tab" first-tab="2">
+
+ <title><g0008e0020 desc="Study Date"/> <g0008e0060 desc="Modality"/> Study</title>
+
+ <author>
+  <name><g0008e0080 desc="Institution Name"/></name>
+  <contact><g0018e1030 desc="Protocol Name"/></contact>
+ </author>
+
+ <abstract>
+  <text/>
+  <p>
+    Patient's Name: <g0010e0010 desc="Patient's Name"/><br/>
+    Patient ID: <g0010e0020 desc="Patient ID"/><br/>
+    Study Date: <g0008e0020 desc="Study Date"/><br/>
+    <g0032e4000 desc="Study Comments"/>
+  </p>
+ </abstract>
+
+ <section heading="Demographic Data">
+  <p>
+   <table border="1">
+    <g0010e0030 desc="Patient's Birth Date"/>
+    <g0010e1010 desc="Patient's Age"/>
+    <g0010e0040 desc="Patient's Sex"/>
+    <g0008e0060 desc="Modality"/>
+    <g0018e0015 desc="Body Part Examined"/>
+    <g0008e0050 desc="Accession Number"/>
+    <g0008e0020 desc="Study Date"/>
+    <g0008e0030 desc="Study Time"/>
+    <g0008e002A desc="Acquisition Datetime"/>
+    <g0008e0022 desc="Acquisition Date"/>
+    <g0008e0032 desc="Acquisition Time"/>
+    <g0020e000D desc="Study Instance UID"/>
+    <g0008e0018 desc="SOP Instance UID"/>
+   </table>
+  </p>
+ </section>
+
+ <section heading="Metadata References">
+ <metadata-refs/>
+ </section>
+
+ <image-section heading="Images">
+ <insert-megasave width="512"/>
+ </image-section>
+
+ <section heading="not visible" visible="no">
+  <patient>
+   <pt-name><g0010e0010 desc="Patient's Name"/></pt-name>
+   <pt-id><g0010e0020 desc="Patient ID"/></pt-id>
+   <pt-mrn><g0010e1090 desc="Medical Record Locator"/></pt-mrn>
+   <pt-sex><g0010e0040 desc="Patient's Sex"/></pt-sex>
+  </patient>
+  <modality><g0008e0060 desc="Modality"/></modality>
+  <anatomy><g0018e0015 desc="Body Part Examined"/></anatomy>
+ </section>
+
+ <authorization>
+  <owner>admin</owner>
+  <read></read>
+  <update></update>
+  <export></export>
+ </authorization>
+
+</MIRCdocument>

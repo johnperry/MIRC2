@@ -1,0 +1,77 @@
+<Configuration>
+    <Server port="80"/>
+    <Plugin
+        class="mirc.MIRC"
+        name="MIRC Site"
+        root="mircsite"/>
+    <Pipeline name="File Service Pipeline">
+        <ImportService
+            calledAETTag="00120010"
+            class="org.rsna.ctp.stdstages.DicomImportService"
+            logConnections="rejected"
+            name="File Service DicomImportService"
+            port="1081"
+            quarantine="quarantines/FileService/DicomImportService"
+            root="roots/FileService/DicomImportService"/>
+        <Anonymizer
+            class="org.rsna.ctp.stdstages.DicomAnonymizer"
+            id="FileServiceAnonymizer"
+            lookupTable="scripts/lookup-table.properties"
+            name="File Service DicomAnonymizer"
+            quarantine="quarantines/FileService/DicomAnonymizer"
+            root="roots/FileService/DicomAnonymizer"
+            script="scripts/FileService/MircFileServiceAnonymizer.script"/>
+        <StorageService
+            class="mirc.stages.MircFileStorageService"
+            fsNameTag="00120010"
+            name="MircFileStorageService"
+            quarantine="quarantines/FileService/MircFileStorageService"
+            root="roots/FileService/MircFileStorageService"/>
+    </Pipeline>
+    <Pipeline name="DICOM Service Pipeline">
+        <ImportService
+            class="org.rsna.ctp.stdstages.DicomImportService"
+            logConnections="rejected"
+            name="DICOM Service DicomImportService"
+            port="1082"
+            quarantine="quarantines/DicomService/DicomImportService"
+            root="roots/DicomService/DicomImportService"/>
+        <Anonymizer
+            class="org.rsna.ctp.stdstages.DicomAnonymizer"
+            lookupTable="scripts/lookup-table.properties"
+            name="DICOM Service DicomAnonymizer"
+            quarantine="quarantines/DicomService/DicomAnonymizer"
+            root="roots/DicomService/DicomAnonymizer"
+            script="scripts/DicomServiceAnonymizer.script"/>
+        <StorageService
+            class="mirc.stages.MircDocumentStorageService"
+            name="MircDocumentStorageService"
+            ssid="ss1"
+            quarantine="quarantines/DicomService/MircDocumentStorageService"
+            root="roots/DicomService/MircDocumentStorageService"/>
+    </Pipeline>
+    <Pipeline name="TCE Service Pipeline">
+        <ImportService
+            class="org.rsna.ctp.stdstages.DicomImportService"
+            logConnections="rejected"
+            name="TCE Service DicomImportService"
+            port="1083"
+            quarantine="quarantines/TCEService/DicomImportService"
+            root="roots/TCEService/DicomImportService"/>
+        <ImportService
+            class="org.rsna.ctp.stdstages.HttpImportService"
+            logConnections="rejected"
+            name="TCE Service HttpImportService"
+            port="1084"
+            quarantine="quarantines/TCEService/HttpImportService"
+            root="roots/TCEService/HttpImportService"/>
+        <StorageService
+            class="mirc.stages.TCEStorageService"
+            name="TCEStorageService"
+            ssid="ss1"
+            anonymize="yes"
+            script="scripts/TCEServiceAnonymizer.script"
+            quarantine="quarantines/TCEService/TCEStorageService"
+            root="roots/TCEService/TCEStorageService"/>
+    </Pipeline>
+</Configuration>

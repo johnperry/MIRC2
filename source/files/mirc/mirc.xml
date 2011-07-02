@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<mirc
+	mode		="rad"
+	siteurl		="http://192.168.0.4:80"
+	addresstype	="dynamic"
+	masthead	="masthead.jpg"
+	mastheadheight="75"
+  	sitename	="My MIRC Site"
+  	showsitename="yes"
+  	showptids	="yes"
+  	timeout		="15"
+  	disclaimerurl="">
+
+	<Libraries>
+
+		<Library
+            acclog="no"
+            address="/storage/ss1"
+            authenb="yes"
+            autoindex="yes"
+            dcmenb="no"
+            enabled="yes"
+            id="ss1"
+            jpegquality="-1"
+            local="yes"
+            maxsize="75"
+            subenb="yes"
+            tceenb="no"
+            timeout="0"
+            zipenb="yes">
+			<title>My MIRC Site</title>
+		</Library>
+
+		<Library address="http://mirc.childrensmemorial.org/general/service" enabled="yes">
+			<title>CMH: Children's Memorial Hospital General Pediatric Cases</title>
+		</Library>
+
+		<Library address="http://mirc.childrensmemorial.org/cardiovascular/service" enabled="yes">
+			<title>CMH:Cardiovascular</title>
+		</Library>
+
+		<Library address="http://mirc.childrensmemorial.org/chest/service" enabled="yes">
+			<title>CMH:Chest and Airway</title>
+		</Library>
+
+		<Library address="http://mirc.childrensmemorial.org/emergency/service" enabled="yes">
+			<title>CMH:Emergency Radiology</title>
+		</Library>
+
+		<Library address="http://mirc.childrensmemorial.org/Boards/service" enabled="yes">
+			<title>CMH:Fourth Year Board Review Cases</title>
+		</Library>
+
+		<Library address="http://mirc.childrensmemorial.org/GI/service" enabled="yes">
+			<title>CMH:GI Tract</title>
+		</Library>
+
+		<Library address="http://mirc.childrensmemorial.org/GU/service" enabled="yes">
+			<title>CMH:GU Tract</title>
+		</Library>
+
+		<Library address="http://mirc.childrensmemorial.org/ICU/service" enabled="yes">
+			<title>CMH:Intensive Care Units</title>
+		</Library>
+
+		<Library address="http://mirc.childrensmemorial.org/musculoskeletal/service" enabled="yes">
+			<title>CMH:Musculoskeletal System</title>
+		</Library>
+
+		<Library address="http://mirc.childrensmemorial.org/Neuroradiology/service" enabled="yes">
+			<title>CMH:Neuroradiology</title>
+		</Library>
+
+		<Library address="http://mirc.childrensmemorial.org/oncology/service" enabled="yes">
+			<title>CMH:Oncology</title>
+		</Library>
+
+		<Library address="http://mirc.childrensmemorial.org/syndromes/service" enabled="yes">
+			<title>CMH:Systemic Diseases and Syndromes</title>
+		</Library>
+
+		<Library address="http://pubimage.hcuge.ch/4DACTION/_XML_MIRCQUERY/" enabled="yes">
+			<title>Casimage</title>
+		</Library>
+
+		<Library address="http://mirc.hnehealth.nsw.gov.au/mircstorage/service" enabled="yes">
+			<title>Hunter New England Imaging, Newcastle, Australia</title>
+		</Library>
+
+		<Library address="http://www.mirip.org/servlet/nmircserver.StorageServlet" enabled="yes">
+			<title>National MIRC, Singapore</title>
+		</Library>
+
+        <Library address="http://mirc.rsna.org/mircstorage/service" enabled="yes">
+            <title>The RSNA MIRC Site</title>
+        </Library>
+
+		<Library address="http://popeye.rad.tju.edu:8080/neuro/service" enabled="yes">
+			<title>Thomas Jefferson University Hospital - Neuro</title>
+		</Library>
+
+		<Library address="http://147.163.65.155:8080/Neurorad-Teaching-Files/service" enabled="no">
+			<title>Univ. of Palermo, Italy - Neuro</title>
+		</Library>
+
+		<Library address="http://www3.teachingfile.com/mircstorage/service" enabled="yes">
+			<title>University of Illinois/Mercy Hospital, Chicago</title>
+		</Library>
+
+		<Library address="http://www.rad.unipd.it:8080/O3_storage/service" enabled="yes">
+			<title>University of Padova</title>
+		</Library>
+
+	</Libraries>
+
+	<FileService
+		maxsize = "75"
+		timeout = "0" />
+
+</mirc>

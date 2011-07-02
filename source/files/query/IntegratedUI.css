@@ -1,0 +1,313 @@
+A { color: black; }
+A:link { text-decoration: none; }
+A:hover { text-decoration: none; }
+A:visited { color: black; text-decoration: none;}
+div.L1 A { color: black;}
+div.L1 A:visited { color: black; text-decoration: none;}
+div.L2x A { color: black;}
+div.L2x A:visited { color: black; text-decoration: none;}
+div.L2y A { color: black;}
+div.L2y A:visited { color: black; text-decoration: none;}
+A.TitleLink { font-weight: bold; }
+
+body {
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+}
+
+div.header {
+	background:#C6D8F9;
+	margin: 0;
+	padding: 0;
+	padding-bottom: 3px;
+	text-align: left;
+	border: none;
+	border-bottom: thin solid black;
+	overflow: hidden;
+	white-space: nowrap;
+	height: 35px;
+}
+
+div.header input#freetext { width:250px; }
+
+div.headerRight { 
+	margin-top: 5px;
+	float: right; 
+}
+
+span.sitename {
+	text-align:left;
+	font-size: 18pt;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-weight: bold;
+	color: blue;
+	padding: 6px;
+	padding-top: 10px;
+	padding-right: 10px;
+}
+
+.headerText {
+	font-size: 10pt;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-weight: normal;
+	color: black;	
+}
+
+.L1 {
+	font-size: 12pt;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-weight: bold;
+	color: blue;	
+	margin-left: 10px;
+	margin-top: 15px;
+	margin-bottom: 10px;
+	cursor: default;
+}
+
+.L2 {
+	font-size: 10pt;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-weight: normal;
+	color: black;
+	margin-left: 20px;
+}
+
+.L2z {
+	font-size: 10pt;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-weight: normal;
+	color: black;
+	margin-left: 20px;
+	margin-top: 4px;
+}
+
+.L2y {
+	font-size: 10pt;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-weight: normal;
+	color: blue;
+	margin-left: 20px;
+}
+
+.L2x {
+	font-size: 10pt;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-weight: normal;
+	color: blue;
+	margin-left: 20px;
+	margin-top: 4px;
+}
+
+.Modifiers {
+	font-size: 10pt;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-weight: bold;
+	color: blue;
+	margin-left: 0px;
+	margin-top: 15px;
+	margin-bottom: 5px;
+	cursor: Pointer;
+}
+
+div.SelectLibraries {
+	font-size: 10pt;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-weight: normal;
+	color: blue;
+	margin-left: 20px;
+	margin-bottom: 5px;
+	cursor: Pointer;
+}
+div.SelectElements {
+	font-size: 10pt;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-weight: normal;
+	color: black;
+	margin-left: 20px;
+	margin-bottom: 5px;
+	cursor: Pointer;
+}
+div.SelectElements select {
+	margin-left: 20;
+	margin-bottom:3;
+	width: 110;
+}
+div.ModifiersMain { /*div containing all the modifiers groups*/
+	font-size: 10pt;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-weight: normal;
+	color: black;
+	margin-left: 5px;
+	cursor: Pointer;
+}
+div.ModifiersGroup { /*expand/collapse for a single group*/
+	font-size: 10pt;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-weight: normal;
+	color: black;
+	margin-left: 20px;
+	margin-top: 4px;
+	cursor: Pointer;
+}
+div.ModifiersComponents { /*div containing the individual components*/
+	font-size: 10pt;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-weight: normal;
+	color: black;
+	margin-left: 38px;
+	cursor: Pointer;
+}
+
+div.footer {
+	font-size: 10pt;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-weight: normal;
+	color: black;	
+	background:#C6D8F9;
+	border: none;
+	border-top: thin solid black;
+}
+
+div.footer span.productname {
+	font-size: 10pt;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-weight: bold;
+	color: #004E96;
+	padding-left:3pt;
+	margin-bottom: 2px;
+}	
+
+div.footerRight { 
+	margin-top: 9px;
+	float: right; 
+}
+
+div.rightpane {
+	color: black;
+	overflow: auto;
+}
+div.rightpane table {
+	width: 100%;
+}
+div.rightpane table img.spaceRight {
+	margin-right: 4px;
+}
+div.rightpane table th {
+	text-align:left;
+	font-size: 10pt;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	background: #A8C7FF;
+}
+div.rightpane table td {
+	padding: 2px;
+	vertical-align: top;
+	background: white;
+	font-size: 10pt;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+}
+div.rightpane table td .center {
+	text-align: center;
+}
+div.rightpane table td.tableCB {
+	width: 20px;
+}
+div.rightpane table td.blankTD {
+	width: 20px;
+	background:#C6D8F9;
+}
+div.rightpane table td.detailsTD {
+	white-space: normal;
+	background:#C6D8F9;
+	padding-left: 20px;
+	overflow: auto;
+}
+div.rightpane table td.detailsTD .detailsIMG {
+	margin: 3;
+	width: 96px;
+	height: auto;
+}
+div.rightpane table td.detailsTD p {
+	margin-top: 3px;
+	margin-right: 10px;
+	overflow: auto;
+}
+
+div.leftpane hr {
+	margin-left: 20px;
+	width: 100px;
+	text-align: left;
+}
+
+div.links {
+	margin-top: 20px;
+	margin-bottom:20px;
+	float: right;
+	font-size: 10pt;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-weight: normal;
+	color: black;
+	margin-right:15px;
+}
+
+/* Split pane styles */
+.leftpane {
+	position:absolute;
+	border:0;
+	margin:0;
+	padding:0;
+	overflow:auto;
+	white-space:nowrap;
+	background:#A8C7FF;
+}
+.centerpane {
+	position:absolute;
+	border:0;
+	margin:0;
+	padding:0;
+	background:#C6D8F9;
+	cursor:col-resize;
+}
+.rightpane {
+	position:absolute;
+	border:0;
+	margin:0;
+	padding:0;
+	overflow:auto;
+	background:#C6D8F9;
+}
+
+.w0  { padding-left:0px; }
+.w0x { padding-left:30px; }
+.w1  { padding-left:10px; }
+.w1x { padding-left:35px; }
+.w2  { padding-left:20px; }
+.w2x { padding-left:45px; }
+.w3  { padding-left:30px; }
+.w3x { padding-left:55px; }
+
+span.highlight {
+	/*background: white;*/
+}
+
+span.dehighlight {
+	/*background: #A8C7FF;*/
+}
+
+div#confs {
+	margin-left:20px;
+}
+
+div.open {
+	font-weight: bold;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size:10pt;
+	color: black;
+}
+
+div.closed {
+	font-weight: normal;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size:10pt;
+	color: black;
+}

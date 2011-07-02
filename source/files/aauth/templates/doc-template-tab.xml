@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<MIRCdocument display="tab">
+
+	<title>Tab Template</title>
+
+	<section heading="History">
+		<p/>
+	</section>
+
+	<image-section heading="Images">
+		<insert-megasave/>
+	</image-section>
+
+	<section heading="Findings">
+		<p/>
+	</section>
+
+	<section heading="Diagnosis">
+		<p/>
+	</section>
+
+	<section heading="Discussion">
+		<p/>
+	</section>
+
+	<document-type>Radiologic Teaching File</document-type>
+
+	<publication-date/>
+
+</MIRCdocument>
