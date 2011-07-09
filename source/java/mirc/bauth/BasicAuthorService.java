@@ -189,14 +189,20 @@ public class BasicAuthorService extends Servlet {
 			boolean enabled = ((lib != null) && lib.getAttribute("authenb").equals("yes"));
 			if (enabled) {
 
+				logger.debug("Submission received for "+ssid);
+
 				//Make a temporary directory to receive the files
 				File dir = mc.createTempDirectory();
+
+				logger.debug("...temp directory for submission: "+dir);
 
 				//Get the posted files
 				int maxsize = StringUtil.getInt( lib.getAttribute("maxsize"), 0 );
 				if (maxsize == 0) maxsize = 75;
 				maxsize *= 1024*1024; //make it megabytes
 				LinkedList<UploadedFile> files = req.getParts(dir, maxsize);
+
+				logger.debug("...submission includes "+files.size()+" file(s)");
 
 				//Make a File that points to the MIRCdocument.xml file to be created,
 				//and copy the template into that file.
@@ -255,21 +261,44 @@ public class BasicAuthorService extends Servlet {
 
 				//Save the file and then insert all the files.
 				FileUtil.setText(mdFile, XmlUtil.toString(mdXML));
+
+				logger.debug("...XML saved to "+mdFile);
+
 				MircDocument md = insertFiles(mdFile, files, anonymize);
+
+				logger.debug("..."+files.size()+" file(s) inserted, anonymize=\""+anonymize+"\"");
 
 				//Now move the directory into the documents tree.
 				Index index = Index.getInstance(ssid);
 				File docs = index.getDocumentsDir();
 				File storageDir = new File(docs, StringUtil.makeNameFromDate());
+
+				logger.debug("...storageDir: "+storageDir);
+
 				FileUtil.createParentDirectory(storageDir);
+
+				File parentDir = storageDir.getParentFile();
+				logger.debug("...parentDir ("+parentDir+") "+(parentDir.exists()?"exists":"does not exist"));
+				logger.debug("...storageDir ("+storageDir+") "+(storageDir.exists()?"exists":"does not exist"));
+
 				if (!dir.renameTo(storageDir)) {
+					logger.debug("...unable to rename temp directory to storageDir");
+
+					if (storageDir.exists()) {
+						logger.debug("...storageDir now exists");
+						for (File f : storageDir.listFiles()) logger.debug("......"+f.getName());
+					}
+
 					FileUtil.deleteAll(dir);
 					throw new Exception("Unable to install the MIRCdocument.");
 				}
+				else logger.debug("...temp directory successfully renamed to storageDir");
 
 				//Index the MIRC document
 				String key = index.getKey(new File(storageDir, "MIRCdocument.xml"));
 				index.insertDocument(key);
+
+				logger.debug("...submission indexed successfully");
 
 				//Success, save the author information in the preferences
 				Preferences.getInstance().setAuthorInfo(username, name, affiliation, contact);
