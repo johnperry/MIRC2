@@ -7,6 +7,7 @@
 
 package mirc.query;
 
+import java.io.File;
 import mirc.MircConfig;
 import org.apache.log4j.Logger;
 import org.rsna.util.FileUtil;
@@ -31,8 +32,14 @@ public class ClassicUI implements UI {
 	public String getPage() throws Exception {
 
 		MircConfig mc = MircConfig.getInstance();
+
 		Document mircXML = mc.getXML();
-		Document xsl = XmlUtil.getDocument( FileUtil.getStream( "/query/ClassicUI.xsl" ) );
+
+		File root = mc.getRootDirectory();
+		File query = new File(root, "query");
+		File xslFile = new File(query, "ClassicUI.xsl");
+		Document xsl = XmlUtil.getDocument( FileUtil.getStream( xslFile, "/query/ClassicUI.xsl" ) );
+
 		Object[] params = new Object[] {
 			"options", mc.enumeratedValues,
 			"species", mc.speciesValues

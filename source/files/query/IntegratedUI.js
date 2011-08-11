@@ -53,6 +53,7 @@ function loaded() {
 	}
 	else queryPCPublic();
 	queryMethod = repeatSearch;
+	showSessionPopup();
 }
 window.onload = loaded;
 
@@ -126,6 +127,13 @@ function loginLogout() {
 //************************************************
 //Modifiers
 //************************************************
+function clearModifiers() {
+	firstResult = 1;
+	var freetext = document.getElementById("freetext");
+	freetext.value = "";
+	repeatSearch();
+}
+
 function getModifiers() {
 	var mods = "";
 	mods +=	"&firstresult=" + firstResult;
@@ -210,6 +218,7 @@ function getModifiersDiv() {
 	setSelectOption(sel, "25", "25", true);
 	setSelectOption(sel, "150", "50", false);
 	setSelectOption(sel, "100", "100", false);
+	setSelectOption(sel, "500", "500", false);
 
 	sel = setSelect(tbody, "orderby", "Sort Order:", "Choose the order of the cases");
 	setSelectOption(sel, "lmdate", "Last modified date", true);
@@ -629,6 +638,28 @@ function toggleExpandCollapse() {
 	}
 }
 
+function setExpandCollapse() {
+	var tbody = document.getElementById("tableBody");
+	var cbs = tbody.getElementsByTagName("INPUT");
+	var isExpanded = false;
+	for (var i=0; i<cbs.length; i++) {
+		var cb = cbs[i];
+		if (cb.type == "checkbox") {
+			var td = cb.parentNode.nextSibling;
+			var tr = td.parentNode;
+			var img = td.firstChild;
+			isExpanded |= (img.src.indexOf(expandURL) == -1);
+		}
+	}
+	var img = document.getElementById("expandCollapseImg");
+	if (!isExpanded) {
+		img.src = expandURL;
+	}
+	else {
+		img.src = collapseURL;
+	}
+}
+
 function expandAll() {
 	var tbody = document.getElementById("tableBody");
 	var cbs = tbody.getElementsByTagName("INPUT");
@@ -718,6 +749,7 @@ function collapseDetails(tbody, tr, td, img) {
 		tbody.removeChild(tr.nextSibling);
 		img.src = expandURL;
 	}
+	setExpandCollapse();
 }
 
 function importSpecial(dest, node) {

@@ -20,6 +20,7 @@ function loaded() {
 		titleDiv.style.color = "blue";
 	}
 	showNews();
+	showSessionPopup();
 }
 window.onload = loaded;
 

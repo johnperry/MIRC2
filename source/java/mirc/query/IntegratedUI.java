@@ -7,6 +7,7 @@
 
 package mirc.query;
 
+import java.io.File;
 import mirc.MircConfig;
 import org.apache.log4j.Logger;
 import org.rsna.util.FileUtil;
@@ -31,8 +32,14 @@ public class IntegratedUI implements UI {
 	public String getPage() throws Exception {
 
 		MircConfig mc = MircConfig.getInstance();
+
 		Document mircXML = mc.getXML();
-		Document xsl = XmlUtil.getDocument( FileUtil.getStream( "/query/IntegratedUI.xsl" ) );
+
+		File root = mc.getRootDirectory();
+		File query = new File(root, "query");
+		File xslFile = new File(query, "IntegratedUI.xsl");
+		Document xsl = XmlUtil.getDocument( FileUtil.getStream( xslFile, "/query/IntegratedUI.xsl" ) );
+
 		return XmlUtil.getTransformedText( mircXML, xsl, null );
 
 	}

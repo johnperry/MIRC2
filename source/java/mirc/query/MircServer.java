@@ -65,6 +65,9 @@ public class MircServer extends Thread {
 	 * waits for a response, and returns it to the Query Service.
 	 */
 	public void run() {
+
+		logger.debug("Sending query to "+urlString);
+
 		String serverResponse = "";
 		try {
 			URL url = new URL(urlString);
@@ -139,6 +142,8 @@ public class MircServer extends Thread {
 
 		//Return the result
 		queryService.acceptQueryResult(this, result);
+
+		logger.debug("Response from "+urlString+" returned to the QueryService");
 	}
 
 	//Make an error response as a MIRCqueryresult..

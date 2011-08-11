@@ -171,6 +171,8 @@ public class QueryService extends Servlet {
 	 */
 	public void doPost(HttpRequest req, HttpResponse res) throws Exception {
 
+		logger.debug("Query received:\n"+req.toString());
+
 		String requestContentType = req.getContentType();
 		if (requestContentType.toLowerCase().indexOf("application/x-www-form-urlencoded") >= 0) {
 
@@ -185,6 +187,8 @@ public class QueryService extends Servlet {
 			res.write(getHTMLMessage("Unsupported Content-Type: "+requestContentType));
 			res.send();
 		}
+
+		logger.debug("...query serviced");
 	}
 
 	// This function actually services the query for the doGet and doPost methods.
@@ -450,8 +454,8 @@ public class QueryService extends Servlet {
 		return servers;
 	}
 
-	// Generate an HTML page that lists a message.
-	// It is used to inform a user that something uncorrectable has happened.
+	// Generate an HTML page that lists a message to inform
+	// a user that something uncorrectable has happened.
 	private String getHTMLMessage(String messageString) {
 			return "<html><head><title>Error</title></head><body>"
 							+ "<p>" + messageString + "</p></body></html>";

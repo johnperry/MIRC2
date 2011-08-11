@@ -65,9 +65,6 @@ public class ZipThread extends Thread {
 	Filter filesOnly;
 	int docCount = 0;
 
-	Properties dicomAnonymizerProperties = null;
-	Properties lookupTableProperties = null;
-
 	Index index;
 
 	/**
@@ -150,8 +147,6 @@ public class ZipThread extends Thread {
 		index = Index.getInstance(ssid);
 		docsDir = index.getDocumentsDir();
 		baseDir = new File(docsDir, StringUtil.makeNameFromDate());
-
-		if (anonymize) initializeAnonymizer();
 	}
 
 	private String[] trim(String[] s) {
@@ -252,49 +247,8 @@ public class ZipThread extends Thread {
 			//Move the object to the MIRCdocument's directory.
 			FileObject object = FileObject.getInstance(files[i]);
 			object.setStandardExtension();
-
-			String filename = object.getFile().getName();
-			filename = filename.replaceAll("\\s+", "_");
-			object.moveToDirectory(mdDir, filename);
-
-			//If the object is a DicomObject and anonymize is set,
-			//anonymize it using the anonymization script for the
-			//storage service.
-			if (anonymize
-				&& (object instanceof DicomObject)
-					&& (dicomAnonymizerProperties != null)) {
-
-				/*
-				File file = object.getFile();
-				String exceptions =
-					DicomAnonymizer.anonymize(
-						file, file,
-						dicomAnonymizerProperties, lookupTableProperties,
-						new LocalRemapper(), false, false);
-				*/
-				//We don't have to re-parse the object because none
-				//of the rest of this loop depends on the parsed data.
-			}
-
-			//See if we can instantiate it as a MircImage.
-			//If successful, add it in as an image.
-			try {
-				MircImage image = new MircImage(object.getFile());
-				if (image.isDicomImage()) {
-					md.insertDicomElements(image.getDicomObject());
-				}
-				md.insert(image);
-			}
-			catch (Exception notImage) {
-				//The file is not an image that can be inserted,
-				//parse it as a subclass of FileObject and insert
-				//it into the document as a metadata object.
-				FileObject fileObject = FileObject.getInstance(object.getFile());
-				md.insert(fileObject, fileObject.getFile().getName());
-				if (fileObject.hasMatchingExtension(textExtensions,true)) {
-					md.insert(fileObject.getFile());
-				}
-			}
+			try { md.insertFile(object.getFile(), true, textExtensions, anonymize); }
+			catch (Exception skip) { }
 		}
 
 		//Sort the image-section
@@ -378,24 +332,4 @@ public class ZipThread extends Thread {
 		}
 		FileUtil.close(zipFile);
 	}
-
-	private void initializeAnonymizer() {
-		try {
-			/*
-			File propFile = new File(TrialConfig.basepath + TrialConfig.dicomAnonymizerFilename);
-			dicomAnonymizerProperties = new Properties();
-			dicomAnonymizerProperties.load(new FileInputStream(propFile));
-			File lkupFile = new File(TrialConfig.basepath + TrialConfig.lookupTableFilename);
-			lookupTableProperties = new Properties();
-			try { lookupTableProperties.load(new FileInputStream(lkupFile)); }
-			catch (Exception ex) { lookupTableProperties = null; }
-			*/
-		}
-		catch (Exception e) {
-			logger.warn("Unable to load the DicomAnonymizer script.");
-		}
-	}
-
-
-
 }

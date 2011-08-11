@@ -15,6 +15,7 @@ import mirc.addimg.*;
 import mirc.bauth.*;
 import mirc.casenav.*;
 import mirc.confs.*;
+import mirc.download.*;
 import mirc.files.*;
 import mirc.fsadmin.*;
 import mirc.prefs.*;
@@ -79,6 +80,9 @@ public class MIRC extends AbstractPlugin {
 		//Load the Preferences
 		Preferences.load( root );
 
+		//Load the DownloadDB
+		DownloadDB.load( root );
+
 		//Install the servlets
 		Configuration config = Configuration.getInstance();
 		ServletSelector selector = config.getServer().getServletSelector();
@@ -100,6 +104,7 @@ public class MIRC extends AbstractPlugin {
 		selector.addServlet("aauth", AuthorService.class);
 		selector.addServlet("addimg", AddImageService.class);
 		selector.addServlet("publish", PublishService.class);
+		selector.addServlet("download", DownloadServlet.class);
 
 		//Install the standard roles
 		Users users = Users.getInstance();
@@ -130,6 +135,7 @@ public class MIRC extends AbstractPlugin {
 		Index.closeAll();
 		RadLexIndex.close();
 		Preferences.close();
+		DownloadDB.close();
 		stop = true;
 		logger.info("MIRC Plugin stopped");
 	}

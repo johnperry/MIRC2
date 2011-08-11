@@ -311,7 +311,8 @@ public class MircConfig {
 			String disclaimerurl,
 			String timeout,
 			String roles,
-			String ui) {
+			String ui,
+			String popup) {
 		mircRoot.setAttribute("mode",mode);
 		mircRoot.setAttribute("sitename",sitename);
 		mircRoot.setAttribute("showsitename",showsitename);
@@ -323,6 +324,7 @@ public class MircConfig {
 		mircRoot.setAttribute("timeout",timeout);
 		mircRoot.setAttribute("roles", roles.trim().replaceAll("[\\s,]+",","));
 		mircRoot.setAttribute("UI", ui);
+		mircRoot.setAttribute("popup", popup);
 		saveXML();
 		reload();
 	}

@@ -68,6 +68,8 @@ public class StorageService extends Servlet {
 	 */
 	public void doGet(HttpRequest req, HttpResponse res ) throws Exception {
 
+		logger.debug("Request: "+req.toString());
+
 		String reqpath = req.getPath();
 		String reqpathLC = reqpath.toLowerCase();
 
@@ -257,6 +259,8 @@ public class StorageService extends Servlet {
 			res.write( XmlUtil.getTransformedText( doc, xsl, params ) );
 			res.setContentType("html");
 			res.send();
+
+			logger.debug("...the request for the MIRCdocument was serviced");
 		}
 	}
 

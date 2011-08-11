@@ -75,6 +75,7 @@ public class Index {
 				try {
 					index = new Index(documentsDir, indexFile);
 					indexTable.put(ssid, index);
+					index.commit();
 				}
 				catch (Exception ex) { logger.warn("Unable to create the index for \""+ssid+"\""); }
 			}

@@ -79,6 +79,31 @@
 						</td>
 					</tr>
 					<tr>
+						<td>Show initial session popup:</td>
+						<td>
+							<input type="radio" name="popup" value="help">
+								<xsl:if test="@popup='help'">
+									<xsl:attribute name="checked"/>
+								</xsl:if>
+								Help
+							</input>
+							<br/>
+							<input type="radio" name="popup" value="notes">
+								<xsl:if test="@popup='notes'">
+									<xsl:attribute name="checked"/>
+								</xsl:if>
+								Notes
+							</input>
+							<br/>
+							<input type="radio" name="popup" value="none">
+								<xsl:if test="not(@popup='help') andnot(@popup='notes'">
+									<xsl:attribute name="checked"/>
+								</xsl:if>
+								None
+							</input>
+						</td>
+					</tr>
+					<tr>
 						<td>Show site name in masthead:</td>
 						<td>
 							<input type="radio" name="showsitename" value="yes">

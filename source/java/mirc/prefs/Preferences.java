@@ -288,8 +288,7 @@ public class Preferences {
 	/**
 	 * Commit changes and close the index.
 	 * No errors are reported and no operations
-	 * are available after this call without calling
-	 * loadIndex.
+	 * are available after this call.
 	 */
 	public static synchronized void close() {
 		JdbmUtil.close(recman);

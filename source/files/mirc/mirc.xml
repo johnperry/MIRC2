@@ -88,7 +88,7 @@
 			<title>Hunter New England Imaging, Newcastle, Australia</title>
 		</Library>
 
-		<Library address="http:mymircsa.dnsdojo.com:9090/storage/service" enabled="yes">
+		<Library address="http://mymircsa.dnsdojo.com:9090/storage/service" enabled="yes">
 			<title>MIRC South Africa</title>
 		</Library>
 

@@ -124,7 +124,7 @@ function showAboutPopup() {
 	p = document.createElement("P");
 	var iframe = document.createElement("IFRAME");
 	iframe.style.width = w - 30;
-	iframe.style.height = 210;
+	iframe.style.height = h - 190;
 	iframe.src = "/query/credits.html";
 	p.appendChild(iframe);
 	div.appendChild(p);
@@ -153,7 +153,7 @@ function showHelpPopup() {
 
 function showDisclaimerPopup() {
 	if (disclaimerURL != "") {
-	var id = "disclaimerPopupID";
+		var id = "disclaimerPopupID";
 		var pop = document.getElementById(id);
 		if (pop) pop.parentNode.removeChild(pop);
 
@@ -168,5 +168,19 @@ function showDisclaimerPopup() {
 		div.appendChild(iframe);
 		var closebox = "/icons/closebox.gif";
 		showDialog(id, w, h, null, closebox, null, div, null, null);
+	}
+}
+
+function showSessionPopup() {
+	var cooks = getCookieObject();
+	var cook = getCookie("MIRC", cooks);
+	if ((cook == null) || (cook == "")) {
+		setSessionCookie("MIRC", "session");
+		if (sessionPopup == "help") {
+			showHelpPopup();
+		}
+		else if (sessionPopup == "notes") {
+			showDisclaimerPopup();
+		}
 	}
 }

@@ -181,6 +181,7 @@
 			</xsl:for-each>
 			);
 		var disclaimerURL = '<xsl:value-of select="@disclaimerurl"/>';
+		var sessionPopup = '<xsl:value-of select="@popup"/>';
 	</script>
 </xsl:template>
 

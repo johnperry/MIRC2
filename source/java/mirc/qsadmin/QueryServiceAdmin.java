@@ -128,7 +128,8 @@ public class QueryServiceAdmin extends Servlet {
 			req.getParameter("disclaimerurl"),
 			req.getParameter("timeout"),
 			req.getParameter("roles"),
-			req.getParameter("UI")
+			req.getParameter("UI"),
+			req.getParameter("popup")
 		);
 
 		//Install any newly defined roles
