@@ -19,8 +19,8 @@
 		<pathelement location="${ctp}/libraries/dcm4che.jar"/>
 		<pathelement location="${ctp}/libraries/log4j.jar"/>
 		<pathelement location="${ctp}/libraries/jdbm.jar"/>
-		<pathelement location="${libraries}/gif.jar"/>
-		<pathelement location="${libraries}/batik-rasterizer-partial.jar"/>
+		<pathelement location="${libraries}/mirc/gif.jar"/>
+		<pathelement location="${libraries}/mirc/batik-rasterizer-partial.jar"/>
 	</path>
 
 	<target name="clean">
@@ -85,11 +85,13 @@
 	<target name="installer" depends="jar">
 
 		<copy overwrite="true" todir="${build}/CTP/libraries">
-			<fileset dir="${libraries}" includes="*.*"/>
+			<fileset dir="${libraries}" includes="**"/>
 		</copy>
+		<!--
 		<copy overwrite="true" todir="${build}/CTP/xml">
 			<fileset dir="xml" includes="*.*"/>
 		</copy>
+		-->
 		<copy overwrite="true" todir="${build}/config">
 			<fileset dir="${source}/config" includes="*.*"/>
 		</copy>
