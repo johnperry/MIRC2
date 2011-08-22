@@ -260,7 +260,7 @@ public class QueryService extends Servlet {
 			User user = (mc.isLocal(address) ? req.getUser() : null);
 			String serverName = server.getTextContent().trim();
 			MircServer thread = new MircServer( address, user, serverName, mircQueryString, this);
-			serverThreads.add( thread );
+			synchronized (this) { serverThreads.add( thread ); }
 			thread.start();
 		}
 
@@ -268,13 +268,18 @@ public class QueryService extends Servlet {
 		//The MircServer threads call the acceptQueryResult method,
 		//which appends them to the results document.
 		long startTime = System.currentTimeMillis();
-		while ((serverThreads.size() > 0) && ((System.currentTimeMillis()-startTime) < timeout)) {
-			try { Thread.sleep(100); }
-			catch (Exception maybeDone) { }
+		int size;
+		while ((System.currentTimeMillis()-startTime) < timeout) {
+			synchronized (this) { size = serverThreads.size(); }
+			if (size > 0) {
+				try { Thread.sleep(100); }
+				catch (Exception maybeDone) { }
+			}
+			else break;
 		}
 
 		//Shut down any remaining serverThreads
-		synchronized (serverThreads) {
+		synchronized (this) {
 			for (MircServer server: serverThreads) server.interrupt();
 			serverThreads.removeAll(serverThreads);
 		}
