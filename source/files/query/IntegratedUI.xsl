@@ -57,63 +57,79 @@
 
 <xsl:template name="header">
 <div class="header">
-	<div class="headerRight">
-		<input type="button" value="Show all" onclick="clearModifiers();"/>
-		<xsl:text>&#160;&#160;</xsl:text>
-		<input type="text" id="freetext" value="Search..." onkeyup="keyClicked(event);"/>
-		<xsl:text>&#160;&#160;</xsl:text>
-		<input type="button" value="Search" onclick="repeatSearch();"/>
-		<xsl:text>&#160;&#160;&#160;&#160;</xsl:text>
-		<span class="headerText">Welcome </span>
-		<span class="headerText" id="usernameSpan">&#160;</span>
-		<xsl:text>&#160;&#160;</xsl:text>
-		<span class="headerText" id="myAccount">
-			<xsl:text>|&#160;&#160;</xsl:text>
-			<a href="/prefs">My Account</a>
-			<xsl:text>&#160;&#160;</xsl:text>
-		</span>
-		<span class="headerText">
-			<xsl:text>|&#160;&#160;</xsl:text>
-			<a href="javascript:loginLogout();" id="loginoutAnchor">Login</a>
-			<xsl:text>&#160;&#160;</xsl:text>
-		</span>
+	<div class="headerLeft">
+		<span class="sitename"><xsl:value-of select="@sitename"/></span>
 	</div>
-	<span class="sitename"><xsl:value-of select="@sitename"/></span>
+	<div class="headerRight">
+
+		<div style="float:right; margin-top:7px;">
+			<xsl:text>&#160;&#160;</xsl:text>
+			<input type="button" value="Search" onclick="repeatSearch();"/>
+			<xsl:text>&#160;&#160;&#160;&#160;</xsl:text>
+			<span class="headerText">Welcome </span>
+			<span class="headerText" id="usernameSpan">&#160;</span>
+			<xsl:text>&#160;&#160;</xsl:text>
+			<span class="headerText" id="myAccount">
+				<xsl:text>|&#160;&#160;</xsl:text>
+				<a href="/prefs">My Account</a>
+				<xsl:text>&#160;&#160;</xsl:text>
+			</span>
+			<span class="headerText">
+				<xsl:text>|&#160;&#160;</xsl:text>
+				<a href="javascript:loginLogout();" id="loginoutAnchor">Login</a>
+				<xsl:text>&#160;&#160;</xsl:text>
+			</span>
+		</div>
+
+		<div style="float:right;">
+			<input type="text" id="freetext" value="Search..." onkeyup="keyClicked(event);"/>
+			<p><a href="javascript:showServersPopup();">Select libraries</a></p>
+		</div>
+
+		<div style="float:right; margin-top:7px;">
+			<input type="button" value="Show all" onclick="clearModifiers();"/>
+			<xsl:text>&#160;&#160;</xsl:text>
+		</div>
+
+	</div>
 </div>
 </xsl:template>
 
 <xsl:template name="leftpane">
-	<div id="MyCollections">
-		<div class="L1">My Collections</div>
+	<div id="Cases">
+		<!--<div class="L1">Cases</div>-->
 		<div class="L2" id="MyDocuments"><a href="javascript:queryMine();">My Cases</a><br/></div>
-		<div class="L2" id="PrivateDocuments"><a href="javascript:queryPrivate();">Private Cases</a><br/></div>
-		<div class="L2" id="UnpublishedDocuments"><a href="javascript:queryUnpublished();">Unpublished Cases</a><br/></div>
 		<div class="L2" id="AllDocuments"><a href="javascript:queryAll();">All Cases</a><br/></div>
-		<div class="L2z" id="ApprovalQueue"><a href="javascript:approvalQueue();">Approval Queue</a><br/></div>
-		<div class="L2x"><a href="/files">File Cabinets</a><br/></div>
+
+		<div class="L2x" id="ApprovalQueue"><a href="javascript:approvalQueue();">Approval Queue</a><br/></div>
+
 		<div id="Conferences">
 			<div class="L2x"><a href="/confs">Conferences</a></div>
 			<div id="confs">;</div>
 		</div>
-	</div>
 
-	<div id="PublicCollections">
-		<div class="L1">Public Collections</div>
-		<div class="L2" id="PCAllDocuments"><a href="javascript:queryPCAll();">All Cases</a><br/></div>
-		<div class="L2" id="PCPublicDocuments"><a href="javascript:queryPCPublic();">Public Cases</a><br/></div>
-		<div class="L2" id="PCUnpublishedDocuments"><a href="javascript:queryPCUnpublished();">Unpublished Cases</a><br/></div>
+		<div id="FileCabinets">
+			<div class="L2x"><a href="/files">File Cabinets</a><br/></div>
+			<div id="cabs">;</div>
+		</div>
+
+		<div class="L2x" id="CaseOfTheDay"><a href="{news/url}" target="shared">Case of the Day</a><br/></div>
 	</div>
 
 	<div id="AuthorTools">
-		<div class="L1">Author Tools</div>
-		<div class="L2y"><a href="/bauth/ss1">Basic Tool</a><br/></div>
-		<div class="L2y"><a href="/aauth/ss1">Advanced Tool</a><br/></div>
-		<div class="L2y"><a href="/submit/ss1">Submit Service</a><br/></div>
-		<div class="L2y"><a href="/zip/ss1">Zip Service</a><br/></div>
+		<hr/>
+		<!--<div class="L1">Author Tools</div>-->
+		<div class="L2"><a href="/bauth/ss1">Basic Author Tool</a><br/></div>
+		<div class="L2"><a href="/aauth/ss1">Advanced Author Tool</a><br/></div>
+		<div class="L2"><a href="javascript:submitService('ss1')"
+			title="Use this service to insert cases exported from another site">Submit Service</a><br/></div>
+		<div class="L2"><a href="/zip/ss1"
+			title="Use this service to create cases from a zip file of images">Zip Service</a><br/></div>
 	</div>
 
 	<div id="Admin">
-		<div class="L1">Admin Tools</div>
+		<hr/>
+		<!--<div class="L1">Admin Tools</div>-->
 		<div class="L2"><a href="/users?home=/query">User Manager</a><br/></div>
 		<div class="L2"><a href="/qsadmin">Query Service</a><br/></div>
 		<div class="L2"><a href="/fsadmin?home=/query">File Service</a><br/></div>
@@ -136,15 +152,11 @@
 <xsl:template name="footer">
 <div class="footer">
 	<div class="footerRight">
-		&#160;&#160;<a href="/query?UI=classic">Classic</a>&#160;&#160;
+		&#160;&#160;<a href="/query?UI=classic">Classic UI</a>&#160;&#160;
 		|&#160;&#160;<a href="javascript:showModifiersPopup();">Query Modifiers</a>&#160;&#160;
-		|&#160;&#160;<a href="javascript:showServersPopup();">Select Libraries</a>&#160;&#160;
 		|&#160;&#160;<a href="javascript:showHelpPopup();">Help</a>&#160;&#160;
 		|&#160;&#160;<a href="javascript:showAboutPopup();">About MIRC</a>&#160;&#160;
 		|&#160;&#160;<a href="http://mircwiki.rsna.org/index.php?title=MIRC_Articles" target="wiki">RSNA MIRC Wiki</a>&#160;&#160;
-		<xsl:if test="news/url">
-			|&#160;&#160;<a href="{news/url}" target="shared">Case of the Day</a>&#160;&#160;
-		</xsl:if>
 	</div>
 	<img src="/query/RSNA.jpg"/>
 	<span class="productname">TEACHING FILE SYSTEM</span>
@@ -181,6 +193,7 @@
 			</xsl:for-each>
 			);
 		var disclaimerURL = '<xsl:value-of select="@disclaimerurl"/>';
+		var codURL = '<xsl:value-of select="news/url"/>';
 		var sessionPopup = '<xsl:value-of select="@popup"/>';
 	</script>
 </xsl:template>

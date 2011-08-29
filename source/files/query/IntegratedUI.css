@@ -26,13 +26,27 @@ div.header {
 	border-bottom: thin solid black;
 	overflow: hidden;
 	white-space: nowrap;
-	height: 35px;
+	height: 41px;/*35px;*/
 }
 
 div.header input#freetext { width:250px; }
+div.header p {
+	margin:0; 
+	padding:0; 
+	font-size:8pt; 
+	width:250px;
+	color: blue;
+	text-align:right;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+}
+
+div.headerLeft {
+	margin-top: 4px;
+	float: left;
+}
 
 div.headerRight { 
-	margin-top: 5px;
+	margin-top: 0px;
 	float: right; 
 }
 
@@ -96,67 +110,7 @@ span.sitename {
 	font-weight: normal;
 	color: blue;
 	margin-left: 20px;
-	margin-top: 4px;
-}
-
-.Modifiers {
-	font-size: 10pt;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
-	font-weight: bold;
-	color: blue;
-	margin-left: 0px;
-	margin-top: 15px;
-	margin-bottom: 5px;
-	cursor: Pointer;
-}
-
-div.SelectLibraries {
-	font-size: 10pt;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
-	font-weight: normal;
-	color: blue;
-	margin-left: 20px;
-	margin-bottom: 5px;
-	cursor: Pointer;
-}
-div.SelectElements {
-	font-size: 10pt;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
-	font-weight: normal;
-	color: black;
-	margin-left: 20px;
-	margin-bottom: 5px;
-	cursor: Pointer;
-}
-div.SelectElements select {
-	margin-left: 20;
-	margin-bottom:3;
-	width: 110;
-}
-div.ModifiersMain { /*div containing all the modifiers groups*/
-	font-size: 10pt;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
-	font-weight: normal;
-	color: black;
-	margin-left: 5px;
-	cursor: Pointer;
-}
-div.ModifiersGroup { /*expand/collapse for a single group*/
-	font-size: 10pt;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
-	font-weight: normal;
-	color: black;
-	margin-left: 20px;
-	margin-top: 4px;
-	cursor: Pointer;
-}
-div.ModifiersComponents { /*div containing the individual components*/
-	font-size: 10pt;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
-	font-weight: normal;
-	color: black;
-	margin-left: 38px;
-	cursor: Pointer;
+	margin-top: 8px;
 }
 
 div.footer {
@@ -233,15 +187,24 @@ div.rightpane table td.detailsTD p {
 	overflow: auto;
 }
 
+div.rightpane iframe {
+	width: 100%;
+	height: 100%;
+	border-style: none;
+	border-width: 0px;
+}
+
+div#Cases { margin-top: 8px; }
+
 div.leftpane hr {
-	margin-left: 20px;
+	margin: 6px 0px 6px 20px;
 	width: 100px;
 	text-align: left;
 }
 
 div.links {
-	margin-top: 20px;
-	margin-bottom:20px;
+	margin-top: 10px;
+	margin-bottom:10px;
 	float: right;
 	font-size: 10pt;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
@@ -286,28 +249,23 @@ div.links {
 .w3  { padding-left:30px; }
 .w3x { padding-left:55px; }
 
-span.highlight {
-	/*background: white;*/
-}
-
-span.dehighlight {
-	/*background: #A8C7FF;*/
-}
-
+/*Styles for the conferences and file cabinets trees in the left pane*/
 div#confs {
 	margin-left:20px;
 }
 
-div.open {
-	font-weight: bold;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
-	font-size:10pt;
-	color: black;
+div#cabs {
+	margin-left:20px;
 }
 
-div.closed {
-	font-weight: normal;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
-	font-size:10pt;
-	color: black;
+/*File cabinet selection styles*/
+div#right img.sel {
+	border:1px red solid; 
+	margin:1px;
 }
+
+div#right img.desel {
+	border:1px #C6D8F9 solid; 
+	margin:1px;
+}
+

@@ -86,8 +86,10 @@ public class SubmitService extends Servlet {
 
 			if ((path.length() == 2) && enabled) {
 					res.disableCaching();
+					String ui = req.getParameter("ui", "");
+					if (!ui.equals("integrated")) ui = "classic";
+					res.write( getPage( ui, ssid, "" ) );
 					res.setContentType("html");
-					res.write( getPage( ssid, "" ) );
 					res.send();
 			}
 			else { super.doGet(req, res); return; }
@@ -95,19 +97,22 @@ public class SubmitService extends Servlet {
 		else res.redirect("/query");
 	}
 
-	private String getPage(String ssid, String result) throws Exception {
+	private String getPage(String ui, String ssid, String result) throws Exception {
 		Document xml = MircConfig.getInstance().getXML();
 		Document xsl = XmlUtil.getDocument( FileUtil.getStream( "/submit/SubmitService.xsl" ) );
 		Object[] params = new Object[] {
+							"ui", ui,
 							"ssid", ssid,
 							"result", result
 						};
-		return XmlUtil.getTransformedText( xml, xsl, params );
+		String page = XmlUtil.getTransformedText( xml, xsl, params );
+		return page;
 	}
 
-	private void finish(HttpResponse res, String ssid, StringBuffer result, boolean suppress) throws Exception {
+	private void finish(HttpResponse res, String ui, String ssid, StringBuffer result, boolean suppress) throws Exception {
 		if( suppress ) res.write(result.toString().replaceAll("\\|", "<br/>"));
-		else res.write( getPage( ssid, result.toString() ) );
+		else res.write( getPage( ui, ssid, result.toString() ) );
+		res.setContentType("html");
 		res.send();
 	}
 
@@ -176,7 +181,7 @@ public class SubmitService extends Servlet {
 		//adds the non-file form parameters to the req.params table,
 		//making them available to the req.getParameter(...) methods.
 
-		//Get the docref part of the path. This is tha part after the
+		//Get the docref part of the path. This is the part after the
 		//the ssid. That is the key under which documents are indexed.
 		//If docref has multiple path elements and starts with the name
 		//of the identified library's documents directory ("docs"),
@@ -190,6 +195,8 @@ public class SubmitService extends Servlet {
 		else docref = "";
 		boolean isDocumentUpdate = !docref.equals("");
 		boolean preserveOwners = req.hasParameter("preserveOwners");
+		String ui = req.getParameter("ui", "");
+		if (!ui.equals("integrated")) ui = "classic";
 
 		//Get the suppress query string parameter. This parameter can be used
 		//by client-side applications to suppress the submission form on
@@ -206,7 +213,7 @@ public class SubmitService extends Servlet {
 		catch (Exception ex) {
 			result.append("There was a problem unpacking the posted file.|");
 			result.append( deleteResponse( FileUtil.deleteAll(dir) ) );
-			finish(res, ssid, result, suppress);
+			finish(res, ui, ssid, result, suppress);
 			return;
 		}
 
@@ -215,7 +222,7 @@ public class SubmitService extends Servlet {
 			result.append("The zip file was unpacked successfully, but "
 					 +  "it did not contain a MIRCdocument file to index.|"
 					 +   deleteResponse(FileUtil.deleteAll(dir)) );
-			finish(res, ssid, result, suppress);
+			finish(res, ui, ssid, result, suppress);
 			return;
 		}
 		else {
@@ -280,7 +287,7 @@ public class SubmitService extends Servlet {
 				*/ //************************************************************************************************************
 			}
 		}
-		finish(res, ssid, result, suppress);
+		finish(res, ui, ssid, result, suppress);
 	}
 
 	private void setAuthorization(
@@ -347,7 +354,7 @@ public class SubmitService extends Servlet {
 	}
 
 	//Unpack the submitted zip file into the directory where it is stored,
-	//ignoring all path information.
+	//ignoring all path inUIion.
 	//
 	//Note that some MIRCdocuments from early MIRC versions may be research datasets
 	//and may contain "phi" and "no-phi" subdirectories. These subdirectories will
@@ -364,7 +371,7 @@ public class SubmitService extends Servlet {
 		while (zipEntries.hasMoreElements()) {
 			ZipEntry entry = (ZipEntry)zipEntries.nextElement();
 			if (!entry.isDirectory()) {
-				//Eliminate the path information.
+				//Eliminate the path inUIion.
 				String name = entry.getName().replace("\\", "/");
 				name = name.substring(name.lastIndexOf("/")+1);
 				//Store the entry;

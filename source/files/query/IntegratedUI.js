@@ -6,8 +6,8 @@ var prefs = null;
 var split = null;
 var collectionID = null;
 var collectionQuery = null;
-var treeManager = null;
-var currentNode = null;
+var confTreeManager = null;
+var fileTreeManager = null;
 var currentTable = "";
 var firstResult = 1;
 var maxResults = 25;
@@ -31,13 +31,12 @@ function loaded() {
 	}
 	split = new HorizontalSplit("left", "center", "right", true, 185);
 
-	setVisibility("MyCollections", user.isLoggedIn);
-	setVisibility("PCAllDocuments", user.isLoggedIn);
-	setVisibility("PCUnpublishedDocuments", user.hasRole("publisher"));
+	setVisibility("MyDocuments", user.hasRole("author"));
 	setVisibility("AuthorTools", user.hasRole("author"));
-	setVisibility("Conferences", user.isLoggedIn);
+	setVisibility("FileCabinets", user.isLoggedIn);
 	setVisibility("ApprovalQueue", user.hasRole("publisher"));
 	setVisibility("Admin", user.hasRole("admin"));
+	setVisibility("CaseOfTheDay", (codURL != ""));
 
 	var freetext = document.getElementById("freetext");
 	freetext.focus();
@@ -47,11 +46,9 @@ function loaded() {
 	createServersPopup();
 	setState();
 	setModifierValues();
-	if (user.isLoggedIn) {
-		loadConferences();
-		queryAll();
-	}
-	else queryPCPublic();
+	loadConferences();
+	if (user.isLoggedIn) loadFileCabinets();
+	queryMine();
 	queryMethod = repeatSearch;
 	showSessionPopup();
 }
@@ -325,13 +322,9 @@ function toggleCTPAdmin() {
 //************************************************
 function deselectAll() {
 	deselectCollection("MyDocuments");
-	deselectCollection("PrivateDocuments");
-	deselectCollection("UnpublishedDocuments");
 	deselectCollection("AllDocuments");
-	deselectCollection("PCAllDocuments");
-	deselectCollection("PCPublicDocuments");
-	deselectCollection("PCUnpublishedDocuments");
-	if (treeManager) treeManager.closePaths();
+	if (confTreeManager) confTreeManager.closePaths();
+	if (fileTreeManager) fileTreeManager.closePaths();
 }
 
 function deselectCollection(id) {
@@ -342,6 +335,7 @@ function deselectCollection(id) {
 	var x = document.getElementById(id);
 	if (x) x.firstChild.style.fontWeight = "normal";
 }
+
 function selectCollection( theCollectionQuery, theCollectionID ) {
 	var x = document.getElementById(theCollectionID);
 	if (x) {
@@ -361,43 +355,16 @@ function getBaseQuery() {
 }
 
 function queryMine() {
-	doQuery(getBaseQuery() + "&owner="+encodedUsername);
-	selectCollection(queryMine, "MyDocuments");
-}
-
-function queryPrivate() {
-	doQuery(getBaseQuery() + "&owner="+encodedUsername+"&access=owner");
-	selectCollection(queryPrivate, "PrivateDocuments");
-}
-
-function queryUnpublished() {
-	doQuery(getBaseQuery() + "&owner="+encodedUsername+"&access=restricted");
-	selectCollection(queryUnpublished, "UnpublishedDocuments");
-}
-
-function queryPublic() {
-	doQuery(getBaseQuery() + "&owner="+encodedUsername+"&access=public");
-	selectCollection(queryPublic, "PublicDocuments");
+	if (user.isLoggedIn) {
+		doQuery(getBaseQuery() + "&owner="+encodedUsername);
+		selectCollection(queryMine, "MyDocuments");
+	}
+	else queryAll();
 }
 
 function queryAll() {
 	doQuery(getBaseQuery());
 	selectCollection(queryAll, "AllDocuments");
-}
-
-function queryPCAll() {
-	doQuery(getBaseQuery());
-	selectCollection(queryPCAll, "PCAllDocuments");
-}
-
-function queryPCPublic() {
-	doQuery(getBaseQuery() + "&access=public");
-	selectCollection(queryPCPublic, "PCPublicDocuments");
-}
-
-function queryPCUnpublished() {
-	doQuery(getBaseQuery() + "&owner="+encodedUsername+"&access=restricted");
-	selectCollection(queryPCUnpublished, "PCUnpublishedDocuments");
 }
 
 function firstPage() {
@@ -831,20 +798,20 @@ function approvalQueue() { alert("approvalQueue"); }
 //Conferences
 //************************************************
 function loadConferences() {
-	treeManager =
+	confTreeManager =
 		new TreeManager(
 			"confs",
 			"/confs/tree",
 			"/mirc/images/plus.gif",
 			"/mirc/images/minus.gif");
-	treeManager.load();
-	treeManager.display();
-	treeManager.expandAll();
+	confTreeManager.load();
+	confTreeManager.display();
+	confTreeManager.expandAll();
 }
 
 function showConferenceContents(eveent) {
 	var source = getSource(getEvent(event));
-	currentNode = source.treenode;
+	var currentNode = source.treenode;
 	deselectAll();
 	currentNode.showPath();
 
@@ -914,6 +881,111 @@ function appendAgendaItem(tbody, item) {
 	tbody.appendChild(tr);
 }
 
+//************************************************
+//File Cabinets
+//************************************************
+function loadFileCabinets() {
+	fileTreeManager =
+		new TreeManager(
+			"cabs",
+			"/files/tree",
+			"/mirc/images/plus.gif",
+			"/mirc/images/minus.gif");
+	fileTreeManager.load();
+	fileTreeManager.display();
+	fileTreeManager.expandAll();
+}
+
+//Handlers for tree selection
+//
+function showFileDirContents(event) {
+	var source = getSource(getEvent(event));
+	var currentNode = source.treenode;
+	deselectAll();
+	var currentPath = currentNode.getPath();
+	fileTreeManager.closePaths();
+	currentNode.showPath();
+	//menuBar.setText(currentPath);
+	var req = new AJAX();
+	req.GET("/files/mirc/"+currentPath, req.timeStamp(), null);
+	if (req.success()) {
+		var right = document.getElementById("right");
+		while (right.firstChild) right.removeChild(right.firstChild);
+		//nFiles = 0;
+		var xml = req.responseXML();
+		var root = xml ? xml.firstChild : null;
+		var child = root ? root.firstChild : null;
+		while (child) {
+			if ((child.nodeType == 1) && (child.tagName == "file")) {
+				var img = document.createElement("IMG");
+				img.className = "desel";
+				//img.onclick = cabinetFileClicked;
+				img.ondblclick = cabinetFileDblClicked;
+				//img.onmousedown = startImageDrag;
+				img.setAttribute("src", "/files/"+child.getAttribute("iconURL"));
+				img.setAttribute("title", child.getAttribute("title"));
+				img.xml = child;
+				right.appendChild(img);
+				//nFiles++;
+			}
+			child = child.nextSibling;
+		}
+		//lastClicked = -1;
+		//nodeType = "MircFolder";
+		//nSelected = 0;
+	}
+	else alert("The attempt to get the directory contents failed.");
+	//setEnables();
+}
+
+function cabinetFileDblClicked(theEvent) {
+	var theEvent = getEvent(theEvent)
+	stopEvent(theEvent);
+	var source = getSource(theEvent);
+	var currentClicked = getClicked(source);
+	if (currentClicked == -1) return;
+	var fileURL = "/files/" + source.xml.getAttribute("fileURL");
+	deselectAll();
+	source.className = "sel";
+	lastClicked = currentClicked;
+	//setEnables();
+
+	if (theEvent.altKey) {
+		var filename = source.getAttribute("title");
+		if ((filename.toLowerCase().lastIndexOf(".dcm") == filename.length - 4) ||
+					(filename.replace(/[\.\d]/g,"").length == 0)) {
+			fileURL += "?list";
+		}
+	}
+	window.open(fileURL, "_blank");
+}
+
+function getClicked(file) {
+	var files = getCabinetFiles();
+	for (var i=0; i<files.length; i++) {
+		if (file === files[i]) {
+			return i;
+		}
+	}
+	return -1;
+}
+
+function getCabinetFiles() {
+	var right = document.getElementById("right");
+	return right.getElementsByTagName("IMG");
+}
+
+//************************************************
+//Submit Service
+//************************************************
+function submitService(ssid) {
+	deselectAll();
+	var right = document.getElementById("right");
+	while (right.firstChild) right.removeChild(right.firstChild);
+	var iframe = document.createElement("IFRAME");
+	iframe.src = "/submit/"+ssid+"?ui=integrated";
+	right.appendChild(iframe);
+}
 
 //************************************************
 //Libraries classes

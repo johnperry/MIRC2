@@ -46,6 +46,14 @@ public class Conference implements Serializable {
 	}
 
 	/**
+	 * Determine whether this conference is shared.
+	 * @return true if the conference is shared, false otherwise.
+	 */
+	public boolean isShared() {
+		return title.startsWith("Shared");
+	}
+
+	/**
 	 * Append an AgendaItem to the agenda. This method replaces
 	 * any existing AgendaItem with the same url field with
 	 * the new item.

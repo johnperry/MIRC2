@@ -78,13 +78,63 @@ public class ConferenceService extends Servlet {
 	 */
 	public void doGet(HttpRequest req, HttpResponse res) throws Exception {
 
-		//This servlet is for authenticated users only
+		Path path = req.getParsedPath();
+		String function = path.element(1).toLowerCase();
+
+		if (function.equals("tree")) {
+			//This is a request for the tree structure for the left pane.
+			//This function is allowed for non-authenticated users, so
+			//they can see the shared conferences
+			Conferences confs = Conferences.getInstance();
+			Document doc = XmlUtil.getDocument();
+			Element root = doc.createElement("tree");
+			doc.appendChild(root);
+			appendConferences(root, confs.getRootConference(null));
+			if (req.isFromAuthenticatedUser()) {
+				appendConferences(root, confs.getRootConference(req.getUser().getUsername()));
+			}
+			res.disableCaching();
+			res.setContentType("xml");
+			res.write( XmlUtil.toString(root) );
+			res.send();
+			return;
+		}
+
+		if (function.equals("getagenda")) {
+			//This is a request for an XML structure containing
+			//the agenda items of the specified conference
+			String nodeID = req.getParameter("nodeID");
+			Conferences confs = Conferences.getInstance();
+			Conference conf = confs.getConference(nodeID);
+
+			if (req.isFromAuthenticatedUser() || conf.isShared()) {
+				Document doc = XmlUtil.getDocument();
+				Element root = doc.createElement("agenda");
+				doc.appendChild(root);
+				Iterator<AgendaItem> it = conf.agenda.iterator();
+				while (it.hasNext()) {
+					AgendaItem item = it.next();
+					Element el = doc.createElement("item");
+					el.setAttribute("url", item.url);
+					el.setAttribute("title", item.title);
+					el.setAttribute("alturl", item.alturl);
+					el.setAttribute("alttitle", item.alttitle);
+					el.setAttribute("subtitle", item.subtitle);
+					root.appendChild(el);
+				}
+				res.disableCaching();
+				res.setContentType("xml");
+				res.write( XmlUtil.toString(root) );
+				res.send();
+				return;
+			}
+		}
+
+		//The rest of this servlet is for authenticated users only
 		if (!req.isFromAuthenticatedUser()) { res.redirect("/query"); return; }
 
 		//OK, the user is authenticated; get the name.
 		String username = req.getUser().getUsername();
-
-		Path path = req.getParsedPath();
 
 		if (path.length() == 1) {
 			//This is a request for the conferences page.
@@ -107,23 +157,6 @@ public class ConferenceService extends Servlet {
 			res.disableCaching();
 			res.setContentType("html");
 			res.write(page);
-			res.send();
-			return;
-		}
-
-		String function = path.element(1).toLowerCase();
-
-		if (function.equals("tree")) {
-			//This is a request for the tree structure for the left pane.
-			Conferences confs = Conferences.getInstance();
-			Document doc = XmlUtil.getDocument();
-			Element root = doc.createElement("tree");
-			doc.appendChild(root);
-			appendConferences(root, confs.getRootConference(null));
-			appendConferences(root, confs.getRootConference(username));
-			res.disableCaching();
-			res.setContentType("xml");
-			res.write( XmlUtil.toString(root) );
 			res.send();
 			return;
 		}
@@ -272,34 +305,6 @@ public class ConferenceService extends Servlet {
 			res.disableCaching();
 			res.setContentType("xml");
 			res.write( result );
-			res.send();
-			return;
-		}
-
-		if (function.equals("getagenda")) {
-			//This is a request for an XML structure containing
-			//the agenda items of the specified conference
-			String nodeID = req.getParameter("nodeID");
-			Conferences confs = Conferences.getInstance();
-			Conference conf = confs.getConference(nodeID);
-
-			Document doc = XmlUtil.getDocument();
-			Element root = doc.createElement("agenda");
-			doc.appendChild(root);
-			Iterator<AgendaItem> it = conf.agenda.iterator();
-			while (it.hasNext()) {
-				AgendaItem item = it.next();
-				Element el = doc.createElement("item");
-				el.setAttribute("url", item.url);
-				el.setAttribute("title", item.title);
-				el.setAttribute("alturl", item.alturl);
-				el.setAttribute("alttitle", item.alttitle);
-				el.setAttribute("subtitle", item.subtitle);
-				root.appendChild(el);
-			}
-			res.disableCaching();
-			res.setContentType("xml");
-			res.write( XmlUtil.toString(root) );
 			res.send();
 			return;
 		}
