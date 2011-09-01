@@ -205,12 +205,17 @@ div.leftpane hr {
 div.links {
 	margin-top: 10px;
 	margin-bottom:10px;
-	float: right;
+	float: left;
 	font-size: 10pt;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-weight: normal;
 	color: black;
 	margin-right:15px;
+}
+div.links img {
+	margin-left: 2px;
+	height: 24px;
+	width: 24px;
 }
 
 /* Split pane styles */
@@ -252,6 +257,20 @@ div.links {
 /*Styles for the conferences and file cabinets trees in the left pane*/
 div#confs {
 	margin-left:20px;
+}
+
+div.open {
+	font-weight: bold;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size:10pt;
+	color: black;
+}
+
+div.closed {
+	font-weight: normal;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size:10pt;
+	color: black;
 }
 
 div#cabs {

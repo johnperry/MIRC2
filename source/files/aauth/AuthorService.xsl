@@ -2,6 +2,7 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
 <xsl:output method="xml" encoding="utf-8" omit-xml-declaration="yes" />
 
+<xsl:param name="ui"/>
 <xsl:param name="ssid"/>
 <xsl:param name="libraryTitle"/>
 <xsl:param name="templates"/>
@@ -15,17 +16,26 @@
 			<script language="JavaScript" type="text/javascript" src="/JSUtil.js">;</script>
 			<script language="JavaScript" type="text/javascript" src="/JSPopup.js">;</script>
 			<script language="JavaScript" type="text/javascript" src="/aauth/AuthorService.js">;</script>
+			<script>
+				var ui = '<xsl:value-of select="$ui"/>';
+				var tokens = new Array();
+				<xsl:for-each select="$templates/templates/template">
+					tokens[tokens.length] = '<xsl:value-of select="token"/>';
+				</xsl:for-each>
+			</script>
 		</head>
 		<body>
-			<div class="closebox">
-				<img src="/icons/home.png"
-					 onclick="window.open('/query','_self');"
-					 title="Return to the home page"/>
-				<br/>
-				<img src="/icons/save.png"
-					 onclick="save();"
-					 title="Create the MIRCdocument and open it in the editor"/>
-			</div>
+			<xsl:if test="$ui='classic'">
+				<div class="closebox">
+					<img src="/icons/home.png"
+						 onclick="window.open('/query','_self');"
+						 title="Return to the home page"/>
+					<br/>
+					<img src="/icons/save.png"
+						 onclick="save();"
+						 title="Create the MIRCdocument and open it in the editor"/>
+				</div>
+			</xsl:if>
 
 			<h1><xsl:value-of select="$libraryTitle"/> (<xsl:value-of select="$ssid"/>)</h1>
 			<h2>Author Service</h2>
@@ -67,7 +77,7 @@
 				<tr>
 					<td class="text-label">Template:</td>
 					<td class="text-field">
-						<select class="input-length" name="templatename" id="templatename">
+						<select class="input-length" name="templatename" id="templatename" onchange="templateChanged();">
 							<xsl:for-each select="$templates/templates/template">
 								<option value="{file}">
 									<xsl:if test="position()=1">
@@ -77,10 +87,17 @@
 								</option>
 							</xsl:for-each>
 						</select>
+						<br/>
+						<p class="centered"><img id="tokenIMG"/></p>
 					</td>
 				</tr>
 			</table>
 			</p>
+
+			<p class="instruction">Click this button to open the selected template in the editor:
+				<input type="button" value="Continue" onclick="save();"/>
+			</p>
+			<br/>
 
 			</form>
 		</body>

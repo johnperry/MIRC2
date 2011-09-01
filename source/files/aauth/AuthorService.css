@@ -2,6 +2,7 @@ body {
 	background: #c6d8f9;
 	padding:0;
 	margin:0;
+	border-style: none;
 }
 
 div.closebox {
@@ -63,6 +64,13 @@ p.instruction {
 p.center {
 	margin-left: 15%;
 	margin-right: 15%;
+}
+
+p.centered {
+	margin: 0;
+	padding: 3px;
+	width: 100%;
+	text-align: center;
 }
 
 table {

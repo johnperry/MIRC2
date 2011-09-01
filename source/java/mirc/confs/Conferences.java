@@ -95,6 +95,23 @@ public class Conferences {
 	}
 
 	/**
+	 * Determine whether a Conference is shared.
+	 * @return true if the conference is shared, false otherwise.
+	 */
+	public synchronized boolean isShared(String id) {
+		if (confs != null) {
+			try {
+				Conference conf = (Conference)confs.get(id);
+				while ( (conf.pid != null)
+						&& ((conf = (Conference)confs.get(conf.pid)) != null) ) { } //empty on purpose
+				return (conf != null) && conf.title.equals("Shared");
+			}
+			catch (Exception ex) { }
+		}
+		return false;
+	}
+
+	/**
 	 * Get the Conference object with the specified ID.
 	 * @param id the id of the Conference to fetch.
 	 * @return the Conference object or null if unable.

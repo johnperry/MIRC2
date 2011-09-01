@@ -1011,7 +1011,7 @@
 		var background = '<xsl:value-of select="$bgcolor"/>';
 
 		<xsl:if test="//image-section">
-			var imageSection = 'yes';
+			var imageSection = true;
 
 			var imagePaneWidth = <xsl:choose>
 				<xsl:when test="//image-section/@image-pane-width">
@@ -1067,7 +1067,10 @@
 			</xsl:for-each>
 		</xsl:if>
 
-		<xsl:if test="not(//image-section)">var imageSection = 'no';
+		<xsl:if test="not(//image-section)"> {
+			var imageSection = false;
+			var IMAGES = null;
+		}
 		</xsl:if>
 
 		function Destination(name, url) {

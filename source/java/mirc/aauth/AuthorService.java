@@ -10,6 +10,7 @@ package mirc.aauth;
 import java.awt.Dimension;
 import java.io.File;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedList;
@@ -99,8 +100,26 @@ public class AuthorService extends Servlet {
 		if (!req.userHasRole("author")) { res.redirect("/query"); return; }
 
 		Path path = req.getParsedPath();
-		String ssid = path.element(1);
-		if (ssid.startsWith("ss")) {
+		String function = path.element(1);
+
+		if (function.equals("token")) {
+			String filename = req.getParameter("file", "");
+			if (!filename.equals("")) {
+				String resource = "/aauth/tokens/"+filename;
+				URL url = FileUtil.getURL(resource);
+				if (url != null) {
+					res.write(url);
+					res.setContentType(filename);
+					res.send();
+					return;
+				}
+			}
+			res.setResponseCode(res.notfound);
+			res.send();
+		}
+
+		else if (function.startsWith("ss")) {
+			String ssid = function;
 
 			//Make sure the author service is enabled
 			MircConfig mc = MircConfig.getInstance();
@@ -122,8 +141,13 @@ public class AuthorService extends Servlet {
 					Element titleElement = XmlUtil.getFirstNamedChild(lib, "title");
 					String title = titleElement.getTextContent();
 
+					//Get the UI to determine whether to include the home icon.
+					String ui = req.getParameter("ui", "");
+					if (!ui.equals("integrated")) ui = "classic";
+
 					//Generate the submission page.
 					Object[] params = {
+						"ui",			ui,
 						"ssid",			ssid,
 						"libraryTitle",	title,
 						"templates",	getTemplates( new File(root, "aauth") )
@@ -204,6 +228,12 @@ public class AuthorService extends Servlet {
 						Element childTitle = doc.createElement("title");
 						child.appendChild(childTitle);
 						childTitle.setTextContent(title);
+
+						String display = mdRoot.getAttribute("display").trim().toLowerCase();
+						if (display.equals("")) display = "page";
+						Element childToken = doc.createElement("token");
+						child.appendChild(childToken);
+						childToken.setTextContent(display+".jpg");
 					}
 				}
 				catch (Exception ignoreFile) { }

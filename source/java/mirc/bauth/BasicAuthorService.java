@@ -112,6 +112,10 @@ public class BasicAuthorService extends Servlet {
 				String username = req.getUser().getUsername();
 				Element prefs = Preferences.getInstance().get( username, true );
 
+				//Get the UI to determine whether to include the home icon.
+				String ui = req.getParameter("ui", "");
+				if (!ui.equals("integrated")) ui = "classic";
+
 				//Get the template
 				String templateName = req.getParameter("file", "example-basic-template.xml").trim();
 				File bauth = new File(root, "bauth");
@@ -121,6 +125,7 @@ public class BasicAuthorService extends Servlet {
 
 				//Generate the submission page.
 				Object[] params = {
+					"ui",			ui,
 					"ssid",			ssid,
 					"libraryTitle",	title,
 					"prefs",		prefs,
@@ -203,6 +208,9 @@ public class BasicAuthorService extends Servlet {
 				LinkedList<UploadedFile> files = req.getParts(dir, maxsize);
 
 				logger.debug("...submission includes "+files.size()+" file(s)");
+
+				String ui = req.getParameter("ui", "");
+				if (!ui.equals("integrated")) ui = "classic";
 
 				//Make a File that points to the MIRCdocument.xml file to be created,
 				//and copy the template into that file.

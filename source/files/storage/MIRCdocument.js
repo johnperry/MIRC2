@@ -51,7 +51,7 @@ function mirc_onload() {
 	setBackground();
 	if ((display == "mstf") || (display == "mirctf") || (display == "tab")) {
 		initTabs();
-		if (imageSection == "yes") loadImage(1);
+		if (imageSection) loadImage(1);
 		setIFrameSrc(currentPage);
 		var pos = findObject(document.body);
 		var leftWidth = pos.w / 4;
@@ -67,7 +67,7 @@ function mirc_onload() {
 	}
 	setWheelDriver();
 	window.focus();
-	if (IMAGES) IMAGES.load();
+	if (imageSection) IMAGES.load();
 }
 
 function splitHandler() {
@@ -303,7 +303,7 @@ function setSize() {
 		if (maindivHeight < 100) maindivHeight = 100;
 		maindiv.style.height = maindivHeight;
 
-		if (imageSection == "yes") {
+		if (imageSection) {
 			var leftside = document.getElementById('leftside');
 			var uldiv = document.getElementById('uldiv');
 			var sldiv = document.getElementById("sldiv");

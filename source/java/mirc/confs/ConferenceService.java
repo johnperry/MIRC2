@@ -107,7 +107,7 @@ public class ConferenceService extends Servlet {
 			Conferences confs = Conferences.getInstance();
 			Conference conf = confs.getConference(nodeID);
 
-			if (req.isFromAuthenticatedUser() || conf.isShared()) {
+			if (req.isFromAuthenticatedUser() || confs.isShared(nodeID)) {
 				Document doc = XmlUtil.getDocument();
 				Element root = doc.createElement("agenda");
 				doc.appendChild(root);

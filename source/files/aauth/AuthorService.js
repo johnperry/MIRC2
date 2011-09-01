@@ -1,10 +1,22 @@
 function loaded() {
-	var tools = new Array();
-	tools[tools.length] = new PopupTool("/icons/save.png", "Create the MIRCdocument and open it in the editor", null, save);
-	tools[tools.length] = new PopupTool("/icons/home.png", "Return to the home page", "/query", null);
-	setPopupToolPanel( tools );
+	if (ui == "classic") {
+		var tools = new Array();
+		tools[tools.length] = new PopupTool("/icons/save.png", "Create the MIRCdocument and open it in the editor", null, save);
+		tools[tools.length] = new PopupTool("/icons/home.png", "Return to the home page", "/query", null);
+		setPopupToolPanel( tools );
+	}
+	templateChanged();
 }
 window.onload = loaded;
+
+function templateChanged() {
+	var selectElement = document.getElementById("templatename");
+	var options = selectElement.getElementsByTagName("OPTION");
+	var filename = tokens[selectElement.selectedIndex];
+
+	var img = document.getElementById("tokenIMG");
+	img.src = "/aauth/token?file="+encodeURIComponent(filename);
+}
 
 //Submit the request
 function save() {
@@ -13,7 +25,10 @@ function save() {
 	checkText("contact");
 
 	var form = document.getElementById("formID");
-	form.target = "editor";
+	if (ui == "integrated")
+		form.target = "_self";
+	else
+		form.target = "editor";
 	form.submit();
 }
 

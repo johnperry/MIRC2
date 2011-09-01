@@ -2,6 +2,7 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
 <xsl:output method="xml" encoding="utf-8" omit-xml-declaration="yes" />
 
+<xsl:param name="ui"/>
 <xsl:param name="ssid"/>
 <xsl:param name="name"/>
 <xsl:param name="affiliation"/>
@@ -14,10 +15,9 @@
 <xsl:param name="skipext"/>
 <xsl:param name="skipprefix"/>
 <xsl:param name="result"/>
-
+<xsl:variable name="siteurl" select="/mirc/@siteurl"/>
 
 <xsl:template match="/mirc">
-	<xsl:variable name="siteurl" select="@siteurl"/>
 	<html>
 		<head>
 			<title>Zip Service - <xsl:value-of select="$ssid"/></title>
@@ -27,22 +27,28 @@
 			<script language="JavaScript" type="text/javascript" src="/JSUtil.js">;</script>
 			<script language="JavaScript" type="text/javascript" src="/JSPopup.js">;</script>
 			<script language="JavaScript" type="text/javascript" src="/zip/ZipService.js">;</script>
+			<script>
+				var ui = '<xsl:value-of select="$ui"/>';
+			</script>
 		</head>
 		<body>
-			<div class="closebox">
-				<img src="/icons/home.png"
-					 onclick="window.open('/query','_self');"
-					 title="Return to the home page"/>
-				<br/>
-				<img src="/icons/save.png"
-					 onclick="save();"
-					 title="Submit the zip file"/>
-			</div>
+			<xsl:if test="$ui='classic'">
+				<div class="closebox">
+					<img src="/icons/home.png"
+						 onclick="window.open('/query','_self');"
+						 title="Return to the home page"/>
+					<br/>
+					<img src="/icons/save.png"
+						 onclick="save();"
+						 title="Submit the zip file"/>
+				</div>
+			</xsl:if>
 
 			<h1><xsl:value-of select="Libraries/Library[@id=$ssid]/title"/> (<xsl:value-of select="$ssid"/>)</h1>
 			<h2>Zip Service</h2>
 
 			<form id="formID" action="" method="POST" accept-charset="UTF-8" enctype="multipart/form-data" >
+			<input type="hidden" name="ui" value="{$ui}"/>
 
 			<p class="note">
 				This page may be used by authors to submit zip files to this library.
@@ -177,8 +183,12 @@
 			</table>
 			</p>
 
-			<input ID="filename" name="filename" type="hidden"/>
+			<p class="centered">
+				<input type="button" value="Submit the Zip file" onclick="save();"/>
+			</p>
 			<br/>
+
+			<input ID="filename" name="filename" type="hidden"/>
 
 			</form>
 

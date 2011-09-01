@@ -119,12 +119,30 @@
 	<div id="AuthorTools">
 		<hr/>
 		<!--<div class="L1">Author Tools</div>-->
-		<div class="L2"><a href="/bauth/ss1">Basic Author Tool</a><br/></div>
-		<div class="L2"><a href="/aauth/ss1">Advanced Author Tool</a><br/></div>
-		<div class="L2"><a href="javascript:submitService('ss1')"
-			title="Use this service to insert cases exported from another site">Submit Service</a><br/></div>
-		<div class="L2"><a href="/zip/ss1"
-			title="Use this service to create cases from a zip file of images">Zip Service</a><br/></div>
+		<div class="L2" id="bat">
+			<a href="javascript:basicAuthorTool('ss1')" title="Use this tool to create cases using images on your computer.">
+				Basic Author Tool
+			</a>
+			<br/>
+		</div>
+		<div class="L2" id="aat">
+			<a href="javascript:advAuthorTool('ss1')" title="Use this tool to create cases using images from the file cabinets on the server.">
+				Advanced Author Tool
+			</a>
+			<br/>
+		</div>
+		<div class="L2" id="ssvc">
+			<a href="javascript:submitService('ss1')" title="Use this service to insert cases exported from another site.">
+				Submit Service
+			</a>
+			<br/>
+		</div>
+		<div class="L2" id="zsvc">
+			<a href="javascript:zipService('ss1')" title="Use this service to create cases from a zip file of images.">
+				Zip Service
+			</a>
+			<br/>
+		</div>
 	</div>
 
 	<div id="Admin">

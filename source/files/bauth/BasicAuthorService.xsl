@@ -2,6 +2,7 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
 <xsl:output method="xml" encoding="utf-8" omit-xml-declaration="yes" />
 
+<xsl:param name="ui"/>
 <xsl:param name="ssid"/>
 <xsl:param name="libraryTitle"/>
 <xsl:param name="prefs"/>
@@ -18,22 +19,28 @@
 			<script language="JavaScript" type="text/javascript" src="/JSUtil.js">;</script>
 			<script language="JavaScript" type="text/javascript" src="/JSPopup.js">;</script>
 			<script language="JavaScript" type="text/javascript" src="/bauth/BasicAuthorService.js">;</script>
+			<script>
+				var ui = '<xsl:value-of select="$ui"/>';
+			</script>
 		</head>
 		<body>
-			<div class="closebox">
-				<img src="/icons/home.png"
-					 onclick="window.open('/query','_self');"
-					 title="Return to the home page"/>
-				<br/>
-				<img src="/icons/save.png"
-					 onclick="save();"
-					 title="Create the MIRCdocument"/>
-			</div>
+			<xsl:if test="$ui='classic'">
+				<div class="closebox">
+					<img src="/icons/home.png"
+						 onclick="window.open('/query','_self');"
+						 title="Return to the home page"/>
+					<br/>
+					<img src="/icons/save.png"
+						 onclick="save();"
+						 title="Create the MIRCdocument"/>
+				</div>
+			</xsl:if>
 
 			<h1><xsl:value-of select="$libraryTitle"/> (<xsl:value-of select="$ssid"/>)</h1>
 			<h2>Basic Author Service</h2>
 
 			<form id="formID" action="" method="POST" accept-charset="UTF-8" enctype="multipart/form-data" >
+			<input type="hidden" name="ui" value="{$ui}"/>
 
 			<p class="note">
 				This page may be used by authors to create a MIRCdocument and submit it to the library.
@@ -154,6 +161,10 @@
 					</td>
 				</tr>
 			</table>
+			</p>
+
+			<p class="instruction">Click this button to create the MIRCdocument:
+				<input type="button" value="Submit" onclick="save();"/>
 			</p>
 			<br/>
 

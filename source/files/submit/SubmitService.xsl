@@ -21,17 +21,17 @@
 			</script>
 		</head>
 		<body>
-			<div class="closebox">
-				<xsl:if test="not($ui='integrated')">
+			<xsl:if test="$ui='classic'">
+				<div class="closebox">
 					<img src="/icons/home.png"
 						 onclick="window.open('/query','_self');"
 						 title="Return to the home page"/>
 					<br/>
-				</xsl:if>
-				<img src="/icons/save.png"
-					 onclick="save();"
-					 title="Submit the MIRCdocument"/>
-			</div>
+					<img src="/icons/save.png"
+						 onclick="save();"
+						 title="Submit the MIRCdocument"/>
+				</div>
+			</xsl:if>
 
 			<h1><xsl:value-of select="Libraries/Library[@id=$ssid]/title"/> (<xsl:value-of select="$ssid"/>)</h1>
 			<h2>Submit Service</h2>
@@ -48,6 +48,10 @@
 
 				<p class="center">
 					Select a MIRCdocument zip file: <input class="file" name="file" type="file"/>
+				</p>
+
+				<p class="center">
+					<input type="button" value="Submit the MIRCdocument" onclick="save();"/>
 				</p>
 
 				<xsl:if test="$result">

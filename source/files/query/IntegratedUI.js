@@ -29,7 +29,9 @@ function loaded() {
 		hide("myAccount");
 		replaceContent("loginoutAnchor", "Login");
 	}
-	split = new HorizontalSplit("left", "center", "right", true, 185);
+
+	//leftDiv, sliderDiv, rightDiv, fillHeight, sliderPosition, forceTopForIE, leftMin, rightMin, changeHandler
+	split = new HorizontalSplit("left", "center", "right", true, 185, false, 1);
 
 	setVisibility("MyDocuments", user.hasRole("author"));
 	setVisibility("AuthorTools", user.hasRole("author"));
@@ -325,6 +327,7 @@ function deselectAll() {
 	deselectCollection("AllDocuments");
 	if (confTreeManager) confTreeManager.closePaths();
 	if (fileTreeManager) fileTreeManager.closePaths();
+	deselectAuthorTools();
 }
 
 function deselectCollection(id) {
@@ -342,6 +345,16 @@ function selectCollection( theCollectionQuery, theCollectionID ) {
 		x.firstChild.style.fontWeight = "bold";
 		collectionQuery = theCollectionQuery;
 		collectionID = theCollectionID;
+	}
+}
+
+function deselectAuthorTools() {
+	var ats = document.getElementById("AuthorTools");
+	if (ats) {
+		var aTags = ats.getElementsByTagName("A");
+		for (i=0; i<aTags.length; i++) {
+			aTags[i].style.fontWeight = "normal";
+		}
 	}
 }
 
@@ -576,21 +589,19 @@ function makeLinks(includeNextPrev) {
 	var div = document.createElement("DIV");
 	div.className = "links";
 	if (includeNextPrev) {
-		div.appendChild( makeLink("firstPage", "First Page") );
-		div.appendChild( document.createTextNode( " | " ) );
-		div.appendChild( makeLink("nextPage", "Next Page") );
-		div.appendChild( document.createTextNode( " | " ) );
-		div.appendChild( makeLink("prevPage", "Previous Page") );
-		div.appendChild( document.createTextNode( " | " ) );
+		div.appendChild( makeLink(firstPage, "/icons/go-first.png", "First Page") );
+		div.appendChild( makeLink(prevPage, "/icons/go-previous.png", "Previous Page") );
+		div.appendChild( makeLink(nextPage, "/icons/go-next.png", "Next Page") );
 	}
-	div.appendChild( makeLink("displayCN", "Display in Case Navigator") );
+	div.appendChild( makeLink(displayCN, "/mirc/images/film-projector.gif", "Display the selected cases in the Case Navigator") );
 	return div;
 }
-function makeLink(func, text) {
-	var a = document.createElement("A");
-	a.href = "javascript:"+func+"()";
-	a.appendChild( document.createTextNode(text) );
-	return a;
+function makeLink(func, src, title) {
+	var img = document.createElement("IMG");
+	img.src = src;
+	img.title = title;
+	img.onclick = func;
+	return img;
 }
 
 function toggleExpandCollapse() {
@@ -832,7 +843,6 @@ function showConferenceContents(eveent) {
 				var item = items[i];
 				appendAgendaItem(tbody, item);
 			}
-			//pane.appendChild( makeLinks(false) );
 			selectAll();
 		}
 		else right.appendChild(document.createTextNode("The conference is empty."));
@@ -976,16 +986,39 @@ function getCabinetFiles() {
 }
 
 //************************************************
-//Submit Service
+//Author Tools
 //************************************************
+//Submit Service
 function submitService(ssid) {
+	startAuthoring(ssid, "submit", "ssvc");
+}
+
+//Zip Service
+function zipService(ssid) {
+	startAuthoring(ssid, "zip", "zsvc");
+}
+
+//Basic Author Tool
+function basicAuthorTool(ssid) {
+	startAuthoring(ssid, "bauth", "bat");
+}
+
+//Advanced Author Tool
+function advAuthorTool(ssid) {
+	startAuthoring(ssid, "aauth", "aat");
+}
+
+function startAuthoring(ssid, context, id) {
 	deselectAll();
+	var linkDiv = document.getElementById(id);
+	if (linkDiv) linkDiv.firstChild.style.fontWeight = "bold";
 	var right = document.getElementById("right");
 	while (right.firstChild) right.removeChild(right.firstChild);
 	var iframe = document.createElement("IFRAME");
-	iframe.src = "/submit/"+ssid+"?ui=integrated";
+	iframe.src = "/"+context+"/"+ssid+"?ui=integrated";
 	right.appendChild(iframe);
 }
+
 
 //************************************************
 //Libraries classes

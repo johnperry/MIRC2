@@ -87,8 +87,13 @@ public class ZipService extends Servlet {
 				String username = req.getUser().getUsername();
 				Element prefs = Preferences.getInstance().get( username, true );
 
+				//Get the UI to determine whether to include the home icon.
+				String ui = req.getParameter("ui", "");
+				if (!ui.equals("integrated")) ui = "classic";
+
 				//Generate the submission page.
 				String[] params = {
+					"ui",			ui,
 					"ssid",			ssid,
 					"name",			prefs.getAttribute("name"),
 					"affiliation",	prefs.getAttribute("affiliation"),
@@ -180,6 +185,9 @@ public class ZipService extends Servlet {
 			if (FileUtil.copy( is, fos, req.getContentLength() )) file = x;
 		}
 
+		String ui = req.getParameter("ui", "");
+		if (!ui.equals("integrated")) ui = "classic";
+
 		//The result message
 		String result = "";
 
@@ -242,6 +250,7 @@ public class ZipService extends Servlet {
 		Element prefs = Preferences.getInstance().get( username, true );
 		if (ct.contains("multipart/form-data")) {
 			Object[] params = {
+				"ui",			ui,
 				"ssid",			ssid,
 				"name",			name,
 				"affiliation",	affiliation,
