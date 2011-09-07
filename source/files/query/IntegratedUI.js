@@ -820,7 +820,7 @@ function loadConferences() {
 	confTreeManager.expandAll();
 }
 
-function showConferenceContents(eveent) {
+function showConferenceContents(event) {
 	var source = getSource(getEvent(event));
 	var currentNode = source.treenode;
 	deselectAll();
