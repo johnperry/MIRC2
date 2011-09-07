@@ -1,6 +1,7 @@
 var current_page;
 var current_tab;
 var user;
+var queryMethod = null;//not used in the classic UI
 
 function loaded() {
 	user = new User();
@@ -179,10 +180,11 @@ LocalLibrary.prototype.toString = function() {
 	return s;
 }
 
-function Library(enb, addr, svrname) {
+function Library(enb, addr, svrname, local) {
 	this.enabled = (enb=='yes');
 	this.address = addr;
 	this.name = svrname;
+	this.isLocal = (local=='yes');
 }
 
 function setServerIDs() {

@@ -176,7 +176,10 @@ public class AuthorService extends Servlet {
 					String dirPath = "/storage" + path.subpath(1, len-2) + "/";
 					String authPath = "/aauth" + path.subpath(1);
 
-					Document xsl = XmlUtil.getDocument( FileUtil.getStream( "/aauth/Editor.xsl" ) );
+					File aauth = new File(root, "query");
+					File xslFile = new File(aauth, "Editor.xsl");
+					Document xsl = XmlUtil.getDocument( FileUtil.getStream( xslFile, "/aauth/Editor.xsl" ) );
+
 					Object[] params =
 						new Object[] {
 							"prefs",	prefs,
@@ -292,7 +295,10 @@ public class AuthorService extends Servlet {
 
 						//Process the template with the editor-form transform file.
 						Document templateXML = XmlUtil.getDocument( new File(aauth, template) );
-						Document xsl = XmlUtil.getDocument( FileUtil.getStream( "/aauth/Editor.xsl" ) );
+
+						File xslFile = new File(aauth, "Editor.xsl");
+						Document xsl = XmlUtil.getDocument( FileUtil.getStream( xslFile, "/aauth/Editor.xsl" ) );
+
 						Object[] params =
 							new Object[] {
 								"prefs",	prefs,

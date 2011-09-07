@@ -445,7 +445,8 @@
 				new Library(
 					"<xsl:value-of select="@enabled"/>",
 					"<xsl:value-of select="@address"/>",
-					"<xsl:value-of select="normalize-space(title)"/>"
+					"<xsl:value-of select="normalize-space(title)"/>",
+					"<xsl:value-of select="@local"/>"
 				<xsl:text>)</xsl:text>
 				<xsl:if test="position() != last()">,</xsl:if>
 			</xsl:for-each>
