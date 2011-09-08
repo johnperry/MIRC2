@@ -175,7 +175,6 @@
 <div class="footer">
 	<div class="footerRight">
 		&#160;&#160;<a href="/query?UI=classic">Classic UI</a>&#160;&#160;
-		|&#160;&#160;<a href="javascript:showModifiersPopup();">Query Modifiers</a>&#160;&#160;
 		|&#160;&#160;<a href="javascript:showHelpPopup();">Help</a>&#160;&#160;
 		|&#160;&#160;<a href="javascript:showAboutPopup();">About MIRC</a>&#160;&#160;
 		|&#160;&#160;<a href="http://mircwiki.rsna.org/index.php?title=MIRC_Articles" target="wiki">RSNA MIRC Wiki</a>&#160;&#160;
@@ -229,42 +228,37 @@
 				<xsl:call-template name="page-buttons"/>
 			</td>
 			<td valign="top" rowspan="2"
-				style="font-family:sans-serif;font-size:10pt; padding-left:10px;padding-top:15;">
+				style="font-family:sans-serif;font-size:10pt; padding:25 0 20 10;">
 				<xsl:call-template name="query-modifiers"/>
 			</td>
 		</tr>
 		<tr>
-			<td valign="top"><xsl:call-template name="query-pages"/></td>
+			<td valign="top" id="querypages"><xsl:call-template name="query-pages"/></td>
 			<td/>
 		</tr>
 	</table>
 	<div class="search">
-		<input id="go" class="go" type="button" value="Go"
-				onclick="setStatusLine('Searching...');setCookies();setServerIDs();">
-		</input>
+		<input id="go" class="go" type="button" value="Go" onclick="doAdvancedQuery();"/>
 	</div>
 </div>
 </xsl:template>
 
 <xsl:template name="query-modifiers">
-	<input type="checkbox" name="unknown" id="unknown" value="yes"
+	<input type="checkbox" name="unknown" id="unknown" onchange="setModifierValues();" value="yes"
 		title="Format documents as unknown cases">Display as unknowns</input>
 	<br />
-	<input type="checkbox" name="showimages" id="showimages" value="yes"
-		title="Show images in query results">Show images in results</input>
-	<br />
-	<input type="checkbox" name="icons" id="icons" value="no"
+	<input type="checkbox" name="icons" id="icons" onchange="setModifierValues();" value="no"
 		title="Hide the icon images in MSTF and Tab displays">Suppress icon images</input>
 	<br/>
 	<div class="formatselect">
-		<select name="orderby" id="orderby" title="Select the order of query results">
+		<select name="orderby" id="orderby" onchange="setModifierValues();" title="Select the order of query results">
 			<option value="lmdate" selected="">Last modified date</option>
 			<option value="pubdate">Creation date</option>
 			<option value="title">Document title</option>
 		</select>
 	</div>
 	<div class="formatselect">
-		<select name="maxresults" id="maxresults" title="Choose the maximum number of results per site">
+		<select name="maxresults" id="maxresults" onchange="setModifierValues();" title="Choose the maximum number of results from each library">
 			<option value="10">10 results/site</option>
 			<option value="25" selected="">25 results/site</option>
 			<option value="50">50 results/site</option>
@@ -273,7 +267,7 @@
 		</select>
 	</div>
 	<div class="formatselect">
-		<select name="display" id="display" title="Choose the format in which documents will be displayed">
+		<select name="display" id="display" onchange="setModifierValues();" title="Choose the format in which documents will be displayed">
 			<option value="" selected="">Document format</option>
 			<option value="page">Page format</option>
 			<option value="tab">Tab format</option>
@@ -281,7 +275,7 @@
 		</select>
 	</div>
 	<div class="formatselect">
-		<select name="bgcolor" id="bgcolor" title="Choose the background shade for display">
+		<select name="bgcolor" id="bgcolor" onchange="setModifierValues();" title="Choose the background shade for display">
 			<option value="" selected="">Document background</option>
 			<option value="light">Light background</option>
 			<option value="dark">Dark background</option>
@@ -324,7 +318,7 @@
 	<table width="100%" border="1">
 		<tr>
 			<td width="25%">Free Text Search:</td>
-			<td><input style="width:100%" name="document" id="freetext"></input></td>
+			<td><input style="width:100%" name="document" id="aqfreetext"></input></td>
 		</tr>
 		<tr>
 			<td>Title:</td>

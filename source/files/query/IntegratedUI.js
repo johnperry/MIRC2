@@ -44,7 +44,6 @@ function loaded() {
 	freetext.focus();
 	freetext.onclick = freetextClick;
 	window.onresize = resize;
-	createModifiersPopup();
 	createServersPopup();
 	setState();
 	setModifierValues();
@@ -119,6 +118,14 @@ function toggle(div, components) {
 //************************************************
 //Advanced Query Popup
 //************************************************
+var queryMethod = null;
+var pageSize = "25";
+var sortOrder = "lmdate";
+var displayFormat = "";
+var backgroundColor = "";
+var icons = false;
+var unknown = false;
+
 var current_page;
 var current_tab;
 
@@ -133,7 +140,7 @@ function showAdvancedQueryPopup() {
 	var div = document.getElementById("AdvancedQuery");
 	var title = "Advanced Query";
 	var closebox = "/icons/closebox.gif";
-	showDialog(aqPopupID, 800, 325, title, closebox, null, div, null, null);
+	showDialog(aqPopupID, 800, 335, title, closebox, null, div, null, null);
 }
 
 function bclick(next_page_Id, theEvent) {
@@ -161,6 +168,78 @@ function deselectTab(tab) {
 	tab.style.color = "#6495ED";
 }
 
+function setModifierValues() {
+	pageSize = getSelectedOption("maxresults");
+	sortOrder = getSelectedOption("orderby");
+	displayFormat = getSelectedOption("display");
+	backgroundColor = getSelectedOption("bgcolor");
+	icons = getCBValue("icons");
+	unknown = getCBValue("unknown");
+	setCookies();
+
+	function getSelectedOption(id) {
+		var sel = document.getElementById(id);
+		if (sel) return sel.value;
+		else return "";
+	}
+
+	function getCBValue(id) {
+		var cb = document.getElementById(id);
+		if (cb) return cb.checked;
+		else return false;
+	}
+}
+
+function doAdvancedQuery() {
+	deselectAll();
+	var mods = getBaseQuery();
+	mods +=	"&firstresult=" + firstResult;
+	mods += "&maxresults=" + pageSize;
+	mods += "&orderby=" + sortOrder;
+	if (displayFormat != "") mods += "&display=" + displayFormat;
+	if (backgroundColor != "") mods += "&bgcolor=" + backgroundColor;
+	if (unknown) mods += "&unknown=yes";
+	if (icons) mods += "&icons=no";
+	mods +=	getServerIDs();
+
+	var name = "";
+	var query = "";
+
+	var pages = document.getElementById("querypages");
+	var inputs = pages.getElementsByTagName("INPUT");
+	for (var i=0; i<inputs.length; i++) {
+		if (inputs[i].type == "text") {
+			text = trim( inputs[i].value );
+			name = inputs[i].name;
+			if ((name != "aqfreetext") && (text != "")) {
+				query += "&"+name+"=" + encodeURIComponent(text);
+			}
+		}
+		/*
+		else if ((inputs[i].type == "checkbox") &&
+				 (inputs[i].name != "showimages") &&
+				 (inputs[i].name != "unknown") &&
+				 (inputs[i].name != "icons")) inputs[i].checked = false;
+		*/
+	}
+	var selects = pages.getElementsByTagName("SELECT");
+	for (var i=0; i<selects.length; i++) {
+		var index = selects[i].selectedIndex;
+		name = selects[i].name;
+		var opts = selects[i].getElementsByTagName("OPTION");
+		text = trim( opts[index].value );
+		if (text != "") query += "&"+name+"=" + encodeURIComponent(text);
+	}
+
+	alert(mods + query);
+
+	setCookies();
+	deselectAll();
+	var req = new AJAX();
+	setStatusLine("Searching...");
+	req.POST("/query", mods+query+"&"+req.timeStamp(), processQueryResults);
+}
+
 
 //************************************************
 //Login/Logout
@@ -173,14 +252,6 @@ function loginLogout() {
 //************************************************
 //Modifiers
 //************************************************
-function clearModifiers() {
-	firstResult = 1;
-	var freetext = document.getElementById("freetext");
-	freetext.value = "";
-	clearQueryFields();
-	repeatSearch();
-}
-
 function getModifiers() {
 	var mods = "";
 	mods +=	"&firstresult=" + firstResult;
@@ -189,10 +260,11 @@ function getModifiers() {
 	if (displayFormat != "") mods += "&display=" + displayFormat;
 	if (backgroundColor != "") mods += "&bgcolor=" + backgroundColor;
 	if (unknown) mods += "&unknown=yes";
+	if (icons) mods += "&icons=no";
 	mods +=	getServerIDs();
 
 	var freetext = document.getElementById("freetext");
-	text = trim(freetext.value);
+	var text = trim(freetext.value);
 	if (text == "Search...") text = "";
 	if (text != "") mods += "&document=" + encodeURIComponent(text);
 	return mods;
@@ -200,7 +272,7 @@ function getModifiers() {
 
 function freetextClick() {
 	var freetext = document.getElementById("freetext");
-	text = freetext.value;
+	var text = freetext.value;
 	text = trim(text);
 	if (text == "Search...")  freetext.value = "";
 }
@@ -220,149 +292,9 @@ function getServerIDs() {
 	return ids;
 }
 
-var queryMethod = null;
-var pageSize = "25";
-var sortOrder = "lmdate";
-var displayFormat = "";
-var backgroundColor = "";
-var unknown = false;
-
-function createModifiersPopup() {
-	var id = "modifiersPopupID";
-	var title = "Query Modifiers";
-	var closebox = "/icons/closebox.gif";
-	var div = getModifiersDiv();
-	showDialog(id, 375, 230, title, closebox, null, div, null, null, true);
-}
-
-function showModifiersPopup() {
-	var id = "modifiersPopupID";
-	var title = "Query Modifiers";
-	var closebox = "/icons/closebox.gif";
-	var w = 375;
-	var h = 230;
-	var pop = document.getElementById(id);
-	if (pop) {
-		showPopup(id, w, h, title, closebox);
-	}
-	else {
-		var div = getModifiersDiv();
-		showDialog(id, w, h, title, closebox, null, div, null, null);
-	}
-}
-
-function getModifiersDiv() {
-	var div = document.createElement("DIV");
-	div.className = "content";
-
-	var table = document.createElement("TABLE");
-	var tbody = document.createElement("TBODY");
-	table.appendChild(tbody);
-	div.appendChild(table);
-
-	var sel = setSelect(tbody, "maxresults", "Page Size:", "Choose the number of cases from each library");
-	setSelectOption(sel, "10", "10", false);
-	setSelectOption(sel, "25", "25", true);
-	setSelectOption(sel, "150", "50", false);
-	setSelectOption(sel, "100", "100", false);
-	setSelectOption(sel, "500", "500", false);
-
-	sel = setSelect(tbody, "orderby", "Sort Order:", "Choose the order of the cases");
-	setSelectOption(sel, "lmdate", "Last modified date", true);
-	setSelectOption(sel, "pubdate", "Creation date", false);
-	setSelectOption(sel, "title", "Title", false);
-
-	sel = setSelect(tbody, "display", "Display Format:", "Choose the format in which cases will be displayed");
-	setSelectOption(sel, "", "Case", true);
-	setSelectOption(sel, "page", "Page", false);
-	setSelectOption(sel, "tab", "Tab", false);
-	setSelectOption(sel, "mstf", "MSTF", false);
-
-	sel = setSelect(tbody, "bgcolor", "Background Color:", "Choose the background shade for display");
-	setSelectOption(sel, "", "Case", true);
-	setSelectOption(sel, "light", "Light", false);
-	setSelectOption(sel, "dark", "Dark", false);
-
-	el = setCheckbox(tbody, "unknown", "Display as Unknowns:", "");
-
-	div.appendChild( document.createElement("BR") );
-	div.appendChild(makeServerButton("OK", setModifierValues));
-	return div;
-
-	function setSelect(tbody, id, heading, title) {
-		var tr = document.createElement("TR");
-
-		var td = document.createElement("TD");
-		td.appendChild( document.createTextNode( heading ) );
-		tr.appendChild(td);
-
-		td = document.createElement("TD");
-		var sel = document.createElement("SELECT");
-		sel.id = id;
-		sel.title = title;
-		sel.style.width = 150;
-		td.appendChild(sel);
-		tr.appendChild(td);
-
-		tbody.appendChild(tr);
-		return sel;
-	}
-
-	function setSelectOption(sel, value, text, selected) {
-		var opt = document.createElement("OPTION");
-		opt.value = value;
-		if (selected) opt.selected = true;
-		opt.appendChild( document.createTextNode( text ) );
-		sel.appendChild(opt);
-	}
-
-	function setCheckbox(parent, id, heading, title) {
-		var tr = document.createElement("TR");
-
-		var td = document.createElement("TD");
-		td.appendChild( document.createTextNode( heading ) );
-		tr.appendChild(td);
-
-		td = document.createElement("TD");
-		var cb = document.createElement("INPUT");
-		cb.type = "checkbox";
-		cb.id = id;
-		cb.value = "yes";
-		cb.title = title;
-		td.appendChild(cb);
-		tr.appendChild(td);
-
-		tbody.appendChild(tr);
-		return cb;
-	}
-}
-
-function setModifierValues() {
-	pageSize = getSelectedOption("maxresults");
-	sortOrder = getSelectedOption("orderby");
-	displayFormat = getSelectedOption("display");
-	backgroundColor = getSelectedOption("bgcolor");
-	unknown = getCBValue("unknown");
-	if (queryMethod) queryMethod();
-	hidePopups();
-
-	function getSelectedOption(id) {
-		var sel = document.getElementById(id);
-		if (sel) return sel.value;
-		else return "";
-	}
-
-	function getCBValue(id) {
-		var cb = document.getElementById(id);
-		if (cb) return cb.checked;
-		else return false;
-	}
-}
-
 //************************************************
 //Admin tools
 //************************************************
-
 function toggleCTPAdmin() {
 	toggle("CTPAdmin", "CTPAdminComponents");
 }
@@ -486,6 +418,7 @@ function processQueryResults(req) {
 			}
 			else right.appendChild(document.createTextNode("No results found."));
 		}
+		hidePopups();
 		resize();
 		setStatusLine("");
 	}
@@ -1104,7 +1037,7 @@ function setState() {
 	setSelectFromCookie("serverselect", cookies);
 	setSelectFromCookie("maxresults", cookies);
 	setSelectFromCookie("display", cookies);
-	setSelectFromCookie("bgcolor", cookies);
+	setCheckboxFromCookie("icons", cookies);
 	setCheckboxFromCookie("unknown", cookies);
 }
 
@@ -1113,6 +1046,7 @@ function setCookies() {
 	setSelectCookie("maxresults");
 	setSelectCookie("display");
 	setSelectCookie("bgcolor");
+	setCheckboxCookie("icons");
 	setCheckboxCookie("unknown");
 }
 
