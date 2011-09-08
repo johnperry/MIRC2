@@ -231,8 +231,6 @@ function doAdvancedQuery() {
 		if (text != "") query += "&"+name+"=" + encodeURIComponent(text);
 	}
 
-	alert(mods + query);
-
 	setCookies();
 	deselectAll();
 	var req = new AJAX();
@@ -252,6 +250,13 @@ function loginLogout() {
 //************************************************
 //Modifiers
 //************************************************
+function clearModifiers() {
+	firstResult = 1;
+	var freetext = document.getElementById("freetext");
+	freetext.value = "";
+	repeatSearch();
+}
+
 function getModifiers() {
 	var mods = "";
 	mods +=	"&firstresult=" + firstResult;
