@@ -30,13 +30,24 @@ div.header {
 }
 
 div.header input#freetext { width:250px; }
-div.header p {
+div.header span.left {
 	margin:0; 
 	padding:0; 
+	padding-left: 3px;
 	font-size:8pt; 
-	width:250px;
+	width:125;
 	color: blue;
-	text-align:right;
+	text-align: left;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+}
+div.header span.right {
+	margin:0; 
+	padding:0; 
+	padding-right: 3px;
+	font-size:8pt; 
+	width:125;
+	color: blue;
+	text-align: right;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 }
 
@@ -288,3 +299,51 @@ div#right img.desel {
 	margin:1px;
 }
 
+/*Styles for the Advanced Query popup*/
+div#AdvancedQuery {
+	margin: 0px auto;
+	margin-bottom: 10px;
+	font-family: Arial, Helvetica, Verdana, sans-serif;
+	text-align: center;
+}
+div#AdvancedQuery table {
+	margin: 0px auto;
+	margin-top: 5px;
+	font-size: 10pt;
+}
+div#AdvancedQuery div.formatselect {
+	padding-left:0;
+	padding-top:5px;
+}
+
+div#AdvancedQuery div.formatselect select {
+	width:165px;
+}
+
+div#AdvancedQuery input.clearbutton {
+	margin-top:5px;
+	width:165px;
+	background-color: white;
+	color: #6495ED;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-weight: bold;
+}
+
+div#AdvancedQuery input.tab {
+	width: 16%;
+	font-weight: bold;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	background-color: white;
+	color: #6495ED;
+}
+
+div#AdvancedQuery input.go {
+	width: 100px;
+	color: white;
+	border: 3px outset white;
+	border-style: outset;
+	background-color: #6495ED;
+	font-size: 18pt;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-weight: bold;
+}

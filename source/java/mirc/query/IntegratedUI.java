@@ -40,7 +40,11 @@ public class IntegratedUI implements UI {
 		File xslFile = new File(query, "IntegratedUI.xsl");
 		Document xsl = XmlUtil.getDocument( FileUtil.getStream( xslFile, "/query/IntegratedUI.xsl" ) );
 
-		return XmlUtil.getTransformedText( mircXML, xsl, null );
+		Object[] params = new Object[] {
+			"options", mc.enumeratedValues,
+			"species", mc.speciesValues
+		};
+		return XmlUtil.getTransformedText( mircXML, xsl, params );
 
 	}
 

@@ -53,6 +53,7 @@ function loaded() {
 	queryMine();
 	queryMethod = repeatSearch;
 	showSessionPopup();
+	loadAdvancedQueryPopup();
 }
 window.onload = loaded;
 
@@ -116,6 +117,52 @@ function toggle(div, components) {
 }
 
 //************************************************
+//Advanced Query Popup
+//************************************************
+var current_page;
+var current_tab;
+
+function loadAdvancedQueryPopup() {
+	current_page = document.getElementById('div1');
+	current_tab = document.getElementById('page1tab');
+	selectTab(current_tab);
+}
+
+function showAdvancedQueryPopup() {
+	var aqPopupID = "AdvancedQueryPopup";
+	var div = document.getElementById("AdvancedQuery");
+	var title = "Advanced Query";
+	var closebox = "/icons/closebox.gif";
+	showDialog(aqPopupID, 800, 325, title, closebox, null, div, null, null);
+}
+
+function bclick(next_page_Id, theEvent) {
+	var clicked_tab = getSource(theEvent);
+	var next_page = document.getElementById(next_page_Id);
+	if (current_page != next_page) {
+		current_page.style.visibility="hidden";
+		current_page.style.display="none";
+		current_page = next_page;
+		current_page.style.visibility="visible";
+		current_page.style.display="block";
+		deselectTab(current_tab);
+		current_tab = clicked_tab;
+		selectTab(current_tab);
+	}
+}
+
+function selectTab(tab) {
+	tab.style.backgroundColor = "#6495ED";
+	tab.style.color = 'white';
+}
+
+function deselectTab(tab) {
+	tab.style.backgroundColor = 'white';
+	tab.style.color = "#6495ED";
+}
+
+
+//************************************************
 //Login/Logout
 //************************************************
 function loginLogout() {
@@ -130,6 +177,7 @@ function clearModifiers() {
 	firstResult = 1;
 	var freetext = document.getElementById("freetext");
 	freetext.value = "";
+	clearQueryFields();
 	repeatSearch();
 }
 
@@ -1134,3 +1182,24 @@ function setCheckboxFromCookie(id, cookies) {
 		el.checked = (ctext == "true");
 	}
 }
+
+function clearQueryFields() {
+	var div = document.getElementById("AdvancedQuery");
+	var inputs = div.getElementsByTagName("INPUT");
+	for (var i=0; i<inputs.length; i++) {
+		if (inputs[i].type == "text") inputs[i].value = "";
+		else if ((inputs[i].type == "checkbox") &&
+				 (inputs[i].name != "showimages") &&
+				 (inputs[i].name != "unknown") &&
+				 (inputs[i].name != "icons")) inputs[i].checked = false;
+	}
+	var selects = div.getElementsByTagName("SELECT");
+	for (var i=0; i<selects.length; i++) {
+		if ((selects[i].name != "serverselect") &&
+			(selects[i].name != "orderby") &&
+			(selects[i].name != "maxresults") &&
+			(selects[i].name != "display") &&
+			(selects[i].name != "bgcolor")) selects[i].selectedIndex = 0;
+	}
+}
+
