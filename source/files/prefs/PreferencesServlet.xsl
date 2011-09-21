@@ -2,6 +2,8 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
 <xsl:output method="xml" encoding="utf-8" omit-xml-declaration="yes" />
 
+<xsl:param name="pageui"/>
+
 <xsl:template match="/User">
 	<html>
 		<head>
@@ -11,21 +13,27 @@
 			<script language="JavaScript" type="text/javascript" src="/JSUtil.js">;</script>
 			<script language="JavaScript" type="text/javascript" src="/JSPopup.js">;</script>
 			<script language="JavaScript" type="text/javascript" src="/prefs/PreferencesServlet.js">;</script>
+			<script>
+				var ui = '<xsl:value-of select="$pageui"/>';
+			</script>
 		</head>
 		<body>
-		<div class="closebox">
-			<img src="/icons/home.png"
-				 onclick="window.open('/query','_self');"
-				 title="Return to the home page"/>
-			<br/>
-			<img src="/icons/save.png"
-				 onclick="save();"
-				 title="Save the preferences"/>
-		</div>
+			<xsl:if test="$pageui='classic'">
+				<div class="closebox">
+					<img src="/icons/home.png"
+						 onclick="window.open('/query','_self');"
+						 title="Return to the home page"/>
+					<br/>
+					<img src="/icons/save.png"
+						 onclick="save();"
+						 title="Create the preferences"/>
+				</div>
+			</xsl:if>
 
 			<h1>Preferences for <xsl:value-of select="@username"/></h1>
 
 			<form id="formID" method="post" action="" accept-charset="UTF-8">
+			<input type="hidden" name="pageui" value="{$pageui}"/>
 
 			<p class="note">
 				If you wish to change the parameters of your account, make the
@@ -150,6 +158,9 @@
 						<td class="pw"><input class="text" type="password" name="export-pw[0]"/></td>
 					</tr>
 				</table>
+				<p>
+					<input type="button" value="Save these preferences" onclick="save();"/>
+				</p>
 			</center>
 
 			<br/>

@@ -10,6 +10,9 @@ package mirc.download;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Hashtable;
+import java.util.LinkedList;
+import mirc.MircConfig;
+import org.rsna.multipart.UploadedFile;
 import org.rsna.server.HttpRequest;
 import org.rsna.server.HttpResponse;
 import org.rsna.server.Path;
@@ -56,10 +59,14 @@ public class DownloadServlet extends Servlet {
 		int length = path.length();
 
 		boolean admin = req.userHasRole("admin");
+		boolean upload = req.userHasRole("update");
+
+		String ui = req.getParameter("ui", "");
+		if (!ui.equals("integrated")) ui = "classic";
 
 		if (length == 1) {
 			//This is a request for the download page
-			res.write( getPage() );
+			res.write( getPage(upload, ui) );
 			res.setContentType("html");
 			res.disableCaching();
 			res.send();
@@ -71,6 +78,17 @@ public class DownloadServlet extends Servlet {
 			res.write( XmlUtil.toPrettyString( doc.getDocumentElement() ) );
 			res.disableCaching();
 			res.send();
+		}
+		else if (admin && (length == 2) && path.element(1).equals("upload")) {
+			//This is a request for the upload submission page.
+			//This is only available to users with the update privilege.
+			if (req.userHasRole("update")) {
+				res.write( getUploadPage(ui) );
+				res.setContentType("html");
+				res.disableCaching();
+				res.send();
+			}
+			else res.redirect("/query");
 		}
 		else {
 			//This is a file download request. Log downloads from the
@@ -116,7 +134,46 @@ public class DownloadServlet extends Servlet {
 		}
 	}
 
-	private String getPage() {
+	/**
+	 * The servlet method that responds to an HTTP POST.
+	 */
+	public void doPost(HttpRequest req, HttpResponse res) throws Exception {
+
+		//Only accept connections from users with the update privilege
+		if (!req.userHasRole("update")) { res.redirect("/query"); return; }
+
+		MircConfig mc = MircConfig.getInstance();
+
+		//Make a temporary directory to receive the files
+		File dir = mc.createTempDirectory();
+
+		//Get the posted files.
+		int maxsize = 75 * 1024 * 1024;
+		LinkedList<UploadedFile> files = req.getParts(dir, maxsize);
+
+		//Get the UI (must be done after getting the parts)
+		String ui = req.getParameter("ui", "");
+		if (!ui.equals("integrated")) ui = "classic";
+
+		//Now copy them over to the context directory,
+		//overwriting any files that already exist.
+		File ctx = new File(root, context);
+		if (!ctx.exists()) ctx.mkdirs();
+
+		for ( UploadedFile file: files.toArray( new UploadedFile[files.size()] ) ) {
+			File in = file.getFile();
+			File out = new File( ctx, in.getName() );
+			FileUtil.copy(in, out);
+		}
+
+		//Now delete the temp directory
+		FileUtil.deleteAll(dir);
+
+		//Send the user to the download page so he can see what he did.
+		res.redirect("/download?ui="+ui);
+	}
+
+	private String getPage(boolean upload, String ui) {
 		try {
 			Document doc = XmlUtil.getDocument();
 			Element filesElement = doc.createElement("files");
@@ -132,6 +189,7 @@ public class DownloadServlet extends Servlet {
 				fileElement.setAttribute("name", name);
 				String lm = StringUtil.getDateTime( file.lastModified(), " at " );
 				fileElement.setAttribute("lastModified", lm);
+				fileElement.setAttribute("size", Long.toString( file.length() ));
 				if (name.toLowerCase().endsWith(".jar")) {
 					Hashtable<String,String> manifest = JarUtil.getManifestAttributes(file);
 					if (manifest != null) {
@@ -144,12 +202,26 @@ public class DownloadServlet extends Servlet {
 							build += "["+version+"]";
 						}
 						fileElement.setAttribute("build", build);
+						String desc = manifest.get("Description");
+						if (desc != null) fileElement.setAttribute("desc", desc);
 					}
 				}
 			}
 			Document xsl = XmlUtil.getDocument( FileUtil.getStream( "/download/DownloadServlet.xsl" ) );
-			return XmlUtil.getTransformedText( doc, xsl, null );
+			String[] params = new String[] {"upload", (upload ? "yes" : "no"), "ui", ui};
+			return XmlUtil.getTransformedText( doc, xsl, params );
 		}
 		catch (Exception ex) { return "Unable to create the download page."; }
+	}
+
+	private String getUploadPage(String ui) {
+		try {
+			MircConfig mc = MircConfig.getInstance();
+			Document doc = mc.getXML();
+			Document xsl = XmlUtil.getDocument( FileUtil.getStream( "/download/UploadPage.xsl" ) );
+			String[] params = new String[] {"ui", ui};
+			return XmlUtil.getTransformedText( doc, xsl, params );
+		}
+		catch (Exception ex) { return "Unable to create the page."; }
 	}
 }

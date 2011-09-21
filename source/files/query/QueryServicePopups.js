@@ -39,9 +39,9 @@ function getServerSelectDiv() {
 
 function serverSelectOK() {
 	hidePopups();
-	if (queryMethod) {
+	if (collectionQuery) {
 		firstResult = 1;
-		queryMethod();
+		collectionQuery();
 	}
 }
 
@@ -49,7 +49,7 @@ function appendServers(sel) {
 	for (var i=0; i<allServers.length; i++) {
 		if (allServers[i].enabled) {
 			var opt = document.createElement("OPTION");
-			if (allServers[i].isLocal) opt.selected = "true";
+			if (allServers[i].isLocal) opt.selected = true;
 			opt.value = i;
 			opt.appendChild(document.createTextNode(allServers[i].name));
 			sel.appendChild(opt);

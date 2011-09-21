@@ -40,12 +40,15 @@ var adminItems = new Array (
 
 var helpItems = new Array (
 		new Item("Switch to Integrated User Interface", switchToIntegratedUI),
+		new Item("", null),
 		new Item("CTP Wiki", showWiki),
 		new Item("CTP DICOM Anonymizer", showAnonymizer),
 		new Item("CTP DICOM Anonymizer Configurator", showAnonymizerConfigurator),
 		new Item("", null),
 		new Item("MIRC Help", showHelpPopup),
 		new Item("About MIRC", showAboutPopup),
+		new Item("", null),
+		new Item("Download Software", downloadMIRC, "downloadItem"),
 		new Item("", null),
 		new Item("Notes", showDisclaimerPopup, "disclaimerItem") );
 
@@ -62,7 +65,8 @@ function setMenuEnables() {
 	menuBar.setEnable("approvalQueueItem", user.hasRole("publisher"));
 	menuBar.setEnable("adminMenu", user.hasRole("admin"));
 	menuBar.setEnable("userManager", (user.usersImpl="xml"));
-	menuBar.setEnable("disclaimerItem", (disclaimerURL != "") );
+	menuBar.setEnable("downloadItem", (downloadenb == "yes"));
+	menuBar.setEnable("disclaimerItem", (disclaimerURL != ""));
 
 	//set the author menu enables for the currently selected local library
 	if (localLibraries.length > 0) {
@@ -71,7 +75,6 @@ function setMenuEnables() {
 		authorItems[0].title = lib.title;
 
 		menuBar.setEnable("basicAuthorItem", (lib.authenb == "yes"));
-		menuBar.setEnable("abrAuthorItem", (lib.authenb == "yes"));
 		menuBar.setEnable("advAuthorItem", (lib.authenb == "yes"));
 		menuBar.setEnable("zipItem", (lib.zipenb == "yes"));
 		menuBar.setEnable("subItem", (lib.subenb == "yes"));
@@ -215,4 +218,7 @@ function showAnonymizer(event, item) {
 }
 function showAnonymizerConfigurator(event, item) {
 	window.open("http://mircwiki.rsna.org/index.php?title=The_CTP_DICOM_Anonymizer_Configurator","help");
+}
+function downloadMIRC(event, item) {
+	window.open("/download?ui=classic","_self");
 }

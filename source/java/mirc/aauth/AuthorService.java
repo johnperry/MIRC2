@@ -585,8 +585,8 @@ public class AuthorService extends Servlet {
 	//the referenced files from the file cabinet to parentDir.
 	private void handleCabinetFileRefs(Element element, File parentDir, String username) {
 		String href = element.getAttribute("href");
-		String src = element.getAttribute("href");
-		String docref = element.getAttribute("href");
+		String src = element.getAttribute("src");
+		String docref = element.getAttribute("docref");
 
 		if (href.startsWith("[")) getReferencedFile( element, "href", href, parentDir, username );
 		if (src.startsWith("[")) getReferencedFile( element, "src", src, parentDir, username );
@@ -607,12 +607,10 @@ public class AuthorService extends Servlet {
 		if (k != -1) {
 			String path = ref.substring(1,k);
 			String inName = ref.substring(k+1);
-
 			File inFile = FileService.getFile(path, inName, username);
 			String outName = inName.replaceAll("\\s++","_");
 			File outFile = new File(parentDir, outName);
-			FileUtil.copy(inFile, outFile);
-
+			boolean result = FileUtil.copy(inFile, outFile);
 			element.setAttribute( attrname, outName );
 		}
 	}

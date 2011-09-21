@@ -75,7 +75,7 @@
 			<p class="center">
 			<table border="1">
 				<tr>
-					<td class="text-label">Template:</td>
+					<td class="text-label-top">Template:</td>
 					<td class="text-field">
 						<select class="input-length" name="templatename" id="templatename" onchange="templateChanged();">
 							<xsl:for-each select="$templates/templates/template">

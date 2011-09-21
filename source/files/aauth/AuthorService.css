@@ -94,7 +94,16 @@ td.text-label {
 	font-weight: normal;
 	width:30%;
 	text-align:left;
+}
+
+td.text-label-top {
+	text-align: left;
+	font-size: x-small;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-weight: normal;
+	width:30%;
+	text-align:left;
+	vertical-align:top;
 }
 
 input.file {

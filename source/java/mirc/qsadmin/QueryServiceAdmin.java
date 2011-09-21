@@ -129,7 +129,8 @@ public class QueryServiceAdmin extends Servlet {
 			req.getParameter("timeout"),
 			req.getParameter("roles"),
 			req.getParameter("UI"),
-			req.getParameter("popup")
+			req.getParameter("popup"),
+			req.getParameter("downloadenb")
 		);
 
 		//Install any newly defined roles
@@ -153,6 +154,7 @@ public class QueryServiceAdmin extends Servlet {
 						//This is an update of an existing library.
 						lib.setAttribute("address", server.address);
 						lib.setAttribute("enabled", server.enabled);
+						lib.setAttribute("deflib", server.deflib);
 						Element title = XmlUtil.getFirstNamedChild(lib, "title");
 						title.setTextContent(server.name);
 						mc.removeLibrary(server.prevadrs);
@@ -200,11 +202,13 @@ public class QueryServiceAdmin extends Servlet {
 	private Server getServer(HttpRequest req, int i, String newLocalAddress, String oldLocalAddress) {
 		String enb = req.getParameter("enb"+i, "no");
 		enb = ((enb!=null) && enb.trim().equals("yes")) ? "yes" : "no";
+		String def = req.getParameter("def"+i, "no");
+		def = ((def!=null) && def.trim().equals("yes")) ? "yes" : "no";
 		String adrs = req.getParameter("adrs"+i);
 		String prevadrs = req.getParameter("prevadrs"+i);
 		String name = req.getParameter("name"+i);
 		if ((adrs==null) || (name==null)) return null;
-		return new Server(name, adrs, prevadrs, enb, newLocalAddress, oldLocalAddress);
+		return new Server(name, adrs, prevadrs, enb, def, newLocalAddress, oldLocalAddress);
 	}
 
 	class Server {
@@ -212,18 +216,21 @@ public class QueryServiceAdmin extends Servlet {
 		public String address;
 		public String prevadrs;
 		public String enabled;
+		public String deflib;
 		public boolean isLocal = false;
 
 		public Server(String name,
 					  String address,
 					  String prevadrs,
 					  String enabled,
+					  String deflib,
 					  String newLocalAddress,
 					  String oldLocalAddress) {
 			this.name = name.trim();
 			this.address = address.trim();
 			this.prevadrs = (prevadrs != null) ? prevadrs.trim() : address.trim();
 			this.enabled = enabled.trim();
+			this.deflib = deflib.trim();
 			if (this.address.startsWith(newLocalAddress)) {
 				this.address = this.address.substring(newLocalAddress.length());
 				isLocal = true;

@@ -1,7 +1,7 @@
 var current_page;
 var current_tab;
 var user;
-var queryMethod = null;//not used in the classic UI
+var collectionQuery = null;//not used in the classic UI
 
 function loaded() {
 	user = new User();
@@ -82,7 +82,21 @@ function setState() {
 	var cookies = getCookieObject();
 	var clib = cookies["selectedlib"];
 	if (clib != null) selectedLocalLibrary = parseInt(cserv);
-	setSelectFromCookie("serverselect", cookies);
+
+	var session = (getCookie("MIRC", cookies) != "");
+	if (session) setSelectFromCookie("serverselect", cookies);
+	else {
+		var svrsel = document.getElementById("serverselect");
+		var opts = svrsel.getElementsByTagName("OPTION");
+		var k = 0;
+		for (var i=0; i<allServers.length; i++) {
+			if (allServers[i].enabled) {
+				if (allServers[i].deflib) opts[k].selected = true;
+				k++;
+			}
+		}
+	}
+
 	setSelectFromCookie("maxresults", cookies);
 	setSelectFromCookie("display", cookies);
 	setSelectFromCookie("bgcolor", cookies);
@@ -180,8 +194,9 @@ LocalLibrary.prototype.toString = function() {
 	return s;
 }
 
-function Library(enb, addr, svrname, local) {
+function Library(enb, def, addr, svrname, local) {
 	this.enabled = (enb=='yes');
+	this.deflib = (def=='yes');
 	this.address = addr;
 	this.name = svrname;
 	this.isLocal = (local=='yes');

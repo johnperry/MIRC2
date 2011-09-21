@@ -250,7 +250,6 @@ public class SubmitService extends Servlet {
 						if (dir.renameTo(oldDirFile)) {
 							//Okay, everything is ready, change mainFile to point
 							//to the new file in the old directory.
-							//(in case the name changed) in the old directory.
 							mainFile = new File( oldDirFile, mainFile.getName() );
 							result.append("The document has been updated.|");
 						}
@@ -280,10 +279,10 @@ public class SubmitService extends Servlet {
 			else {
 				result.append("The site index was not updated.|");
 				/* **************************************************************************************************************
-				if (InputQueue.addQueueEntry(docpath))
-					result.append("The document has been added to the input queue.|");
+				if (ApprovalQueue.addEntry(docpath, docXML))
+					result.append("The document has been added to the approval queue.|");
 				else
-					result.append("The attempt to update the input queue failed.|");
+					result.append("The attempt to update the approval queue failed.|");
 				*/ //************************************************************************************************************
 			}
 		}

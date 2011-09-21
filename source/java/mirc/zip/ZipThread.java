@@ -257,7 +257,7 @@ public class ZipThread extends Thread {
 		//Change the read permission if necessary.
 		if (!publish && md.isPublic()) {
 			md.makeNonPublic();
-			//InputQueue.addQueueEntry(indexEntry,true);
+			//ApprovalQueue.getInstance().addEntry(indexEntry, md);
 		}
 		//Save and index the document
 		md.save();

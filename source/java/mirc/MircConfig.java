@@ -312,7 +312,8 @@ public class MircConfig {
 			String timeout,
 			String roles,
 			String ui,
-			String popup) {
+			String popup,
+			String downloadenb) {
 		mircRoot.setAttribute("mode",mode);
 		mircRoot.setAttribute("sitename",sitename);
 		mircRoot.setAttribute("showsitename",showsitename);
@@ -325,6 +326,7 @@ public class MircConfig {
 		mircRoot.setAttribute("roles", roles.trim().replaceAll("[\\s,]+",","));
 		mircRoot.setAttribute("UI", ui);
 		mircRoot.setAttribute("popup", popup);
+		mircRoot.setAttribute("downloadenb", downloadenb);
 		saveXML();
 		reload();
 	}

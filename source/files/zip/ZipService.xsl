@@ -57,7 +57,7 @@
 				The Zip Service User's Manual</a>.
 			</p>
 
-			<p class="instruction">Add author and owner information:</p>
+			<p class="instruction">Add author and document owner information:</p>
 			<p class="center">
 			<table border="1">
 				<tr>
@@ -79,7 +79,7 @@
 					</td>
 				</tr>
 				<tr>
-					<td class="text-label">Owner's username:</td>
+					<td class="text-label">Document owner's username:</td>
 					<td class="text-field">
 						<input class="input-length" name="username" value="{$username}"/>
 					</td>

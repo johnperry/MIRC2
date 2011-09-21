@@ -100,7 +100,7 @@
             <title>The RSNA MIRC Site</title>
         </Library>
 
-		<Library address="http://popeye.rad.tju.edu:8080/neuro/service" enabled="yes">
+		<Library address="http://147.140.2.19:8080/storage/ss2" enabled="yes">
 			<title>Thomas Jefferson University Hospital - Neuro</title>
 		</Library>
 

@@ -49,8 +49,7 @@ function loaded() {
 	setModifierValues();
 	loadConferences();
 	if (user.isLoggedIn) loadFileCabinets();
-	queryMine();
-	queryMethod = repeatSearch;
+	queryAll();
 	showSessionPopup();
 	loadAdvancedQueryPopup();
 }
@@ -100,25 +99,9 @@ function showNode(node, type) {
 	}
 }
 
-function toggle(div, components) {
-	var mods = document.getElementById(div);
-	var img = mods.getElementsByTagName("IMG")[0];
-	var visible = (img.src.indexOf("plus") == -1);
-	var comps = document.getElementById(components);
-	if (visible) {
-		hideNode(comps);
-		img.src = "/mirc/images/plus.gif";
-	}
-	else {
-		showNode(comps, "block");
-		img.src = "/mirc/images/minus.gif";
-	}
-}
-
 //************************************************
 //Advanced Query Popup
 //************************************************
-var queryMethod = null;
 var pageSize = "25";
 var sortOrder = "lmdate";
 var displayFormat = "";
@@ -138,7 +121,7 @@ function loadAdvancedQueryPopup() {
 function showAdvancedQueryPopup() {
 	var aqPopupID = "AdvancedQueryPopup";
 	var div = document.getElementById("AdvancedQuery");
-	var title = "Advanced Query";
+	var title = "Advanced Search";
 	var closebox = "/icons/closebox.gif";
 	showDialog(aqPopupID, 800, 335, title, closebox, null, div, null, null);
 }
@@ -215,12 +198,6 @@ function doAdvancedQuery() {
 				query += "&"+name+"=" + encodeURIComponent(text);
 			}
 		}
-		/*
-		else if ((inputs[i].type == "checkbox") &&
-				 (inputs[i].name != "showimages") &&
-				 (inputs[i].name != "unknown") &&
-				 (inputs[i].name != "icons")) inputs[i].checked = false;
-		*/
 	}
 	var selects = pages.getElementsByTagName("SELECT");
 	for (var i=0; i<selects.length; i++) {
@@ -231,6 +208,7 @@ function doAdvancedQuery() {
 		if (text != "") query += "&"+name+"=" + encodeURIComponent(text);
 	}
 
+	collectionQuery = doAdvancedQuery;
 	setCookies();
 	deselectAll();
 	var req = new AJAX();
@@ -298,13 +276,6 @@ function getServerIDs() {
 }
 
 //************************************************
-//Admin tools
-//************************************************
-function toggleCTPAdmin() {
-	toggle("CTPAdmin", "CTPAdminComponents");
-}
-
-//************************************************
 //Collection queries
 //************************************************
 function deselectAll() {
@@ -324,15 +295,6 @@ function deselectCollection(id) {
 	if (x) x.firstChild.style.fontWeight = "normal";
 }
 
-function selectCollection( theCollectionQuery, theCollectionID ) {
-	var x = document.getElementById(theCollectionID);
-	if (x) {
-		x.firstChild.style.fontWeight = "bold";
-		collectionQuery = theCollectionQuery;
-		collectionID = theCollectionID;
-	}
-}
-
 function deselectAuthorTools() {
 	var ats = document.getElementById("AuthorTools");
 	if (ats) {
@@ -341,6 +303,23 @@ function deselectAuthorTools() {
 			aTags[i].style.fontWeight = "normal";
 		}
 	}
+}
+
+function selectCollection( theCollectionQuery, theCollectionID ) {
+	if (theCollectionID) {
+		var x = document.getElementById(theCollectionID);
+		if (x) {
+			x.firstChild.style.fontWeight = "bold";
+			collectionQuery = theCollectionQuery;
+			collectionID = theCollectionID;
+		}
+	}
+}
+
+function search() {
+	firstResult = 1;
+	if (collectionQuery) collectionQuery();
+	else queryAll();
 }
 
 function repeatSearch() {
@@ -352,12 +331,22 @@ function getBaseQuery() {
 	return "xml=yes";
 }
 
+function queryMineNew() {
+	firstResult = 1;
+	queryMine();
+}
+
 function queryMine() {
 	if (user.isLoggedIn) {
 		doQuery(getBaseQuery() + "&owner="+encodedUsername);
 		selectCollection(queryMine, "MyDocuments");
 	}
 	else queryAll();
+}
+
+function queryAllNew() {
+	firstResult = 1;
+	queryAll();
 }
 
 function queryAll() {
@@ -367,7 +356,7 @@ function queryAll() {
 
 function firstPage() {
 	if (collectionQuery) {
-		firstResult =1;
+		firstResult = 1;
 		repeatSearch();
 	}
 }
@@ -972,6 +961,28 @@ function getCabinetFiles() {
 }
 
 //************************************************
+//Preferences
+//************************************************
+function preferences() {
+	var right = document.getElementById("right");
+	while (right.firstChild) right.removeChild(right.firstChild);
+	var iframe = document.createElement("IFRAME");
+	iframe.src = "/prefs?pageui=integrated";
+	right.appendChild(iframe);
+}
+
+//************************************************
+//Download Service
+//************************************************
+function downloadService() {
+	var right = document.getElementById("right");
+	while (right.firstChild) right.removeChild(right.firstChild);
+	var iframe = document.createElement("IFRAME");
+	iframe.src = "/download?ui=integrated";
+	right.appendChild(iframe);
+}
+
+//************************************************
 //Author Tools
 //************************************************
 //Submit Service
@@ -1025,8 +1036,9 @@ LocalLibrary.prototype.toString = function() {
 	return s;
 }
 
-function Library(enb, addr, svrname, local) {
+function Library(enb, def, addr, svrname, local) {
 	this.enabled = (enb=='yes');
+	this.deflib = (def=='yes');
 	this.address = addr;
 	this.name = svrname;
 	this.isLocal = (local=='yes');
@@ -1037,9 +1049,19 @@ function Library(enb, addr, svrname, local) {
 //************************************************
 function setState() {
 	var cookies = getCookieObject();
-	//var clib = cookies["selectedlib"];
-	//if (clib != null) selectedLocalLibrary = parseInt(cserv);
-	setSelectFromCookie("serverselect", cookies);
+	var session = (getCookie("MIRC", cookies) != "");
+	if (session) setSelectFromCookie("serverselect", cookies);
+	else {
+		var svrsel = document.getElementById("serverselect");
+		var opts = svrsel.getElementsByTagName("OPTION");
+		var k = 0;
+		for (var i=0; i<allServers.length; i++) {
+			if (allServers[i].enabled) {
+				if (allServers[i].deflib) opts[k].selected = true;
+				k++;
+			}
+		}
+	}
 	setSelectFromCookie("maxresults", cookies);
 	setSelectFromCookie("display", cookies);
 	setCheckboxFromCookie("icons", cookies);

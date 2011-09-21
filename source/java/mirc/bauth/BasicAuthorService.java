@@ -238,10 +238,9 @@ public class BasicAuthorService extends Servlet {
 
 				//Set the read and update privileges.
 				//In this service, the read and update privileges
-				//are granted to the owner and anyone with the publisher role.
-				String publisher = "publisher";
-				setElement(root,"authorization/read", publisher);
-				setElement(root,"authorization/update", publisher);
+				//are granted only to the owner.
+				setElement(root,"authorization/read", "");
+				setElement(root,"authorization/update", "");
 
 				//Insert the section elements
 				Node child = root.getFirstChild();

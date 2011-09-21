@@ -3,6 +3,7 @@ body {
 	padding:0;
 	margin:0;
 	text-align: center;
+	border-style: none;
 }
 
 div.closebox {
@@ -36,7 +37,10 @@ th {
 	font-size: 10pt;
 }
 
-td { width:50%; }
+td { 	width:50%;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 10pt;
+}
 
 .name { width:20%; }
 

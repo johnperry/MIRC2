@@ -424,6 +424,7 @@
 
 <xsl:template name="params">
 	<script>
+		var downloadenb = "<xsl:value-of select="@downloadenb"/>";
 		var mode = "<xsl:value-of select="@mode"/>";
 		var version = "<xsl:value-of select="@version"/>";
 		var date = "<xsl:value-of select="@date"/>";
@@ -444,6 +445,7 @@
 			<xsl:for-each select="Libraries/Library[@enabled='yes']">
 				new Library(
 					"<xsl:value-of select="@enabled"/>",
+					"<xsl:value-of select="@deflib"/>",
 					"<xsl:value-of select="@address"/>",
 					"<xsl:value-of select="normalize-space(title)"/>",
 					"<xsl:value-of select="@local"/>"

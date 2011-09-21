@@ -81,7 +81,7 @@
 			</table>
 			</p>
 
-			<p class="instruction">Add author and owner information:</p>
+			<p class="instruction">Add author and document owner information:</p>
 			<p class="center">
 			<table border="1">
 				<tr>
@@ -103,7 +103,7 @@
 					</td>
 				</tr>
 				<tr>
-					<td class="text-label">Owner's username:</td>
+					<td class="text-label">Document owner's username:</td>
 					<td class="text-field">
 						<input class="input-length" name="username" value="{$prefs/@username}"/>
 					</td>
@@ -152,6 +152,7 @@
 					<td class="text-label">Anonymize DICOM objects:</td>
 					<td class="text-field">
 						<input type="checkbox" checked="true" name="anonymize"/>
+						Check this box to anonymize DICOM files in the submission.
 					</td>
 				</tr>
 				<tr>

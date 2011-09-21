@@ -1,8 +1,10 @@
 function loaded() {
-	var tools = new Array();
-	tools[tools.length] = new PopupTool("/icons/save.png", "Save", null, save);
-	tools[tools.length] = new PopupTool("/icons/home.png", "Return to the home page", "/query", null);
-	setPopupToolPanel( tools );
+	if (ui == "classic") {
+		var tools = new Array();
+		tools[tools.length] = new PopupTool("/icons/save.png", "Create the MIRCdocument", null, save);
+		tools[tools.length] = new PopupTool("/icons/home.png", "Return to the home page", "/query", null);
+		setPopupToolPanel( tools );
+	}
 }
 window.onload = loaded;
 

@@ -96,7 +96,7 @@
 							</input>
 							<br/>
 							<input type="radio" name="popup" value="none">
-								<xsl:if test="not(@popup='help') andnot(@popup='notes'">
+								<xsl:if test="not(@popup='help') and not(@popup='notes')">
 									<xsl:attribute name="checked"/>
 								</xsl:if>
 								None
@@ -166,6 +166,24 @@
 						<td><input class="text" type="text" name="timeout" value="{@timeout}"/></td>
 					</tr>
 					<tr>
+						<td>Enable Download Service:</td>
+						<td>
+							<input type="radio" name="downloadenb" value="yes">
+								<xsl:if test="@downloadenb='yes'">
+									<xsl:attribute name="checked"/>
+								</xsl:if>
+								yes
+							</input>
+							<br/>
+							<input type="radio" name="downloadenb" value="no">
+								<xsl:if test="not(@downloadenb='yes')">
+									<xsl:attribute name="checked"/>
+								</xsl:if>
+								no
+							</input>
+						</td>
+					</tr>
+					<tr>
 						<td>Disclaimer URL (blank to disable):</td>
 						<td><input class="text" type="text" name="disclaimerurl" value="{@disclaimerurl}"/></td>
 					</tr>
@@ -196,6 +214,7 @@
 				<table border="1">
 					<tr>
 						<th class="checkbox">Enable</th>
+						<th class="checkbox">Default</th>
 						<th>Storage Service Name</th>
 						<th>Storage Service URL</th>
 					</tr>
@@ -205,6 +224,14 @@
 							<td class="checkbox">
 								<input type="checkbox" name="enb{$n}" value="yes">
 									<xsl:if test="not(@enabled) or @enabled='yes' or @enabled=''">
+										<xsl:attribute name="checked"/>
+									</xsl:if>
+								</input>
+							</td>
+							<td class="checkbox">
+								<input type="checkbox" name="def{$n}" value="yes"
+									title="Include this site in the default selection of libraries">
+									<xsl:if test="@deflib='yes'">
 										<xsl:attribute name="checked"/>
 									</xsl:if>
 								</input>
@@ -228,10 +255,15 @@
 						<td class="checkbox">
 							<input type="checkbox" name="enb0" value="yes"/>
 						</td>
+						<td class="checkbox">
+							<input type="checkbox" name="def0" value="no"
+								title="Include this site in the default selection of libraries"/>
+						</td>
 						<td><input class="svrtext" type="text" name="name0" value=""/></td>
 						<td><input class="svrtext" type="text" name="adrs0" value=""/></td>
 					</tr>
 				</table>
+				<br/>
 			</center>
 			</form>
 

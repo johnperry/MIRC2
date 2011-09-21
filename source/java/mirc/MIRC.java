@@ -18,6 +18,7 @@ import mirc.confs.*;
 import mirc.download.*;
 import mirc.files.*;
 import mirc.fsadmin.*;
+import mirc.login.*;
 import mirc.prefs.*;
 import mirc.publish.*;
 import mirc.qsadmin.*;
@@ -93,6 +94,7 @@ public class MIRC extends AbstractPlugin {
 		selector.addServlet("confs", ConferenceService.class);
 		selector.addServlet("files", FileService.class);
 		selector.addServlet("fsadmin", FileServiceAdmin.class);
+		selector.addServlet("challenge", ChallengeServlet.class);
 		selector.addServlet("sort", SortImagesService.class);
 		selector.addServlet("storage", StorageService.class);
 		selector.addServlet("ssadmin", StorageServiceAdmin.class);

@@ -30,24 +30,13 @@ div.header {
 }
 
 div.header input#freetext { width:250px; }
-div.header span.left {
-	margin:0; 
-	padding:0; 
-	padding-left: 3px;
-	font-size:8pt; 
-	width:125;
-	color: blue;
+div.header .modifiers {
+	display: block;
+	width: 250;
+	margin: 0; 
+	padding: 0 3 0 3; 
+	font-size: 8pt; 
 	text-align: left;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
-}
-div.header span.right {
-	margin:0; 
-	padding:0; 
-	padding-right: 3px;
-	font-size:8pt; 
-	width:125;
-	color: blue;
-	text-align: right;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 }
 

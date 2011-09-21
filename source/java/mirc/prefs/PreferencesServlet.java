@@ -80,12 +80,16 @@ public class PreferencesServlet extends Servlet {
 
 		if (path.length() == 1) {
 
-			//This is a request for the user's preferences page
+			//This is a request for the user's preferences page.
+			//Get the UI to determine whether to include the home icon.
+			String pageui = req.getParameter("pageui", "classic");
+			String[] params = new String[] { "pageui", pageui };
+
 			pref = prefs.get(username, false);
 			Document xsl = XmlUtil.getDocument( FileUtil.getStream( "/prefs/PreferencesServlet.xsl" ) );
 			res.setContentType("html");
 			res.disableCaching();
-			res.write( XmlUtil.getTransformedText( pref.getOwnerDocument(), xsl, null ) );
+			res.write( XmlUtil.getTransformedText( pref.getOwnerDocument(), xsl, params ) );
 			res.send();
 			return;
 		}
@@ -106,7 +110,7 @@ public class PreferencesServlet extends Servlet {
 			res.send();
 		}
 
-		else super.doGet( req, res ); // handle other requests in the superclass
+		else super.doGet( req, res ); //handle other requests in the superclass
 	}
 
 	/**

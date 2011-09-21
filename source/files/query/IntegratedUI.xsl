@@ -66,14 +66,14 @@
 
 		<div style="float:right; margin-top:7px;">
 			<xsl:text>&#160;&#160;</xsl:text>
-			<input type="button" value="Search" onclick="repeatSearch();"/>
+			<input type="button" value="Search" onclick="search();"/>
 			<xsl:text>&#160;&#160;&#160;&#160;</xsl:text>
 			<span class="headerText">Welcome </span>
 			<span class="headerText" id="usernameSpan">&#160;</span>
 			<xsl:text>&#160;&#160;</xsl:text>
 			<span class="headerText" id="myAccount">
 				<xsl:text>|&#160;&#160;</xsl:text>
-				<a href="/prefs">My Account</a>
+				<a href="javascript:preferences()">My Account</a>
 				<xsl:text>&#160;&#160;</xsl:text>
 			</span>
 			<span class="headerText">
@@ -86,12 +86,15 @@
 		<div style="float:right;">
 			<input type="text" id="freetext" value="Search..." onkeyup="keyClicked(event);"/>
 			<br/>
-			<span class="left"><a href="javascript:showAdvancedQueryPopup();">Advanced Query</a></span>
-			<span class="right"><a href="javascript:showServersPopup();">Select libraries</a></span>
+			<div class="modifiers">
+				<a href="javascript:showAdvancedQueryPopup();">Advanced Search</a>
+				<span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;</span>
+				<a href="javascript:showServersPopup();">Select Libraries</a>
+			</div>
 		</div>
 
 		<div style="float:right; margin-top:7px;">
-			<input type="button" value="Show all" onclick="clearModifiers();"/>
+			<input type="button" value="Clear" onclick="clearModifiers();"/>
 			<xsl:text>&#160;&#160;</xsl:text>
 		</div>
 
@@ -102,8 +105,8 @@
 <xsl:template name="leftpane">
 	<div id="Cases">
 		<!--<div class="L1">Cases</div>-->
-		<div class="L2" id="MyDocuments"><a href="javascript:queryMine();">My Cases</a><br/></div>
-		<div class="L2" id="AllDocuments"><a href="javascript:queryAll();">All Cases</a><br/></div>
+		<div class="L2" id="MyDocuments"><a href="javascript:queryMineNew();">My Cases</a><br/></div>
+		<div class="L2" id="AllDocuments"><a href="javascript:queryAllNew();">All Cases</a><br/></div>
 
 		<div class="L2x" id="ApprovalQueue"><a href="javascript:approvalQueue();">Approval Queue</a><br/></div>
 
@@ -118,6 +121,15 @@
 		</div>
 
 		<div class="L2x" id="CaseOfTheDay"><a href="{news/url}" target="shared">Case of the Day</a><br/></div>
+
+		<xsl:if test="@downloadenb='yes'">
+			<div class="L2x" id="Download">
+				<a href="javascript:downloadService()" title="Get the latest MIRC software.">
+					Download Software
+				</a>
+				<br/>
+			</div>
+		</xsl:if>
 	</div>
 
 	<div id="AuthorTools">
@@ -151,11 +163,11 @@
 
 	<div id="Admin">
 		<hr/>
-		<!--<div class="L1">Admin Tools</div>-->
 		<div class="L2"><a href="/users?home=/query">User Manager</a><br/></div>
 		<div class="L2"><a href="/qsadmin">Query Service</a><br/></div>
 		<div class="L2"><a href="/fsadmin?home=/query">File Service</a><br/></div>
 		<div class="L2"><a href="/ssadmin">Storage Service</a><br/></div>
+		<hr/>
 		<div class="L2"><a href="/daconfig?home=/query">DICOM Anonymizer</a><br/></div>
 		<div class="L2"><a href="/script">Script Editor</a><br/></div>
 		<div class="L2"><a href="/lookup">Lookup Table Editor</a><br/></div>
@@ -186,6 +198,7 @@
 
 <xsl:template name="params">
 	<script>
+		var sitename = "<xsl:value-of select="@sitename"/>";
 		var mode = "<xsl:value-of select="@mode"/>";
 		var version = "<xsl:value-of select="@version"/>";
 		var date = "<xsl:value-of select="@date"/>";
@@ -206,6 +219,7 @@
 			<xsl:for-each select="Libraries/Library[@enabled='yes']">
 				new Library(
 					"<xsl:value-of select="@enabled"/>",
+					"<xsl:value-of select="@deflib"/>",
 					"<xsl:value-of select="@address"/>",
 					"<xsl:value-of select="normalize-space(title)"/>",
 					"<xsl:value-of select="@local"/>"

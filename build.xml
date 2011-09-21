@@ -12,6 +12,7 @@
 	<property name="documentation" value="${basedir}/documentation"/>
 	<property name="title" value="MIRC"/>
 	<property name="copyright" value="Copyright 2011 Radiological Society of North America"/>
+	<property name="description" value="CTP/MIRC for teaching files"/>
 
 	<path id="classpath">
 		<pathelement location="${ctp}/libraries/CTP.jar"/>
@@ -31,7 +32,7 @@
 	<target name="init">
 		<tstamp>
 			<format property="today" pattern="yyyy-MM-dd"/>
-			<format property="now" pattern="HH:mm:ss"/>
+			<format property="now" pattern="HH:mm:ss z"/>
 		</tstamp>
 		<echo message="Time now ${now}"/>
 		<echo message="ant.java.version = ${ant.java.version}" />
@@ -101,6 +102,7 @@
 	            <attribute name="Date" value="${today} at ${now}"/>
 	            <attribute name="Java-Version" value="${ant.java.version}"/>
 	            <attribute name="Version" value="${version}"/>
+	            <attribute name="Description" value="${description}"/>
 			</manifest>
 			<fileset dir="${ctp}/build"
 				includes="org/rsna/installer/Installer** CTP/**"/>

@@ -9,6 +9,7 @@ package mirc.storage;
 
 import java.io.*;
 import java.net.HttpURLConnection;
+import java.net.URLEncoder;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -67,8 +68,6 @@ public class StorageService extends Servlet {
 	 * @param res The HttpResponse provided by the servlet container.
 	 */
 	public void doGet(HttpRequest req, HttpResponse res ) throws Exception {
-
-		logger.debug("Request: "+req.toString());
 
 		String reqpath = req.getPath();
 		String reqpathLC = reqpath.toLowerCase();
@@ -234,8 +233,13 @@ public class StorageService extends Servlet {
 
 			//It's not a zip export, check whether read is authorized.
 			if (!userIsAuthorizedTo("read", doc, req)) {
-				//Read is not authorized.
-				res.setResponseCode( res.forbidden );
+				String qs = req.getQueryString();
+				if (!qs.equals("")) qs = "?" + qs;
+				String url = req.getPath() + qs;
+				try { url = URLEncoder.encode(url, "UTF-8"); }
+				catch (Exception ignore) { }
+				String ssid = path.element(1);
+				res.redirect( "/challenge?url="+url+"&ssid="+ssid );
 				res.send();
 				return;
 			}
@@ -259,8 +263,6 @@ public class StorageService extends Servlet {
 			res.write( XmlUtil.getTransformedText( doc, xsl, params ) );
 			res.setContentType("html");
 			res.send();
-
-			logger.debug("...the request for the MIRCdocument was serviced");
 		}
 	}
 

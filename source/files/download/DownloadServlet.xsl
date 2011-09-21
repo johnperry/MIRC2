@@ -2,6 +2,9 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
 <xsl:output method="xml" encoding="utf-8" omit-xml-declaration="yes" />
 
+<xsl:param name="ui"/>
+<xsl:param name="upload"/>
+
 <xsl:template match="/files">
 	<html>
 		<head>
@@ -10,11 +13,13 @@
 			<script language="JavaScript" type="text/javascript" src="/download/DownloadServlet.js">;</script>
 		</head>
 		<body>
-			<div class="closebox">
-				<img src="/icons/home.png"
-					 onclick="window.open('/','_self');"
-					 title="Go to the server home page"/>
-			</div>
+			<xsl:if test="$ui='classic'">
+				<div class="closebox">
+					<img src="/icons/home.png"
+						 onclick="window.open('/','_self');"
+						 title="Go to the server home page"/>
+				</div>
+			</xsl:if>
 
 			<h1>Download Service</h1>
 
@@ -29,17 +34,28 @@
 				<table border="1">
 					<tr>
 						<th>File</th>
-						<th>Last Modified</th>
+						<th>Description</th>
+						<th class="size">Size</th>
 						<th>Build Time</th>
+						<th>Upload Time</th>
 					</tr>
 					<xsl:for-each select="file">
 						<tr>
 							<td><a href="javascript:get('{@name}');"><xsl:value-of select="@name"/></a></td>
-							<td><xsl:value-of select="@lastModified"/></td>
+							<td><xsl:value-of select="@desc"/></td>
+							<td class="size"><xsl:value-of select="format-number(@size,'#,##0')"/></td>
 							<td><xsl:value-of select="@build"/></td>
+							<td><xsl:value-of select="@lastModified"/></td>
 						</tr>
 					</xsl:for-each>
 				</table>
+
+				<xsl:if test="$upload='yes'">
+					<br/>
+					<p class="center">
+						<a href="/download/upload?ui={$ui}">Upload a file</a>
+					</p>
+				</xsl:if>
 			</center>
 
 		</body>
