@@ -656,8 +656,6 @@ public class StorageService extends Servlet {
 			}
 		}
 
-		//Set up the link for publishing the document
-
 		//Set up the link deleting the document
 		String deleteurl = "";
 		if (userIsAuthorizedTo("delete", doc, req))

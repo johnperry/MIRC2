@@ -29,6 +29,8 @@
 <xsl:param name="doc-path"/>
 <xsl:param name="doc-index-entry"/>
 
+<xsl:param name="readAuthorization" select="/MIRCdocument/authorization/read"/>
+
 <xsl:template match="*|@*|text()">
 	<xsl:copy>
 		<xsl:apply-templates select="*|@*|text()" />
@@ -572,7 +574,7 @@
 </xsl:template>
 
 <xsl:template name="publish-button">
-	<xsl:if test="string-length($edit-url)!=0">
+	<xsl:if test="$publish-url and not(contains($readAuthorization,'*'))">
 		<tr>
 			<td>
 				<input type="button" value="Publish" title="Publish this document"

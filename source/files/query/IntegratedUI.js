@@ -275,12 +275,24 @@ function getServerIDs() {
 	return ids;
 }
 
+function getLocalServerIDs() {
+	var ids = "";
+	for (var i=0; i<allServers.length; i++) {
+		if (allServers[i].isLocal) {
+			if (ids != "") ids += ":";
+			ids += i;
+		}
+	}
+	return ids;
+}
+
 //************************************************
 //Collection queries
 //************************************************
 function deselectAll() {
 	deselectCollection("MyDocuments");
 	deselectCollection("AllDocuments");
+	deselectCollection("ApprovalQueue");
 	if (confTreeManager) confTreeManager.closePaths();
 	if (fileTreeManager) fileTreeManager.closePaths();
 	deselectAuthorTools();
@@ -352,6 +364,31 @@ function queryAllNew() {
 function queryAll() {
 	doQuery(getBaseQuery());
 	selectCollection(queryAll, "AllDocuments");
+}
+
+function approvalQueueNew() {
+	firstResult = 1;
+	approvalQueue();
+}
+
+function approvalQueue() {
+	var query = getBaseQuery();
+	query += "&firstresult=" + firstResult;
+	query += "&maxresults=" + pageSize;
+	query += "&orderby=" + sortOrder;
+	query += "&server=" + getLocalServerIDs();
+
+	var freetext = document.getElementById("freetext");
+	var text = trim(freetext.value);
+	if (text == "Search...") text = "";
+	if (text != "") query += "&document=" + encodeURIComponent(text);
+	query += "&pubreq=yes";
+
+	deselectAll();
+	var req = new AJAX();
+	setStatusLine("Searching...");
+	req.POST("/query", query+"&"+req.timeStamp(), processQueryResults);
+	selectCollection(approvalQueue, "ApprovalQueue");
 }
 
 function firstPage() {
@@ -774,11 +811,6 @@ function displayCN() {
 	}
 	if (urls != "") window.open("/casenav?suppressHome=yes&urls="+urls, "shared");
 }
-
-//************************************************
-//Approval Queue
-//************************************************
-function approvalQueue() { alert("approvalQueue"); }
 
 //************************************************
 //Conferences

@@ -212,8 +212,8 @@ public class ZipService extends Servlet {
 			//Create a thread to process the file and kick it off.
 			//This thread will unpack the file (which must be a zip file)
 			//and create MIRCdocuments for the files it contains.
-			boolean autoindex = lib.getAttribute("zipautoindex").equals("yes");
-			boolean publish = autoindex || req.userHasRole("publisher");
+			boolean autoindex = lib.getAttribute("autoindex").equals("yes");
+			boolean canPublish = autoindex || req.userHasRole("publisher");
 			try {
 				File zip = new File(root, "zip");
 				File template = new File(zip, "template.xml");
@@ -226,7 +226,7 @@ public class ZipService extends Servlet {
 							name,
 							affiliation,
 							contact,
-							publish,
+							canPublish,
 							username,
 							read,
 							update,

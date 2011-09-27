@@ -107,8 +107,7 @@
 		<!--<div class="L1">Cases</div>-->
 		<div class="L2" id="MyDocuments"><a href="javascript:queryMineNew();">My Cases</a><br/></div>
 		<div class="L2" id="AllDocuments"><a href="javascript:queryAllNew();">All Cases</a><br/></div>
-
-		<div class="L2x" id="ApprovalQueue"><a href="javascript:approvalQueue();">Approval Queue</a><br/></div>
+		<div class="L2" id="ApprovalQueue"><a href="javascript:approvalQueueNew();">Approval Queue</a><br/></div>
 
 		<div id="Conferences">
 			<div class="L2x"><a href="/confs">Conferences</a></div>

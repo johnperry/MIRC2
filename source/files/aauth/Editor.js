@@ -536,7 +536,8 @@ function sectionImageDblClicked(myEvent) {
 			  "then double-click this image again.");
 		return;
 	}
-	if (getEvent(myEvent).ctrlKey) {
+	var evt = getEvent(myEvent);
+	if (evt.ctrlKey || evt.shiftKey) { //allow shiftKey for Macs
 		//Open the image for creating captions
 		loadCaptionEditor(source);
 	}

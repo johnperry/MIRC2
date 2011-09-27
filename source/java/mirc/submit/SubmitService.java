@@ -20,6 +20,7 @@ import mirc.MircConfig;
 import mirc.storage.Index;
 import mirc.storage.StorageService;
 import mirc.ssadmin.StorageServiceAdmin;
+import mirc.util.MircDocument;
 
 import org.rsna.servlets.Servlet;
 import org.rsna.server.HttpRequest;
@@ -266,25 +267,13 @@ public class SubmitService extends Servlet {
 			String username = req.getUser().getUsername();
 			boolean isAutoindex = lib.getAttribute("autoindex").equals("yes");
 			boolean isPublisher = req.userHasRole("publisher");
-
 			setAuthorization(mainFile, username, isAutoindex, isPublisher, (isDocumentUpdate || preserveOwners));
 
 			//Now index the document.
-			if (isAutoindex || isPublisher) {
-				if (index.insertDocument(docpath))
-					result.append("The site index has been updated.|");
-				else
-					result.append("The attempt to update the site index failed.|");
-			}
-			else {
-				result.append("The site index was not updated.|");
-				/* **************************************************************************************************************
-				if (ApprovalQueue.addEntry(docpath, docXML))
-					result.append("The document has been added to the approval queue.|");
-				else
-					result.append("The attempt to update the approval queue failed.|");
-				*/ //************************************************************************************************************
-			}
+			if (index.insertDocument(docpath))
+				result.append("The site index has been updated.|");
+			else
+				result.append("The attempt to update the site index failed.|");
 		}
 		finish(res, ui, ssid, result, suppress);
 	}
@@ -295,54 +284,44 @@ public class SubmitService extends Servlet {
 						boolean isAutoindex,
 						boolean isPublisher,
 						boolean preserveOwners) {
-		Document doc;
-		try { doc = XmlUtil.getDocument(docFile); }
-		catch (Exception ex) { return; }
+		try {
+			MircDocument md = new MircDocument(docFile);
+			Document doc = md.getXML();;
 
-		//Remove the filename and path attributes of the root element
-		Element root = doc.getDocumentElement();
-		root.removeAttribute("filename");
-		root.removeAttribute("path");
+			//Remove the filename and path attributes of the root element
+			Element root = doc.getDocumentElement();
+			root.removeAttribute("filename");
+			root.removeAttribute("path");
 
-		Element authElement = XmlUtil.getFirstNamedChild(doc, "authorization");
-		if (authElement == null) {
-			//The document does not have an authorization element; insert it.
-			authElement = (Element)root.appendChild(doc.createElement("authorization"));
-		}
-		//Remove any existing owner element and add one containing only
-		//the username of the submitting user. NOTE: this is ONLY done if
-		//the submission is NOT an update to an existing document.
-		if (!preserveOwners) {
-			Element ownerElement = XmlUtil.getFirstNamedChild(authElement, "owner");
-			if (ownerElement != null) authElement.removeChild(ownerElement);
-			ownerElement = doc.createElement("owner");
-			ownerElement.appendChild(doc.createTextNode(owner));
-			authElement.appendChild(ownerElement);
-		}
-		//Set up the read element, if necessary.
-		//The rules are:
-		//  If autoindexing is enabled, the document is accepted.
-		//  If the user has the publisher role, it is accepted.
-		//  If the document is private or restricted, it is accepted.
-		//  Otherwise, the document is made non-public.
-		Element readElement = XmlUtil.getFirstNamedChild(authElement, "read");
-		if (readElement == null) {
-			//The element is missing, add an empty one so that the document will be private by default.
-			readElement = (Element)authElement.appendChild(doc.createElement("read"));
-		}
-		else {
-			String read = readElement.getTextContent();
-			boolean isPublic = read.contains("*");
-			if (!isAutoindex && !isPublisher && isPublic) {
-				read = read.replaceAll("\\s+","").replace("*",",").replaceAll("[,]+",",");
-				if (read.startsWith(",")) read = read.substring(1);
-				if (read.endsWith(",")) read = read.substring(0,read.length()-1);
-				while (readElement.hasChildNodes()) readElement.removeChild(readElement.getFirstChild());
-				readElement.appendChild(doc.createTextNode(read));
+			Element authElement = XmlUtil.getFirstNamedChild(doc, "authorization");
+			if (authElement == null) {
+				//The document does not have an authorization element; insert it.
+				authElement = (Element)root.appendChild(doc.createElement("authorization"));
 			}
+			//Remove any existing owner element and add one containing only
+			//the username of the submitting user. NOTE: this is ONLY done if
+			//the submission is NOT an update to an existing document.
+			if (!preserveOwners) {
+				Element ownerElement = XmlUtil.getFirstNamedChild(authElement, "owner");
+				if (ownerElement != null) authElement.removeChild(ownerElement);
+				ownerElement = doc.createElement("owner");
+				ownerElement.appendChild(doc.createTextNode(owner));
+				authElement.appendChild(ownerElement);
+			}
+			//Set up the read element and set the publication request, if necessary.
+			Element readElement = XmlUtil.getFirstNamedChild(authElement, "read");
+			if (readElement == null) {
+				//The element is missing, add an empty one so that the document will be private by default.
+				readElement = (Element)authElement.appendChild(doc.createElement("read"));
+			}
+			else {
+				//There is an element, set it correctly.
+				md.setPublicationRequest(isAutoindex || isPublisher);
+			}
+			//Finally, save the document to the original file.
+			FileUtil.setText(docFile, XmlUtil.toString(doc));
 		}
-		//Finally, save the document to the original file.
-		FileUtil.setText(docFile, XmlUtil.toString(doc));
+		catch (Exception ex) { return; }
 	}
 
 	//Produce a string for the submission result page indicating whether the

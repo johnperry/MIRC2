@@ -394,9 +394,12 @@ public class QueryService extends Servlet {
 								 String showimages) throws Exception {
 		String anchorString = serverURL + "?firstresult=" + firstresult + "&showimages=" + showimages;
 		NodeList nodeList = formXML.getDocumentElement().getElementsByTagName("server");
+		String server = "";
 		for (int i=0; i<nodeList.getLength(); i++) {
-			anchorString += "&server=" + nodeList.item(i).getTextContent().trim();
+			if (!server.equals("")) server += ":";
+			server += nodeList.item(i).getTextContent().trim();
 		}
+		anchorString += "&server=" + server;
 		nodeList = formXML.getDocumentElement().getElementsByTagName("*");
 		for (int i=0; i<nodeList.getLength(); i++) {
 			String name = ((Element)(nodeList.item(i))).getTagName();

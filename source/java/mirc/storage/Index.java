@@ -148,6 +148,7 @@ public class Index {
 			openDatabase("peer-review");
 			openDatabase("language");
 			openDatabase("owner");
+			openDatabase("pubreq");
 		}
 		catch (Exception ex) {
 			logger.warn("Unable to create/open the index");
@@ -452,18 +453,18 @@ public class Index {
 	 * @param doc the XML DOM object containing the parsed MIRCdocument
 	 */
 	private synchronized void addDocument(File file, String path, Document doc) throws Exception {
-		//Set up to preserve the last modified date.
-		long lastModified = file.lastModified();
 
-		//Insert the RadLex terms and save the file
+		//Insert the RadLex terms, set the image sizes, and
+		//save the file, preserving the last modified date.
+		//Note: the last modified date must be reset before creating the
+		//IndexEntry object; otherwise, or the current date would be used
+		//as the last modified date. This would be incorrect in the case
+		//where the index is being rebuilt.
+		long lastModified = file.lastModified();
 		Element root = doc.getDocumentElement();
 		MircDocument.insertRadLexTerms(root);
-		FileUtil.setText(file, XmlUtil.toString(doc));
-
-		//Reset the last modified date after the RadLex terms were inserted.
-		//Note: this must be done before creating the IndexEntry object,
-		//or the current date will be used as the last modified date. This
-		//would be incorrect in the case where the index is being rebuilt.
+		setImageSizes(file, doc);
+		FileUtil.setText(file, XmlUtil.toString(root));
 		file.setLastModified(lastModified);
 
 		//Get the ID for the document
@@ -485,20 +486,17 @@ public class Index {
 		//Index the access from the index entry
 		fields.get("access").indexString(id, mie.access);
 
+		//Index the pubreq from the root element
+		if (root.getAttribute("pubreq").equals("yes")) {
+			fields.get("pubreq").indexString(id, "yes");
+		}
+
 		//Now do all the query fields
 		for (String name : fields.keySet()) {
 			IndexDatabase db = fields.get(name);
 			NodeList nl = root.getElementsByTagName(name);
 			db.indexString( id, getText( nl ) );
 		}
-
-		//Make sure the image sizes are in place
-		if (setImageSizes(file, doc)) {
-			FileUtil.setText(file, XmlUtil.toString(root));
-		}
-
-		//Reset the lmdate after the image sizes were updated
-		file.setLastModified(lastModified);
 	}
 
 	//Check that all the image elements have w and h attributes.
@@ -679,7 +677,7 @@ public class Index {
 	static class Unfragmented extends Hashtable<String, HashSet<String>> {
 		public Unfragmented() {
 			super();
-			this.put("patient", getSet(new String[] {"male", "female"}));
+			this.put("patient", getSet(new String[] {"male", "female", "yes"}));
 		}
 		private HashSet<String> getSet(String[] words) {
 			HashSet<String> set = new HashSet<String>();

@@ -70,6 +70,7 @@ public class PublishService extends Servlet {
 
 			//Publish it
 			md.makePublic();
+			md.clearPublicationRequest();
 			md.save();
 
 			//Index the MIRC document

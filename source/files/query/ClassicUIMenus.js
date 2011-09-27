@@ -15,7 +15,7 @@ var authorItems = new Array (
 		new Item("Zip Service", showZipService, "zipItem"),
 		new Item("Submit Service", showSubmitService, "subItem"),
 		new Item("Author Summary Report", showAuthorSummary),
-		new Item("Approval Queue Viewer", showApprovalQueue, "approvalQueueItem") );
+		new Item("Approval Queue", showApprovalQueue, "approvalQueueItem") );
 
 var adminItems = new Array (
 		new Item("Log Viewer", showLogViewer),
@@ -133,8 +133,25 @@ function showAuthorSummary(event, item) {
 }
 
 function showApprovalQueue(event, item) {
-	alert("showApprovalQueue called");
-	//window.open("/ssadmin","_self");
+	var query = "";
+	query += "firstresult=" + 1;
+	query += "&maxresults=" + 25;
+	query += "&orderby=lmdate";
+	query += "&server=" + getLocalServerIDs();
+	query += "&pubreq=yes";
+	query += "&queryUID=none";
+	window.open("/query?"+query, "_self");
+}
+
+function getLocalServerIDs() {
+	var ids = "";
+	for (var i=0; i<allServers.length; i++) {
+		if (allServers[i].isLocal) {
+			if (ids != "") ids += ":";
+			ids += i;
+		}
+	}
+	return ids;
 }
 
 //Handlers for the Admin menu

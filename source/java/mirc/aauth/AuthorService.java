@@ -273,6 +273,9 @@ public class AuthorService extends Servlet {
 
 				res.disableCaching();
 
+				boolean autoindex = lib.getAttribute("autoindex").equals("yes");
+				boolean canPublish = autoindex || req.userHasRole("publisher");
+
 				String ct = req.getContentType().toLowerCase();
 				File aauth = new File(root, "aauth");
 				String docText = req.getParameter("doctext");
@@ -341,11 +344,7 @@ public class AuthorService extends Servlet {
 
 						//See if there is a conflict between the read
 						//authorization and the user's roles.
-						if (!user.hasRole("publisher") && md.isPublic()) {
-							md.makeNonPublic();
-							//Add to the approval queue
-							//TBD
-						}
+						md.setPublicationRequest(canPublish);
 
 						//Save and index the document
 						md.save();
@@ -403,11 +402,7 @@ public class AuthorService extends Servlet {
 
 						//See if there is a conflict between the read
 						//authorization and the user's roles.
-						if (!user.hasRole("publisher") && md.isPublic()) {
-							md.makeNonPublic();
-							//Add to the approval queue
-							//TBD
-						}
+						md.setPublicationRequest(canPublish);
 
 						//Save and index the document
 						md.save();

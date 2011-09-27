@@ -43,7 +43,7 @@ public class ZipThread extends Thread {
 	String name;
 	String affiliation;
 	String contact;
-	boolean publish;
+	boolean canPublish;
 	String username;
 	String read;
 	String update;
@@ -72,7 +72,7 @@ public class ZipThread extends Thread {
 	 * @param name the author's name.
 	 * @param affiliation the author's affiliation.
 	 * @param contact the author's contact information.
-	 * @param publish true if the user is a publisher; false otherwise.
+	 * @param canPublish true if the user can publish the documents; false otherwise.
 	 * @param template the default template file to be used unless overridden by the submission.
 	 * @param username the username of the owner to be assigned to the document.
 	 * @param read the read privileges to be assigned to the document
@@ -93,7 +93,7 @@ public class ZipThread extends Thread {
 				String name,
 				String affiliation,
 				String contact,
-				boolean publish,
+				boolean canPublish,
 				String username,
 				String read,
 				String update,
@@ -110,7 +110,7 @@ public class ZipThread extends Thread {
 		this.name = name;
 		this.affiliation = affiliation;
 		this.contact = contact;
-		this.publish = publish;
+		this.canPublish = canPublish;
 		this.username = username;
 		this.read = read;
 		this.update = update;
@@ -254,11 +254,9 @@ public class ZipThread extends Thread {
 		//Sort the image-section
 		md.sortImageSection();
 
-		//Change the read permission if necessary.
-		if (!publish && md.isPublic()) {
-			md.makeNonPublic();
-			//ApprovalQueue.getInstance().addEntry(indexEntry, md);
-		}
+		//Change the read permission and set the publication request, if necessary.
+		md.setPublicationRequest(canPublish);
+
 		//Save and index the document
 		md.save();
 		index.insertDocument(indexEntry);

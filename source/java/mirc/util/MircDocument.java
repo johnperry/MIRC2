@@ -167,6 +167,40 @@ public class MircDocument {
 	}
 
 	/**
+	 * Set the publication request attribute and adjust the authorization/read
+	 * element if the document is public and publication is not authorized.
+	 * @param canPublish true if the document is allowed to be public.
+	 */
+	public void setPublicationRequest(boolean canPublish) {
+		if (canPublish) {
+			//Remove the publication request, if present.
+			clearPublicationRequest();
+		}
+		else {
+			//The document cannot be published. See if it is public.
+			if (isPublic()) {
+				//It's public, make it non-public and set the publication request.
+				makeNonPublic();
+				setPublicationRequest();
+			}
+		}
+	}
+
+	/**
+	 * Set the publication request.
+	 */
+	public void setPublicationRequest() {
+		doc.getDocumentElement().setAttribute("pubreq", "yes");
+	}
+
+	/**
+	 * Clear the publication request.
+	 */
+	public void clearPublicationRequest() {
+		doc.getDocumentElement().removeAttribute("pubreq");
+	}
+
+	/**
 	 * Determine whether the document is public. For compatibility
 	 * with previous MIRC versions, a document is publicly visible
 	 * if its MIRCdocument/authorization/read element is missing
