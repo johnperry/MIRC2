@@ -488,7 +488,7 @@ public class StorageService extends Servlet {
       * @param docXML the MIRCdocument DOM object.
       * @param req the servlet request identifying the remote user.
       */
-	public static boolean userIsAuthorizedTo(String action, Node docXML, HttpRequest req) {
+	public static boolean userIsAuthorizedTo(String action, Document docXML, HttpRequest req) {
 		try {
 			//The admin user is allowed to do anything
 			if (req.userHasRole("admin")) return true;
@@ -499,6 +499,11 @@ public class StorageService extends Servlet {
 			//For the delete action, only the owner or admin is ever authorized.
 			//Therefore, if the action is delete, return false now.
 			if (action.equals("delete")) return false;
+
+			//The read access has a special case: if the document has a publish
+			//request and the user is a publisher, the user can read the document.
+			if (docXML.getDocumentElement().getAttribute("pubreq").equals("yes")
+					&& req.userHasRole("publisher")) return true;
 
 			//For non-owners or non-authenticated users, the rule is that if an action
 			//authorization does not exist in the document, read and export actions are

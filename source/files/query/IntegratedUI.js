@@ -439,13 +439,13 @@ function processQueryResults(req) {
 			var mds = qr.getElementsByTagName("MIRCdocument");
 			if (mds.length > 0) {
 				pane.appendChild( makeLinks(true) );
-				var tbody = setTable(pane);
+				var table = setResultsTable(pane);
 				for (var i=0; i<mds.length; i++) {
 					var md = mds[i];
-					appendDocument(tbody, md);
+					appendDocument(table.tbody, md);
 				}
-				//pane.appendChild( makeLinks(true) );
 				selectAll();
+				//makeScrollableTable('resultsTable', false, 'auto');
 			}
 			else right.appendChild(document.createTextNode("No results found."));
 		}
@@ -542,13 +542,15 @@ function appendTD(tr, doc, tag, className) {
 	tr.appendChild(td);
 }
 
-function setTable(pane) {
+function setResultsTable(pane) {
 	pane.appendChild( document.createElement("BR") );
 	var table = document.createElement("TABLE");
+	table.id = "resultsTable";
 	pane.appendChild(table);
 	pane.appendChild( document.createElement("BR") );
 
 	var thead = document.createElement("THEAD");
+	thead.id = "resultsTableHead";
 	table.appendChild(thead);
 	var tr = document.createElement("TR");
 	thead.appendChild(tr);
@@ -562,9 +564,14 @@ function setTable(pane) {
 	appendTH(tr, "Access");
 	thead.appendChild(tr);
 	var tbody = document.createElement("TBODY");
-	tbody.id = "tableBody";
+	tbody.id = "resultsTableBody";
 	table.appendChild(tbody);
-	return tbody;
+
+	var t = new Object();
+	t.table = table;
+	t.thead = thead;
+	t.tbody = tbody;
+	return t;
 }
 function appendTH(tr, text) {
 	var th = document.createElement("TH");
@@ -629,7 +636,7 @@ function toggleExpandCollapse() {
 }
 
 function setExpandCollapse() {
-	var tbody = document.getElementById("tableBody");
+	var tbody = document.getElementById("resultsTableBody");
 	var cbs = tbody.getElementsByTagName("INPUT");
 	var isExpanded = false;
 	for (var i=0; i<cbs.length; i++) {
@@ -651,7 +658,7 @@ function setExpandCollapse() {
 }
 
 function expandAll() {
-	var tbody = document.getElementById("tableBody");
+	var tbody = document.getElementById("resultsTableBody");
 	var cbs = tbody.getElementsByTagName("INPUT");
 	for (var i=0; i<cbs.length; i++) {
 		var cb = cbs[i];
@@ -666,7 +673,7 @@ function expandAll() {
 }
 
 function collapseAll() {
-	var tbody = document.getElementById("tableBody");
+	var tbody = document.getElementById("resultsTableBody");
 	var cbs = tbody.getElementsByTagName("INPUT");
 	for (var i=0; i<cbs.length; i++) {
 		var cb = cbs[i];
@@ -796,7 +803,7 @@ function toggleSelect() {
 }
 
 function displayCN() {
-	var tbody = document.getElementById("tableBody");
+	var tbody = document.getElementById("resultsTableBody");
 	var cbs = tbody.getElementsByTagName("INPUT");
 	var urls = ""
 	for (var i=0; i<cbs.length; i++) {

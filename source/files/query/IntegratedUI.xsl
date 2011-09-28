@@ -31,6 +31,7 @@
 	<script language="JavaScript" type="text/javascript" src="/JSLoginPopup.js">;</script>
 	<script language="JavaScript" type="text/javascript" src="/JSPage.js">;</script>
 	<script language="JavaScript" type="text/javascript" src="/JSSplitPane.js">;</script>
+	<script language="JavaScript" type="text/javascript" src="/JSScrollableTable.js">;</script>
 	<script language="JavaScript" type="text/javascript" src="/query/QueryServicePopups.js">;</script>
 	<script language="JavaScript" type="text/javascript" src="/query/IntegratedUI.js">;</script>
 	<xsl:call-template name="params"/>

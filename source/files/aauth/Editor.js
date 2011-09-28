@@ -922,6 +922,10 @@ function getDocumentDescriptionText(section) {
 		var docref = trim(iList[2].value);
 		if (docref != "") text += " docref=\"" + docref + "\"";
 	}
+	if (iList[3].checked) {
+		text += " pubreq=\"yes\"";
+	}
+
 	text += ">\n";
 	var doctype = trim(sList[3].value);
 	if (doctype != "") text += "<document-type>" + doctype + "</document-type>\n";

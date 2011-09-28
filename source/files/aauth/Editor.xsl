@@ -370,6 +370,10 @@
 				You can change anything you like at any time if the result
 				is not what you want.
 			</p>
+			<p class="p3">
+				To request that this document be made publicly visible, check the box at the bottom of the page.
+			</p>
+
 			<table border="1">
 				<tr>
 					<td rowspan="3">
@@ -505,6 +509,16 @@
 					<td id="creator">
 						<xsl:text>MIRC Author Service - version </xsl:text>
 						<xsl:value-of select="$version"/>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2">
+						Check this box to request publication of this document:
+						<input type="checkbox" id="pubreq" name="pubreq">
+							<xsl:if test="@pubreq='yes'">
+								<xsl:attribute name="checked">true</xsl:attribute>
+							</xsl:if>
+						</input>
 					</td>
 				</tr>
 			</table>

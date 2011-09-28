@@ -172,18 +172,16 @@ public class MircDocument {
 	 * @param canPublish true if the document is allowed to be public.
 	 */
 	public void setPublicationRequest(boolean canPublish) {
-		if (canPublish) {
-			//Remove the publication request, if present.
-			clearPublicationRequest();
-		}
-		else {
-			//The document cannot be published. See if it is public.
-			if (isPublic()) {
-				//It's public, make it non-public and set the publication request.
+		if (isPublic()) {
+			if (canPublish) {
+				clearPublicationRequest();
+			}
+			else {
 				makeNonPublic();
 				setPublicationRequest();
 			}
 		}
+		//else leave the permissions and the publication request alone
 	}
 
 	/**

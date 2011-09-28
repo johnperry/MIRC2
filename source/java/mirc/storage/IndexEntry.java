@@ -33,6 +33,7 @@ public class IndexEntry implements Serializable {
 	public String access    = "";
 	public String lmstring	= "";
 	public boolean isPublic = false;
+	public boolean hasPubReq= false;
 	public int[] ptAges		= new int[0];
 
 	public HashSet<String> owners = new HashSet<String>();
@@ -120,6 +121,9 @@ public class IndexEntry implements Serializable {
 						|| roles.contains("*")
 								|| ( (users.size() == 0) && (roles.size() == 0) );
 
+		//Set a flag to assist the Approval Queue query.
+		hasPubReq = root.getAttribute("pubreq").equals("yes");
+
 		//Get the ages of all the patients in this document
 		//to make age range searches faster.
 		NodeList nl = root.getElementsByTagName("pt-age");
@@ -176,12 +180,15 @@ public class IndexEntry implements Serializable {
 	 * @param user the user
 	 * @return true if the document is public or if the user is
 	 * an admin user or if the user is one of the allowed users
-	 * or if the user has one of the allowed roles; false otherwise.
+	 * or if the user has one of the allowed roles, or if the
+	 * document has a publish request and the user is a publisher;
+	 * false otherwise.
 	 */
 	public boolean allows(User user) {
 		if (isPublic) return true;
 		if (user == null) return false;
 		if (user.hasRole("admin")) return true;
+		if (hasPubReq && user.hasRole("publisher")) return true;
 		if (users.contains(user.getUsername())) return true;
 		String[] userroles = user.getRoleNames();
 		for (String role : userroles) {
