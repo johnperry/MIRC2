@@ -31,7 +31,7 @@ function loaded() {
 	}
 
 	//leftDiv, sliderDiv, rightDiv, fillHeight, sliderPosition, forceTopForIE, leftMin, rightMin, changeHandler
-	split = new HorizontalSplit("left", "center", "right", true, 185, false, 1);
+	split = new HorizontalSplit("left", "center", "right", true, 185, false, 1, 120, resizeScrollableTable);
 
 	setVisibility("MyDocuments", user.hasRole("author"));
 	setVisibility("AuthorTools", user.hasRole("author"));
@@ -57,6 +57,7 @@ window.onload = loaded;
 
 function resize() {
 	split.positionSlider();
+	resizeScrollableTable();
 }
 
 //************************************************
@@ -428,6 +429,8 @@ function doQuery(query) {
 //************************************************
 //Query results
 //************************************************
+var scrollableTable = null;
+
 function processQueryResults(req) {
 	if (req.success()) {
 		var xml = req.responseXML();
@@ -439,19 +442,35 @@ function processQueryResults(req) {
 			var mds = qr.getElementsByTagName("MIRCdocument");
 			if (mds.length > 0) {
 				pane.appendChild( makeLinks(true) );
-				var table = setResultsTable(pane);
+				scrollableTable = setResultsTable(pane);
 				for (var i=0; i<mds.length; i++) {
 					var md = mds[i];
-					appendDocument(table.tbody, md);
+					appendDocument(scrollableTable.tbody, md);
 				}
 				selectAll();
-				//makeScrollableTable('resultsTable', false, 'auto');
+				resizeScrollableTable();
+				scrollableTable.bodyTable.parentNode.onresize = resizeScrollableTable;
 			}
 			else right.appendChild(document.createTextNode("No results found."));
 		}
 		hidePopups();
 		resize();
+		resizeScrollableTable();
 		setStatusLine("");
+	}
+}
+
+function resizeScrollableTable() {
+	if (scrollableTable) {
+		var bodyTable = scrollableTable.bodyTable;
+		var scrollDiv = bodyTable.parentNode;
+		var container = scrollDiv.parentNode;
+		var containerPos = findObject(container);
+		var scrollDivPos = findObject(scrollDiv);
+		var bodyTablePos = findObject(bodyTable);
+		var h = containerPos.h - (scrollDivPos.y - containerPos.y);
+		scrollDiv.style.height = ((h>0) ? h : 1);
+		scrollableTable.sync();
 	}
 }
 
@@ -464,7 +483,7 @@ function appendDocument(tbody, doc) {
 	appendTDAuthor(tr, doc);
 	appendTD(tr, doc, "category")
 	appendTD(tr, doc, "lmdate", "center")
-	appendTDText(tr, " ");
+	//appendTDText(tr, " ");
 	appendTD(tr, doc, "access");
 	tbody.appendChild(tr);
 }
@@ -543,15 +562,15 @@ function appendTD(tr, doc, tag, className) {
 }
 
 function setResultsTable(pane) {
-	pane.appendChild( document.createElement("BR") );
-	var table = document.createElement("TABLE");
-	table.id = "resultsTable";
-	pane.appendChild(table);
-	pane.appendChild( document.createElement("BR") );
+	//pane.appendChild( document.createElement("BR") );
 
+	pane.style.overflow = "hidden";
+
+	var headerTable = document.createElement("TABLE");
+	headerTable.id = "headerTable";
 	var thead = document.createElement("THEAD");
 	thead.id = "resultsTableHead";
-	table.appendChild(thead);
+	headerTable.appendChild(thead);
 	var tr = document.createElement("TR");
 	thead.appendChild(tr);
 	appendTHCB(tr);
@@ -560,19 +579,27 @@ function setResultsTable(pane) {
 	appendTH(tr, "Author");
 	appendTH(tr, "Specialty");
 	appendTH(tr, "Date Modified");
-	appendTH(tr, "Rating");
-	appendTH(tr, "Access");
+	//appendTH(tr, "Rating");
+	appendTH(tr, "Acc.");
 	thead.appendChild(tr);
-	var tbody = document.createElement("TBODY");
-	tbody.id = "resultsTableBody";
-	table.appendChild(tbody);
+	pane.appendChild(headerTable);
 
-	var t = new Object();
-	t.table = table;
-	t.thead = thead;
-	t.tbody = tbody;
-	return t;
+	var scrollDiv = document.createElement("DIV");
+	scrollDiv.id = "scrollDiv";
+	scrollDiv.className = "scrollDiv";
+
+	var resultsTable = document.createElement("TABLE");
+	resultsTable.id = "resultsTable";
+	var tbody = document.createElement("TBODY");
+	resultsTable.id = "resultsTableBody";
+	resultsTable.appendChild(tbody);
+	scrollDiv.appendChild(resultsTable);
+
+	pane.appendChild(scrollDiv);
+
+	return new ScrollableTable( headerTable, resultsTable );
 }
+
 function appendTH(tr, text) {
 	var th = document.createElement("TH");
 	th.appendChild(document.createTextNode(text));
@@ -929,13 +956,11 @@ function showFileDirContents(event) {
 	var currentPath = currentNode.getPath();
 	fileTreeManager.closePaths();
 	currentNode.showPath();
-	//menuBar.setText(currentPath);
 	var req = new AJAX();
 	req.GET("/files/mirc/"+currentPath, req.timeStamp(), null);
 	if (req.success()) {
 		var right = document.getElementById("right");
 		while (right.firstChild) right.removeChild(right.firstChild);
-		//nFiles = 0;
 		var xml = req.responseXML();
 		var root = xml ? xml.firstChild : null;
 		var child = root ? root.firstChild : null;
@@ -943,23 +968,16 @@ function showFileDirContents(event) {
 			if ((child.nodeType == 1) && (child.tagName == "file")) {
 				var img = document.createElement("IMG");
 				img.className = "desel";
-				//img.onclick = cabinetFileClicked;
 				img.ondblclick = cabinetFileDblClicked;
-				//img.onmousedown = startImageDrag;
 				img.setAttribute("src", "/files/"+child.getAttribute("iconURL"));
 				img.setAttribute("title", child.getAttribute("title"));
 				img.xml = child;
 				right.appendChild(img);
-				//nFiles++;
 			}
 			child = child.nextSibling;
 		}
-		//lastClicked = -1;
-		//nodeType = "MircFolder";
-		//nSelected = 0;
 	}
 	else alert("The attempt to get the directory contents failed.");
-	//setEnables();
 }
 
 function cabinetFileDblClicked(theEvent) {
@@ -972,7 +990,6 @@ function cabinetFileDblClicked(theEvent) {
 	deselectAll();
 	source.className = "sel";
 	lastClicked = currentClicked;
-	//setEnables();
 
 	if (theEvent.altKey) {
 		var filename = source.getAttribute("title");

@@ -20,6 +20,7 @@
             authenb="yes"
             autoindex="yes"
             dcmenb="no"
+            deflib="yes"
             enabled="yes"
             id="ss1"
             jpegquality="-1"
@@ -32,7 +33,7 @@
 			<title>My MIRC Site</title>
 		</Library>
 
-		<Library address="http://mirc.childrensmemorial.org/general/service" enabled="yes">
+		<Library address="http://mirc.childrensmemorial.org/general/service" enabled="yes" deflib="yes">
 			<title>CMH: Children's Memorial Hospital General Pediatric Cases</title>
 		</Library>
 
@@ -100,7 +101,7 @@
             <title>The RSNA MIRC Site</title>
         </Library>
 
-		<Library address="http://147.140.2.19:8080/storage/ss2" enabled="yes">
+		<Library address="http://147.140.2.19:8080/storage/ss2" enabled="yes" deflib="yes">
 			<title>Thomas Jefferson University Hospital - Neuro</title>
 		</Library>
 

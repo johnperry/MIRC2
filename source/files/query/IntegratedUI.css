@@ -139,8 +139,13 @@ div.footerRight {
 
 div.rightpane {
 	color: black;
+	overflow: none; /*auto;*/
+}
+
+div.rightpane div.scrollDiv {
 	overflow: auto;
 }
+
 div.rightpane table {
 	width: 100%;
 }
@@ -148,7 +153,8 @@ div.rightpane table img.spaceRight {
 	margin-right: 4px;
 }
 div.rightpane table th {
-	text-align:left;
+	padding: 2px;
+	text-align: left;
 	font-size: 10pt;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	background: #A8C7FF;
@@ -204,8 +210,7 @@ div.leftpane hr {
 
 div.links {
 	margin-top: 10px;
-	margin-bottom:10px;
-	float: left;
+	margin-bottom:5px;
 	font-size: 10pt;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-weight: normal;
@@ -245,7 +250,7 @@ div.links img {
 	background:#C6D8F9;
 }
 
-.w0  { padding-left:0px; }
+.w0  { padding-left: 0px; }
 .w0x { padding-left:30px; }
 .w1  { padding-left:10px; }
 .w1x { padding-left:35px; }
