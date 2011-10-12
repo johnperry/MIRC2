@@ -163,6 +163,8 @@ public class ZipThread extends Thread {
 
 	private void processDirectory(File dir, File template, String title, String keywords) {
 
+		logger.debug("Processing "+dir);
+
 		//Make sure this directory should be processed
 		if (skipDirectory(dir)) return;
 
@@ -202,6 +204,8 @@ public class ZipThread extends Thread {
 	}
 
 	private void createMircDocument(File[] files, File template, String title, String keywords) {
+
+		logger.debug("...creating MIRCdocument ("+files.length+" files)");
 
 		//Don't create MIRCdocuments for empty file lists.
 		if (files.length == 0) return;
@@ -260,6 +264,8 @@ public class ZipThread extends Thread {
 		//Save and index the document
 		md.save();
 		index.insertDocument(indexEntry);
+
+		logger.debug("...MIRCdocument created: "+indexEntry);
 	}
 
 	class Filter implements FileFilter {
@@ -319,7 +325,7 @@ public class ZipThread extends Thread {
 						.getName()
 							.trim()
 								.replaceAll("[\\s]+","_")
-									.replaceAll("[\"&'><#;:@/?=]","_");
+									.replaceAll("[*\"&'><#;:@/?=]","_");
 				outFile = new File(outFile.getParentFile(), name);
 
 				//Now write the file with the corrected name.

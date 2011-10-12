@@ -278,7 +278,7 @@ public class MircSiteCopier extends JFrame {
 
 				//Only copy users if this is a UsersXmlFileImpl
 				if (usersClassName.equals("org.rsna.server.UsersXmlFileImpl")) {
-					UsersXmlFileImpl users = (UsersXmlFileImpl)Users.getInstance(usersClassName);
+					UsersXmlFileImpl users = (UsersXmlFileImpl)Users.getInstance(usersClassName, null);
 					NodeList nl = tcUsersRoot.getElementsByTagName("user");
 					for (int i=0; i<nl.getLength(); i++) {
 						Element tcUser = (Element)nl.item(i);

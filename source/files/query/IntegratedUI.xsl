@@ -159,6 +159,12 @@
 			</a>
 			<br/>
 		</div>
+		<div class="L2" id="srpt">
+			<a href="javascript:showAuthorSummary('ss1')" title="Display an author summary report.">
+				Author Summary
+			</a>
+			<br/>
+		</div>
 	</div>
 
 	<div id="Admin">

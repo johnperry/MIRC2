@@ -79,7 +79,12 @@ public class AuthorSummary extends Servlet {
 				String sitename = XmlUtil.getFirstNamedChild(lib, "title").getTextContent();
 				String today = StringUtil.getDate("");
 				String userIsAdmin = (req.userHasRole("admin") ? "yes" : "no");
+
+				String ui = req.getParameter("ui", "");
+				if (!ui.equals("integrated")) ui = "classic";
+
 				String[] params = new String[] {
+					"ui",			ui,
 					"ssid",			ssid,
 					"userIsAdmin",	userIsAdmin,
 					"today",		today
@@ -129,6 +134,9 @@ public class AuthorSummary extends Servlet {
 		String date		= req.getParameter("date", "no");
 		String access	= req.getParameter("access", "no");
 		String user		= req.getParameter("user","").trim();
+
+		String ui = req.getParameter("ui", "");
+		if (!ui.equals("integrated")) ui = "classic";
 
 		//If the request does not come from an admin user,
 		//only allow the user to see his documents.
@@ -198,6 +206,7 @@ public class AuthorSummary extends Servlet {
 
 		//Make an array or parameters for the transformations
 		Object[] params = {
+					"ui",			ui,
 					"ssid",			ssid,
 					"show-titles",	title,
 					"show-names",	name,

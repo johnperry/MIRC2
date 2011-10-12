@@ -124,7 +124,6 @@ public class DownloadServlet extends Servlet {
 				res.setETag(fileLMDate);
 				res.setContentType(file);
 				res.setContentDisposition(file);
-				res.disableCaching();
 				res.send();
 			}
 			//The requested file doesn't exist in the download

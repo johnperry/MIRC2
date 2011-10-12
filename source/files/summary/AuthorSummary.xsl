@@ -2,6 +2,7 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
 <xsl:output method="xml" encoding="utf-8" omit-xml-declaration="yes" />
 
+<xsl:param name="ui"/>
 <xsl:param name="ssid"/>
 <xsl:param name="userIsAdmin"/>
 <xsl:param name="today"/>
@@ -16,23 +17,29 @@
 		<script language="JavaScript" type="text/javascript" src="/JSUtil.js">;</script>
 		<script language="JavaScript" type="text/javascript" src="/JSPopup.js">;</script>
 		<script language="JavaScript" type="text/javascript" src="/summary/AuthorSummary.js">;</script>
+		<script>
+			var ui = '<xsl:value-of select="$ui"/>';
+		</script>
 	</head>
 	<body>
-		<div class="closebox">
-			<img src="/icons/home.png"
-				 onclick="window.open('/query','_self');"
-				 title="Return to the home page"/>
-			<br/>
-			<img src="/icons/save.png"
-				 onclick="save();"
-				 title="Submit the request"/>
-		</div>
+		<xsl:if test="$ui='classic'">
+			<div class="closebox">
+				<img src="/icons/home.png"
+					 onclick="window.open('/query','_self');"
+					 title="Return to the home page"/>
+				<br/>
+				<img src="/icons/save.png"
+					 onclick="save();"
+					 title="Submit the request"/>
+			</div>
+		</xsl:if>
 
 		<center>
 			<h1>Author Summary Request - <xsl:value-of select="$ssid"/></h1>
 			<h2><xsl:value-of select="Libraries/Library[@id=$ssid]/title"/></h2>
 
 			<form id="formID" method="post" action="" accept-charset="UTF-8">
+			<input type="hidden" name="ui" value="{$ui}"/>
 
 			<table border="1">
 
@@ -85,6 +92,11 @@
 				</tr>
 
 			</table>
+			<br/>
+
+			<p class="center">
+				<input type="button" value="Submit the request" onclick="save();"/>
+			</p>
 
 			</form>
 

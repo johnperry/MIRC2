@@ -2,6 +2,7 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
 <xsl:output method="html" encoding="utf-8"/>
 
+<xsl:param name="ui"/>
 <xsl:param name="ssid"/>
 <xsl:param name="show-titles"/>
 <xsl:param name="show-names"/>
@@ -21,14 +22,19 @@
 			<script language="JavaScript" type="text/javascript" src="/JSUtil.js">;</script>
 			<script language="JavaScript" type="text/javascript" src="/JSPopup.js">;</script>
 			<script language="JavaScript" type="text/javascript" src="/summary/summaryToHTML.js">;</script>
-			<script>var ssid = '<xsl:value-of select="$ssid"/>';</script>
+			<script>
+				var ui = '<xsl:value-of select="$ui"/>';
+				var ssid = '<xsl:value-of select="$ssid"/>';
+			</script>
 		</head>
 		<body>
-		<div class="closebox">
-			<img src="/icons/home.png"
-				 onclick="window.open('/summary/{$ssid}','_self');"
-				 title="Return to the summary request page"/>
-		</div>
+			<xsl:if test="$ui='classic'">
+				<div class="closebox">
+					<img src="/icons/home.png"
+						 onclick="window.open('/summary/{$ssid}','_self');"
+						 title="Return to the summary request page"/>
+				</div>
+			</xsl:if>
 			<center>
 				<br/>
 				<h1>Author Summary Report - <xsl:value-of select="$ssid"/></h1>

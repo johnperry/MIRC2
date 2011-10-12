@@ -294,9 +294,15 @@ function deselectAll() {
 	deselectCollection("MyDocuments");
 	deselectCollection("AllDocuments");
 	deselectCollection("ApprovalQueue");
+	deselectLink("Download");
 	if (confTreeManager) confTreeManager.closePaths();
 	if (fileTreeManager) fileTreeManager.closePaths();
 	deselectAuthorTools();
+}
+
+function deselectLink(id) {
+	var x = document.getElementById(id);
+	if (x) x.firstChild.style.fontWeight = "normal";
 }
 
 function deselectCollection(id) {
@@ -429,6 +435,7 @@ function doQuery(query) {
 //************************************************
 //Query results
 //************************************************
+//Note: this table is used for both query results and conferences
 var scrollableTable = null;
 
 function processQueryResults(req) {
@@ -442,7 +449,7 @@ function processQueryResults(req) {
 			var mds = qr.getElementsByTagName("MIRCdocument");
 			if (mds.length > 0) {
 				pane.appendChild( makeLinks(true) );
-				scrollableTable = setResultsTable(pane);
+				scrollableTable = setScrollableTable(pane, resultsTableHeadings);
 				for (var i=0; i<mds.length; i++) {
 					var md = mds[i];
 					appendDocument(scrollableTable.tbody, md);
@@ -561,7 +568,7 @@ function appendTD(tr, doc, tag, className) {
 	tr.appendChild(td);
 }
 
-function setResultsTable(pane) {
+function setScrollableTable(pane, headings) {
 	//pane.appendChild( document.createElement("BR") );
 
 	pane.style.overflow = "hidden";
@@ -573,14 +580,7 @@ function setResultsTable(pane) {
 	headerTable.appendChild(thead);
 	var tr = document.createElement("TR");
 	thead.appendChild(tr);
-	appendTHCB(tr);
-	appendTHTitle(tr);
-	appendTH(tr, "Library");
-	appendTH(tr, "Author");
-	appendTH(tr, "Specialty");
-	appendTH(tr, "Date Modified");
-	//appendTH(tr, "Rating");
-	appendTH(tr, "Acc.");
+	headings(tr);
 	thead.appendChild(tr);
 	pane.appendChild(headerTable);
 
@@ -598,6 +598,17 @@ function setResultsTable(pane) {
 	pane.appendChild(scrollDiv);
 
 	return new ScrollableTable( headerTable, resultsTable );
+}
+
+function resultsTableHeadings(tr) {
+	appendTHCB(tr);
+	appendTHTitle(tr);
+	appendTH(tr, "Library");
+	appendTH(tr, "Author");
+	appendTH(tr, "Specialty");
+	appendTH(tr, "Date Modified");
+	//appendTH(tr, "Rating");
+	appendTH(tr, "Acc.");
 }
 
 function appendTH(tr, text) {
@@ -879,36 +890,24 @@ function showConferenceContents(event) {
 		var items = root.getElementsByTagName("item");
 		if (items.length > 0) {
 			pane.appendChild( makeLinks(false) );
-			var tbody = setConferenceTable(pane);
+			scrollableTable = setScrollableTable(pane, conferenceTableHeadings);
 			for (var i=0; i<items.length; i++) {
 				var item = items[i];
-				appendAgendaItem(tbody, item);
+				appendAgendaItem(scrollableTable.tbody, item);
 			}
 			selectAll();
+			resizeScrollableTable();
+			scrollableTable.bodyTable.parentNode.onresize = resizeScrollableTable;
 		}
 		else right.appendChild(document.createTextNode("The conference is empty."));
 	}
 	resize();
 }
 
-function setConferenceTable(pane) {
-	pane.appendChild( document.createElement("BR") );
-	var table = document.createElement("TABLE");
-	pane.appendChild(table);
-	pane.appendChild( document.createElement("BR") );
-
-	var thead = document.createElement("THEAD");
-	table.appendChild(thead);
-	var tr = document.createElement("TR");
-	thead.appendChild(tr);
+function conferenceTableHeadings(tr) {
 	appendTH(tr, "");
 	appendTH(tr, "Title");
 	appendTH(tr, "Author");
-	thead.appendChild(tr);
-	var tbody = document.createElement("TBODY");
-	tbody.id = "tableBody";
-	table.appendChild(tbody);
-	return tbody;
 }
 
 function appendAgendaItem(tbody, item) {
@@ -960,6 +959,7 @@ function showFileDirContents(event) {
 	req.GET("/files/mirc/"+currentPath, req.timeStamp(), null);
 	if (req.success()) {
 		var right = document.getElementById("right");
+		right.style.overflow = "auto";
 		while (right.firstChild) right.removeChild(right.firstChild);
 		var xml = req.responseXML();
 		var root = xml ? xml.firstChild : null;
@@ -1031,6 +1031,9 @@ function preferences() {
 //Download Service
 //************************************************
 function downloadService() {
+	deselectAll();
+	var linkDiv = document.getElementById("Download");
+	if (linkDiv) linkDiv.firstChild.style.fontWeight = "bold";
 	var right = document.getElementById("right");
 	while (right.firstChild) right.removeChild(right.firstChild);
 	var iframe = document.createElement("IFRAME");
@@ -1061,6 +1064,10 @@ function advAuthorTool(ssid) {
 	startAuthoring(ssid, "aauth", "aat");
 }
 
+function showAuthorSummary(ssid) {
+	startAuthoring(ssid, "summary", "srpt");
+}
+
 function startAuthoring(ssid, context, id) {
 	deselectAll();
 	var linkDiv = document.getElementById(id);
@@ -1071,7 +1078,6 @@ function startAuthoring(ssid, context, id) {
 	iframe.src = "/"+context+"/"+ssid+"?ui=integrated";
 	right.appendChild(iframe);
 }
-
 
 //************************************************
 //Libraries classes
