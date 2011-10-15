@@ -11,6 +11,7 @@ var fileTreeManager = null;
 var currentTable = "";
 var firstResult = 1;
 var maxResults = 25;
+var queryIsActive = false;
 
 var expandURL = "/mirc/images/expand.png";
 var collapseURL = "/mirc/images/collapse.png";
@@ -214,6 +215,7 @@ function doAdvancedQuery() {
 	deselectAll();
 	var req = new AJAX();
 	setStatusLine("Searching...");
+	queryIsActive = true;
 	req.POST("/query", mods+query+"&"+req.timeStamp(), processQueryResults);
 }
 
@@ -394,6 +396,7 @@ function approvalQueue() {
 	deselectAll();
 	var req = new AJAX();
 	setStatusLine("Searching...");
+	queryIsActive = true;
 	req.POST("/query", query+"&"+req.timeStamp(), processQueryResults);
 	selectCollection(approvalQueue, "ApprovalQueue");
 }
@@ -429,6 +432,7 @@ function doQuery(query) {
 	query += getModifiers();
 	var req = new AJAX();
 	setStatusLine("Searching...");
+	queryIsActive = true;
 	req.POST("/query", query+"&"+req.timeStamp(), processQueryResults);
 }
 
@@ -437,9 +441,10 @@ function doQuery(query) {
 //************************************************
 //Note: this table is used for both query results and conferences
 var scrollableTable = null;
+var blanks = "\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0";
 
 function processQueryResults(req) {
-	if (req.success()) {
+	if (queryIsActive && req.success()) {
 		var xml = req.responseXML();
 		var qr = xml ? xml.firstChild : null;
 		if (qr) {
@@ -460,7 +465,7 @@ function processQueryResults(req) {
 			}
 			else right.appendChild(document.createTextNode("No results found."));
 		}
-		hidePopups();
+		//hidePopups();
 		resize();
 		resizeScrollableTable();
 		setStatusLine("");
@@ -564,6 +569,7 @@ function appendTD(tr, doc, tag, className) {
 		node = node[0].firstChild;
 		if (node) text = node.nodeValue;
 	}
+	if (trim(text) == "") text = blanks;
 	td.appendChild( document.createTextNode(text) );
 	tr.appendChild(td);
 }
@@ -878,6 +884,7 @@ function showConferenceContents(event) {
 	deselectAll();
 	currentNode.showPath();
 
+	queryIsActive = false;
 	var req = new AJAX();
 	req.GET("/confs/getAgenda", "nodeID="+currentNode.nodeID+"&"+req.timeStamp(), null);
 	if (req.success()) {
@@ -955,6 +962,7 @@ function showFileDirContents(event) {
 	var currentPath = currentNode.getPath();
 	fileTreeManager.closePaths();
 	currentNode.showPath();
+	queryIsActive = false;
 	var req = new AJAX();
 	req.GET("/files/mirc/"+currentPath, req.timeStamp(), null);
 	if (req.success()) {
@@ -1020,6 +1028,7 @@ function getCabinetFiles() {
 //Preferences
 //************************************************
 function preferences() {
+	queryIsActive = false;
 	var right = document.getElementById("right");
 	while (right.firstChild) right.removeChild(right.firstChild);
 	var iframe = document.createElement("IFRAME");
@@ -1031,6 +1040,7 @@ function preferences() {
 //Download Service
 //************************************************
 function downloadService() {
+	queryIsActive = false;
 	deselectAll();
 	var linkDiv = document.getElementById("Download");
 	if (linkDiv) linkDiv.firstChild.style.fontWeight = "bold";
@@ -1069,6 +1079,7 @@ function showAuthorSummary(ssid) {
 }
 
 function startAuthoring(ssid, context, id) {
+	queryIsActive = false;
 	deselectAll();
 	var linkDiv = document.getElementById(id);
 	if (linkDiv) linkDiv.firstChild.style.fontWeight = "bold";

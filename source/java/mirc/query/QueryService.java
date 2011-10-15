@@ -251,17 +251,22 @@ public class QueryService extends Servlet {
 		Element resultsRoot = results.createElement("Results");
 		results.appendChild(resultsRoot);
 
+		//Get the session cookie value, it present
+		String sessionCookie = req.getCookie("RSNASESSION");
+
 		//Send the mircquery to all the selected servers
 		Element[] servers = getSelectedServers(formXML, mircXML);
 		serverThreads = new HashSet<MircServer>();
 		for (Element server : servers) {
 			String address = server.getAttribute("address").trim();
 			if (address.startsWith("/")) address = siteurl + address;
-			User user = (mc.isLocal(address) ? req.getUser() : null);
+			String cookie = (mc.isLocal(address) ? sessionCookie : null);
 			String serverName = server.getTextContent().trim();
-			MircServer thread = new MircServer( address, user, serverName, mircQueryString, this);
-			synchronized (this) { serverThreads.add( thread ); }
-			thread.start();
+			synchronized (this) {
+				MircServer thread = new MircServer( address, cookie, serverName, mircQueryString, this);
+				serverThreads.add( thread );
+				thread.start();
+			}
 		}
 
 		//Wait for the results to come in.
@@ -280,7 +285,10 @@ public class QueryService extends Servlet {
 
 		//Shut down any remaining serverThreads
 		synchronized (this) {
-			for (MircServer server: serverThreads) server.interrupt();
+			for (MircServer server: serverThreads) {
+				logger.warn("Aborting "+server.getServerURL());
+				server.interrupt();
+			}
 			serverThreads.removeAll(serverThreads);
 		}
 
@@ -338,6 +346,9 @@ public class QueryService extends Servlet {
 		if (result != null) {
 			Node importedResult = results.importNode( result.getDocumentElement(), true );
 			results.getDocumentElement().appendChild( importedResult );
+		}
+		else {
+			logger.warn("Null result received from "+server.getServerURL());
 		}
 		serverThreads.remove(server);
 	}

@@ -22,7 +22,9 @@ import org.apache.log4j.Logger;
 import org.rsna.servlets.Servlet;
 import org.rsna.server.HttpRequest;
 import org.rsna.server.HttpResponse;
+import org.rsna.server.Authenticator;
 import org.rsna.server.Path;
+import org.rsna.server.Users;
 import org.rsna.server.User;
 
 import org.rsna.ctp.objects.DicomObject;
@@ -277,6 +279,20 @@ public class StorageService extends Servlet {
 
 		//All responses will be XML
 		res.setContentType("xml");
+
+		//Do our own authentication based on the RSNASESSION cookie.
+		//Note that the RSNASESSION cookie is a pointer into a session table
+		//maintained by the Authenticator. Each session contains the username
+		//as well as the IP address of the client. We need to know who the user
+		//is, but the Authenticator will have failed to authenticate this connection
+		//because it came from the Query Service, not the client who initiated the
+		//session. So our strategy here will be to get the cookie that was passed
+		//by the Query Service and ask the Authenticator for the username of the
+		//session, then to get the user from the Users class and force that back
+		//into the HttpRequest, thus accepting the fact that the cookie is from
+		//a different source.
+		String username = Authenticator.getInstance().getUsernameForSession(req.getCookie("RSNASESSION"));
+		if (username != null) req.setUser(Users.getInstance().getUser(username));
 
 		//Check that this is a post of a MIRCquery.
 		if (req.getContentType().toLowerCase().contains("text/xml")) {

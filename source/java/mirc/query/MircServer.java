@@ -31,7 +31,7 @@ import org.w3c.dom.Element;
 public class MircServer extends Thread {
 
 	private String urlString;
-	private User user;
+	private String sessionID;
 	private String serverName;
 	private String mircQuery;
 	private QueryService queryService;
@@ -41,7 +41,7 @@ public class MircServer extends Thread {
 	/**
 	 * Class constructor.
 	 * @param urlString the URL of the MIRC storage service to be queried.
-	 * @param user the user making the request, or null if the user is not authenticated.
+	 * @param sessionID the ID of the session of the user making the request, or null if there is no session.
 	 * @param serverName the name of the MIRC storage service to be queried
 	 * (used as a heading in the results list).
 	 * @param mircQuery the MIRCquery XML string.
@@ -49,15 +49,31 @@ public class MircServer extends Thread {
 	 */
 	public MircServer(
 			String urlString,
-			User user,
+			String sessionID,
 			String serverName,
 			String mircQuery,
 			QueryService queryService) {
 		this.urlString = urlString;
-		this.user = user;
+		this.sessionID = sessionID;
 		this.serverName = serverName;
 		this.mircQuery = mircQuery;
 		this.queryService = queryService;
+	}
+
+	/**
+	 * Get the URL associated with this MircServer.
+	 * @return the URL used to query this MircServer.
+	 */
+	public String getServerURL() {
+		return urlString;
+	}
+
+	/**
+	 * Get the name of this MircServer.
+	 * @return the name of this MircServer.
+	 */
+	public String getServerName() {
+		return serverName;
 	}
 
 	/**
@@ -76,8 +92,8 @@ public class MircServer extends Thread {
 			conn.setRequestMethod("POST");
 			conn.setRequestProperty("Content-Type","text/xml; charset=\"UTF-8\"");
 
-			//If the user is authenticated and the server is local, pass the user's credentials.
-			if (user != null) conn.setRequestProperty("Authorization", user.getBasicAuthorization());
+			//If the sessionID exists, pass it in the RSNASESSION cookie.
+			if (sessionID != null) conn.setRequestProperty("Cookie", "RSNASESSION="+sessionID);
 
 			conn.setDoOutput(true);
 			conn.connect();
@@ -93,15 +109,18 @@ public class MircServer extends Thread {
 			//Get the response
 			BufferedReader svrrdr =
 				new BufferedReader(
-					new InputStreamReader( conn.getInputStream(),FileUtil.utf8 ) );
+					new InputStreamReader( conn.getInputStream(), FileUtil.utf8 ) );
 			StringWriter svrsw = new StringWriter();
 			char[] cbuf = new char[1024];
 			int n;
 			boolean hcf = false;
 			while (((n = svrrdr.read(cbuf,0,1024)) != -1) && !(hcf = interrupted())) svrsw.write(cbuf,0,n);
 			svrrdr.close();
-			if (hcf) serverResponse = makeExceptionResponse("No response from the server.");
-			else serverResponse = svrsw.toString();
+			if (!hcf) serverResponse = svrsw.toString();
+			else {
+				serverResponse = makeExceptionResponse("No response from the server.");
+				logger.warn("Read aborted by interrupt: "+url+"\nResponse:\n"+svrsw.toString());
+			}
 		}
 		catch (MalformedURLException e) {
 			serverResponse = makeExceptionResponse("Malformed URL: "+urlString);

@@ -45,7 +45,7 @@ public class QueryAuthenticator extends Authenticator {
 	 * @return the credentials.
 	 */
 	protected PasswordAuthentication getPasswordAuthentication() {
-		return new PasswordAuthentication(username,password.toCharArray());
+		return new PasswordAuthentication(username, password.toCharArray());
 	}
 
 }
