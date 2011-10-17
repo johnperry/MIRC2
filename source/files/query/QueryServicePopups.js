@@ -47,13 +47,11 @@ function serverSelectOK() {
 
 function appendServers(sel) {
 	for (var i=0; i<allServers.length; i++) {
-		if (allServers[i].enabled) {
-			var opt = document.createElement("OPTION");
-			if (allServers[i].isLocal) opt.selected = true;
-			opt.value = i;
-			opt.appendChild(document.createTextNode(allServers[i].name));
-			sel.appendChild(opt);
-		}
+		var opt = document.createElement("OPTION");
+		if (allServers[i].isLocal) opt.selected = true;
+		opt.value = i;
+		opt.appendChild(document.createTextNode(allServers[i].name));
+		sel.appendChild(opt);
 	}
 }
 

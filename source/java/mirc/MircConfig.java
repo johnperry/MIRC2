@@ -114,7 +114,7 @@ public class MircConfig {
 			timeout = ((timeout>1) && (timeout<200)) ? timeout : 10;
 
 			//Build the libraries table and identify the local servers
-			libraries = new Hashtable<String,Element>();
+			libraries = new Hashtable<String, Element>();
 			Node child = mircRoot.getFirstChild();
 			while (child != null) {
 				if ((child instanceof Element) && child.getNodeName().equals("Libraries")) {
@@ -372,15 +372,12 @@ public class MircConfig {
 	}
 
 	/**
-	 * Get a Libraries element containing only the enabled Library elements.
+	 * Get a Libraries element containing all the libraries in sorted
+	 * order, alphabetically by name, with all the local libraries first.
 	 */
-	public Element getEnabledLibraries() {
+	public Element getSortedLibraries() {
 		try {
-			HashSet<Element> libset = new HashSet<Element>();
-			for (Element lib : libraries.values()) {
-				if (lib.getAttribute("enabled").equals("yes")) libset.add(lib);
-			}
-			Element[] libs = libset.toArray( new Element[libset.size()] );
+			Element[] libs = libraries.values().toArray( new Element[libraries.size()] );
 			Arrays.sort( libs, new ElementComparator() );
 			Document doc = XmlUtil.getDocument();
 			Element root = doc.createElement("Libraries");
@@ -395,7 +392,7 @@ public class MircConfig {
 	 * @param resolve true if URLs for local servers are to
 	 * include the siteurl.
 	 * @return a copy of the Libraries element (with addresses resolved
-	 * if resolve==true, or null if no Libraries element exists in the MircConfig XML.
+	 * if resolve==true), or null if no Libraries element exists in the MircConfig XML.
 	 */
 	public Element getLibraries(boolean resolve) {
 		try {

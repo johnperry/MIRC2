@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------
-*  Copyright 2005 by the Radiological Society of North America
+*  Copyright 2011 by the Radiological Society of North America
 *
 *  This source software is released under the terms of the
 *  RSNA Public License. (http://mirc.rsna.org/rsnapubliclicense)
@@ -12,6 +12,7 @@ import java.io.StringWriter;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.TimeZone;
@@ -20,8 +21,6 @@ import mirc.MircConfig;
 import mirc.prefs.Preferences;
 
 import org.apache.log4j.Logger;
-
-import mirc.MircConfig;
 
 import org.rsna.servlets.Servlet;
 import org.rsna.server.HttpRequest;
@@ -43,7 +42,7 @@ import org.w3c.dom.NodeList;
  * The Query Service is the interface into MIRC for users.
  * This servlet responds to both HTTP GET and POST.
  */
-public class QueryService extends Servlet {
+public class QueryService extends Servlet implements QueryServiceCallback {
 
 	static final Logger logger = Logger.getLogger(QueryService.class);
 
@@ -258,14 +257,16 @@ public class QueryService extends Servlet {
 		Element[] servers = getSelectedServers(formXML, mircXML);
 		serverThreads = new HashSet<MircServer>();
 		for (Element server : servers) {
-			String address = server.getAttribute("address").trim();
-			if (address.startsWith("/")) address = siteurl + address;
-			String cookie = (mc.isLocal(address) ? sessionCookie : null);
-			String serverName = server.getTextContent().trim();
-			synchronized (this) {
-				MircServer thread = new MircServer( address, cookie, serverName, mircQueryString, this);
-				serverThreads.add( thread );
-				thread.start();
+			if (server.getAttribute("enabled").equals("yes")) {
+				String address = server.getAttribute("address").trim();
+				if (address.startsWith("/")) address = siteurl + address;
+				String cookie = (mc.isLocal(address) ? sessionCookie : null);
+				String serverName = server.getTextContent().trim();
+				synchronized (this) {
+					MircServer thread = new MircServer( address, cookie, serverName, mircQueryString, this);
+					serverThreads.add( thread );
+					thread.start();
+				}
 			}
 		}
 
@@ -455,22 +456,16 @@ public class QueryService extends Servlet {
 	// query page.
 	private Element[] getSelectedServers(Document formXML, Document mircXML) throws Exception {
 		NodeList formNodeList = formXML.getDocumentElement().getElementsByTagName("server");
-		Element svrs = MircConfig.getInstance().getEnabledLibraries();
+		Element svrs = MircConfig.getInstance().getSortedLibraries();
 		NodeList mircNodeList = svrs.getElementsByTagName("Library");
-		//Handle the case where nothing is selected; return the first node.
-		if (formNodeList.getLength() < 1) {
-			Element[] s = new Element[1];
-			s[0] = (Element)mircNodeList.item(0);
-			return s;
-		}
-		//Handle the case where one or more servers are selected.
-		Element[] servers = new Element[formNodeList.getLength()];
+		LinkedList<Element> servers = new LinkedList<Element>();
 		for (int i=0; i<formNodeList.getLength(); i++) {
-			servers[i] =
-				(Element)mircNodeList.item(
-						StringUtil.getInt(formNodeList.item(i).getTextContent().trim()) );
+			int serverIndex = StringUtil.getInt(formNodeList.item(i).getTextContent().trim());
+			if ( (serverIndex >= 0) && (serverIndex < mircNodeList.getLength()) ) {
+				servers.add( (Element)mircNodeList.item(serverIndex) );
+			}
 		}
-		return servers;
+		return servers.toArray( new Element[servers.size()] );
 	}
 
 	// Generate an HTML page that lists a message to inform

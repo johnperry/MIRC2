@@ -116,7 +116,7 @@ public class MircServlet extends Servlet {
 		}
 		else if (function.equals("find")) {
 			String id = req.getParameter("id");
-			Element libs = mc.getEnabledLibraries();
+			Element libs = mc.getSortedLibraries();
 			NodeList nl = libs.getElementsByTagName("Library");
 			for (int i=0; i<nl.getLength(); i++) {
 				Element lib = (Element)nl.item(i);

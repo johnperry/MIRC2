@@ -431,7 +431,7 @@
 		var serverURL = "<xsl:value-of select="@siteurl"/>";
 		var selectedLocalLibrary = 0;
 		var localLibraries = <xsl:text>new Array(</xsl:text>
-			<xsl:for-each select="Libraries/Library[@local='yes' and @enabled='yes']">
+			<xsl:for-each select="Libraries/Library[@local='yes']">
 				new LocalLibrary(
 					"<xsl:value-of select="@id"/>",
 					"<xsl:value-of select="normalize-space(title)"/>",
@@ -442,7 +442,7 @@
 				<xsl:if test="position() != last()">,</xsl:if>
 			</xsl:for-each>);
 		var allServers = <xsl:text>new Array(</xsl:text>
-			<xsl:for-each select="Libraries/Library[@enabled='yes']">
+			<xsl:for-each select="Libraries/Library">
 				new Library(
 					"<xsl:value-of select="@enabled"/>",
 					"<xsl:value-of select="@deflib"/>",
