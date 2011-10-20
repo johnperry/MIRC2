@@ -34,7 +34,7 @@ public class MircServer extends Thread {
 	private String sessionID;
 	private String serverName;
 	private String mircQuery;
-	private QueryServiceCallback queryService;
+	private QueryService queryService;
 
 	static final Logger logger = Logger.getLogger(MircServer.class);
 
@@ -52,7 +52,7 @@ public class MircServer extends Thread {
 			String sessionID,
 			String serverName,
 			String mircQuery,
-			QueryServiceCallback queryService) {
+			QueryService queryService) {
 		this.urlString = urlString;
 		this.sessionID = sessionID;
 		this.serverName = serverName;

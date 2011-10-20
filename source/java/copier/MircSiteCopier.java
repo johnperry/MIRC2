@@ -317,7 +317,7 @@ public class MircSiteCopier extends JFrame {
 							sb.append(role);
 						}
 						mircRoot.setAttribute("roles", sb.toString());
-						mircConfig.saveXML();
+						mircConfig.save();
 					}
 				}
 				else {

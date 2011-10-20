@@ -30,24 +30,24 @@ import org.rsna.ctp.stdstages.DicomAnonymizer;
  */
 public class MircConfig {
 
-	static File dir = null;
-	static File mirc = null;
-	static Document mircXML = null;
-	static Element mircRoot;
-	static int timeout = 10;
-	static String siteurl = null;
-	File TEMP = null;
+	static volatile File dir = null;
+	static volatile File mirc = null;
+	static volatile Document mircXML = null;
+	static volatile Element mircRoot;
+	static volatile int timeout = 10;
+	static volatile String siteurl = null;
+	volatile File TEMP = null;
 
-	protected static MircConfig mircConfigInstance = null;
+	protected static volatile MircConfig mircConfigInstance = null;
 
 	static final Logger logger = Logger.getLogger(MircConfig.class);
 
-	public static Document enumeratedValues = null;
-	public static Document speciesValues = null;
-	public static Document mircqueryXSL = null;
+	public static volatile Document enumeratedValues = null;
+	public static volatile Document speciesValues = null;
+	public static volatile Document mircqueryXSL = null;
 
-	static DicomAnonymizer fsDicomAnonymizer = null;
-	static Hashtable<String,Element> libraries;
+	static volatile DicomAnonymizer fsDicomAnonymizer = null;
+	static volatile Hashtable<String,Element> libraries;
 
 	/**
 	 * Private singleton constructor; this class must be
@@ -88,7 +88,7 @@ public class MircConfig {
 	/**
 	 * Reload the components.
 	 */
-	public void reload() {
+	public synchronized void reload() {
 		loadXML();
 		setMastheadHeight();
 		reloadXMLObjects();
@@ -200,7 +200,12 @@ public class MircConfig {
 	/**
 	 * Save the MIRC configuration XML object.
 	 */
-	public static void saveXML() {
+	public synchronized void save() {
+		saveXML();
+	}
+
+	//Static method to save the XML object
+	private static void saveXML() {
 		FileUtil.setText(mirc, XmlUtil.toPrettyString( mircXML ));
 	}
 
@@ -300,7 +305,7 @@ public class MircConfig {
 	 * @param timeout the query timeout in seconds.
 	 * @param roles the additional roles defined by the site.
 	 */
-	public void setPrimarySystemParameters(
+	public synchronized void setPrimarySystemParameters(
 			String mode,
 			String sitename,
 			String showsitename,
@@ -334,28 +339,28 @@ public class MircConfig {
 	/**
 	 * Get the MIRC plugin version
 	 */
-	public String getVersion() {
+	public synchronized String getVersion() {
 		return mircRoot.getAttribute("version");
 	}
 
 	/**
 	 * Get the mode of the site (rad or vet)
 	 */
-	public String getMode() {
+	public synchronized String getMode() {
 		return mircRoot.getAttribute("mode");
 	}
 
 	/**
 	 * Get the default user interface
 	 */
-	public String getUI() {
+	public synchronized String getUI() {
 		return mircRoot.getAttribute("UI");
 	}
 
 	/**
 	 * Get the extra role names defined for the site
 	 */
-	public String[] getDefinedRoles() {
+	public synchronized String[] getDefinedRoles() {
 		return mircRoot.getAttribute("roles").split(",");
 	}
 
@@ -375,7 +380,7 @@ public class MircConfig {
 	 * Get a Libraries element containing all the libraries in sorted
 	 * order, alphabetically by name, with all the local libraries first.
 	 */
-	public Element getSortedLibraries() {
+	public synchronized Element getSortedLibraries() {
 		try {
 			Element[] libs = libraries.values().toArray( new Element[libraries.size()] );
 			Arrays.sort( libs, new ElementComparator() );
@@ -394,7 +399,7 @@ public class MircConfig {
 	 * @return a copy of the Libraries element (with addresses resolved
 	 * if resolve==true), or null if no Libraries element exists in the MircConfig XML.
 	 */
-	public Element getLibraries(boolean resolve) {
+	public synchronized Element getLibraries(boolean resolve) {
 		try {
 			Document doc = XmlUtil.getDocument();
 			Element root = doc.createElement("Libraries");
@@ -417,7 +422,7 @@ public class MircConfig {
 	 * Get an ID for a new Local Library.
 	 * @return an ID for a new Local Library.
 	 */
-	public String getNewLocalLibraryID() {
+	public synchronized String getNewLocalLibraryID() {
 		Set<String> ssids = getLocalLibraryIDs();
 		int n = ssids.size() + 1;
 		while ( ssids.contains( "ss"+n ) ) n++;
@@ -428,7 +433,7 @@ public class MircConfig {
 	 * Get a Set containing all the local library IDs.
 	 * @return all the StorageService names.
 	 */
-	public Set<String> getLocalLibraryIDs() {
+	public synchronized Set<String> getLocalLibraryIDs() {
 		Set<String> set = new HashSet<String>();
 		for (Element lib : libraries.values()) {
 			if ( lib.getAttribute("local").equals("yes") ) {
@@ -458,6 +463,18 @@ public class MircConfig {
 	}
 
 	/**
+	 * Set the enable of a Library element.
+	 * @param address the address of the Library.
+	 * @param enabled true if the library is to be enabled; false otherwise.
+	 */
+	public synchronized void setLibraryEnable(String address, boolean enabled) {
+		Element lib = getLibrary(address);
+		if (lib != null) {
+			lib.setAttribute("enabled", (enabled ? "yes" : "no"));
+		}
+	}
+
+	/**
 	 * Get the local Library element with the specified id.
 	 * @return the Library element, or null if no element
 	 * exists with the specified id.
@@ -476,8 +493,9 @@ public class MircConfig {
 	 * Note: this method does not reload the configuration.
 	 * @param library the Library element to insert.
 	 */
-	public void insertLibrary(Element library) {
+	public synchronized void insertLibrary(Element library) {
 		if (library.getNodeName().equals("Library")) {
+			library = (Element)mircXML.importNode(library, true);
 			libraries.put( library.getAttribute("address"), library);
 		}
 	}
@@ -487,7 +505,7 @@ public class MircConfig {
 	 * Note: this method does not reload the configuration.
 	 * @param address the address of the server to remove.
 	 */
-	public void removeLibrary(String address) {
+	public synchronized void removeLibrary(String address) {
 		libraries.remove(address);
 	}
 
@@ -496,7 +514,7 @@ public class MircConfig {
 	 * Note: this method does not reload the configuration.
 	 * @param id the id of the library to remove.
 	 */
-	public void removeLocalLibrary(String id) {
+	public synchronized void removeLocalLibrary(String id) {
 		removeLibrary( "/storage/" + id );
 	}
 
@@ -507,7 +525,7 @@ public class MircConfig {
 	 * @param address the address of the library.
 	 * @param enabled whether the library is enabled ("yes" or "no").
 	 */
-	public Element createLibrary(String title, String address, String enabled) throws Exception {
+	public synchronized Element createLibrary(String title, String address, String enabled) throws Exception {
 		Element lib = mircXML.createElement("Library");
 		lib.setAttribute( "address", address );
 		lib.setAttribute( "enabled", enabled );
@@ -536,7 +554,7 @@ public class MircConfig {
 	/**
 	 * Sort the libraries in order, local ones first, in alphabetical order second.
 	 */
-	public void sortLibraries() {
+	public synchronized void sortLibraries() {
 		Element mirclibs = XmlUtil.getFirstNamedChild(mircRoot, "Libraries");
 		Node child;
 		while ( (child=mirclibs.getFirstChild()) != null ) mirclibs.removeChild(child);
@@ -574,7 +592,7 @@ public class MircConfig {
 	 * @return a copy of the FileService element, or null if
 	 * no FileService element exists in the MircConfig XML.
 	 */
-	public Element getFileService() {
+	public synchronized Element getFileService() {
 		try {
 			Document doc = XmlUtil.getDocument();
 			Element fs = XmlUtil.getFirstNamedChild(mircRoot, "FileService");
@@ -588,7 +606,7 @@ public class MircConfig {
 	 * Replace the FileService element with a new one.
 	 * @param service the replacement FileService element.
 	 */
-	public void setFileService(Element service) {
+	public synchronized void setFileService(Element service) {
 		if (service.getNodeName().equals("FileService")) {
 			try {
 				Element fs = XmlUtil.getFirstNamedChild(mircRoot, "FileService");
@@ -609,7 +627,7 @@ public class MircConfig {
 	 * &lt;/news&gt;<br>
 	 * @return the news element.
 	 */
-	public Element getNews() {
+	public synchronized Element getNews() {
 		try {
 			NodeList nl = mircRoot.getElementsByTagName("news");
 			if (nl.getLength() == 0) {
@@ -627,7 +645,7 @@ public class MircConfig {
 	 * @param image the URL of the image used as the icon of the news item
 	 * @param url the URL of the news item
 	 */
-	public void setNews(String title, String image, String url) {
+	public synchronized void setNews(String title, String image, String url) {
 		deleteNews();
 		Element news = mircRoot.getOwnerDocument().createElement("news");
 		setNewsChild(news, "title", title);
@@ -652,7 +670,7 @@ public class MircConfig {
 	/**
 	 * Delete the news element.
 	 */
-	public void deleteNews() {
+	public synchronized void deleteNews() {
 		NodeList nl = mircRoot.getElementsByTagName("news");
 		if (nl.getLength() != 0) {
 			mircRoot.removeChild(nl.item(0));

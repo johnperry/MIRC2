@@ -42,7 +42,7 @@ import org.w3c.dom.NodeList;
  * The Query Service is the interface into MIRC for users.
  * This servlet responds to both HTTP GET and POST.
  */
-public class QueryService extends Servlet implements QueryServiceCallback {
+public class QueryService extends Servlet {
 
 	static final Logger logger = Logger.getLogger(QueryService.class);
 

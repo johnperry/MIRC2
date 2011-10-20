@@ -127,6 +127,9 @@ public class MIRC extends AbstractPlugin {
 		//Install the redirector
 		installRedirector();
 
+		//Start the LibraryMonitor
+		new LibraryMonitor().start();
+
 		logger.info("MIRC Plugin started");
 	}
 
