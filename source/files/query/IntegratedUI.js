@@ -1127,12 +1127,8 @@ function setState() {
 	else {
 		var svrsel = document.getElementById("serverselect");
 		var opts = svrsel.getElementsByTagName("OPTION");
-		var k = 0;
 		for (var i=0; i<allServers.length; i++) {
-			if (allServers[i].enabled) {
-				if (allServers[i].deflib) opts[k].selected = true;
-				k++;
-			}
+			if (allServers[i].deflib) opts[i].selected = true;
 		}
 	}
 	setSelectFromCookie("maxresults", cookies);
