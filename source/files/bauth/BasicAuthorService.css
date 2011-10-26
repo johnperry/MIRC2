@@ -66,6 +66,13 @@ p.center {
 	margin-right: 15%;
 }
 
+p.centered {
+	margin: 0;
+	padding: 3px;
+	width: 100%;
+	text-align: center;
+}
+
 table {
 	width:70%;
 	text-align: center;
@@ -112,3 +119,6 @@ select {
 	width:100%;
 }
 
+select#libSelect {
+	width:50%;
+}

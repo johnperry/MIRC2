@@ -5,7 +5,8 @@
 <xsl:param name="ui"/>
 <xsl:param name="ssid"/>
 <xsl:param name="result"/>
-<xsl:variable name="siteurl" select="/mirc/@siteurl"/>
+<xsl:param name="config"/>
+<xsl:variable name="localLibraries" select="$config/mirc/Libraries/Library[@local='yes' and @subenb='yes']"/>
 
 <xsl:template match="/mirc">
 	<html>
@@ -13,12 +14,10 @@
 			<title>Submit Service - <xsl:value-of select="$ssid"/></title>
 			<link rel="Stylesheet" type="text/css" media="all" href="/JSPopup.css"></link>
 			<link rel="Stylesheet" type="text/css" media="all" href="/submit/SubmitService.css"></link>
+			<xsl:call-template name="data"/>
 			<script language="JavaScript" type="text/javascript" src="/JSUtil.js">;</script>
 			<script language="JavaScript" type="text/javascript" src="/JSPopup.js">;</script>
 			<script language="JavaScript" type="text/javascript" src="/submit/SubmitService.js">;</script>
-			<script>
-				var ui = '<xsl:value-of select="$ui"/>';
-			</script>
 		</head>
 		<body>
 			<xsl:if test="$ui='classic'">
@@ -33,8 +32,7 @@
 				</div>
 			</xsl:if>
 
-			<h1><xsl:value-of select="Libraries/Library[@id=$ssid]/title"/> (<xsl:value-of select="$ssid"/>)</h1>
-			<h2>Submit Service</h2>
+			<h1>Submit Service</h1>
 
 			<form id="formID" action="" method="POST" accept-charset="UTF-8" enctype="multipart/form-data" >
 				<input type="hidden" name="ui" value="{$ui}"/>
@@ -46,9 +44,24 @@
 					The MIRC Protocol for Document Exchange</a>.
 				</p>
 
-				<p class="center">
-					Select a MIRCdocument zip file: <input class="file" name="file" type="file"/>
-				</p>
+				<p class="instruction">Select a MIRCdocument zip file:</p>
+				<p class="centered"><input class="file" name="file" type="file"/></p>
+
+				<xsl:if test="count($localLibraries)&gt;1">
+					<p class="instruction">Select the library in which to store the MIRCdocument:</p>
+					<p class="centered">
+						<select id="libSelect" name="libSelect">
+							<xsl:for-each select="$localLibraries">
+								<option value="{@id}">
+									<xsl:if test="@id=$ssid">
+										<xsl:attribute name="selected">true</xsl:attribute>
+									</xsl:if>
+									<xsl:value-of select="title"/>
+								</option>
+							</xsl:for-each>
+						</select>
+					</p>
+				</xsl:if>
 
 				<p class="center">
 					<input type="button" value="Submit the MIRCdocument" onclick="save();"/>
@@ -86,6 +99,20 @@
 			<xsl:with-param name="text" select="substring-after($text,'|')"/>
 		</xsl:call-template>
 	</xsl:if>
+</xsl:template>
+
+<xsl:template name="data">
+	<script>
+		var ui = '<xsl:value-of select="$ui"/>';
+		<xsl:choose>
+			<xsl:when test="$localLibraries[@id=$ssid]">
+				var ssid = '<xsl:value-of select="$ssid"/>';
+			</xsl:when>
+			<xsl:otherwise>
+				var ssid = '<xsl:value-of select="$localLibraries[position()=1]/@id"/>';
+			</xsl:otherwise>
+		</xsl:choose>
+	</script>
 </xsl:template>
 
 </xsl:stylesheet>

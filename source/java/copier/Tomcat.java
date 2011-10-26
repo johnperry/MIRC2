@@ -119,7 +119,7 @@ public class Tomcat {
 		return contentsCheck(dir, include, empty);
 	}
 
-	//See of a directory contains an array of filenames and doesn't contain another array of filenames
+	//See if a directory contains an array of filenames and doesn't contain another array of filenames
 	public static boolean contentsCheck(File dir, String[] include, String[] exclude) {
 		if (!dir.isDirectory()) return false;
 		if (include != null) {

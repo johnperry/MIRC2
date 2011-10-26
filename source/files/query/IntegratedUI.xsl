@@ -241,7 +241,7 @@
 
 <!--Advanced Query Popup -->
 <xsl:template name="AdvancedQuery">
-<div class="content" id="AdvancedQuery">
+<div class="content" style="display:none;" id="AdvancedQuery">
 	<table width="100%">
 		<tr>
 			<td align="center" valign="top" style="height:30px; width:75%;">

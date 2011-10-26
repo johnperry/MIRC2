@@ -9,7 +9,11 @@ function loaded() {
 window.onload = loaded;
 
 function save() {
+	var selectElement = document.getElementById("libSelect");
+	if (selectElement) ssid = selectElement.value;
+
 	var form = document.getElementById("formID");
+	form.action = "/submit/"+ssid;
 	form.target = "_self";
 	form.submit();
 }

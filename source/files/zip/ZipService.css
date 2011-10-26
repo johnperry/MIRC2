@@ -104,3 +104,6 @@ input.input-length {
 	width:100%
 }
 
+select#libSelect {
+	width:50%;
+}

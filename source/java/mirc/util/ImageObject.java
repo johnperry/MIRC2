@@ -5,7 +5,7 @@
 *  RSNA Public License (http://mirc.rsna.org/rsnapubliclicense)
 *----------------------------------------------------------------*/
 
-package org.rsna.ctp.objects;
+package mirc.util;
 
 import java.awt.*;
 import java.awt.geom.*;
@@ -295,8 +295,10 @@ public class ImageObject {
 			int height = bufferedImage.getHeight();
 			if (minSize > maxSize) minSize = maxSize;
 
+			int pixelSize = getPixelSize();
+
 			//See if we need to do anything at all
-			if ((getPixelSize() == 24) && (minSize <= width) && (width <= maxSize)) return bufferedImage;
+			if ((pixelSize == 24) && (minSize <= width) && (width <= maxSize)) return bufferedImage;
 
 			// Set the scale.
 			double scale;
@@ -311,7 +313,6 @@ public class ImageObject {
 			// Set up the transform
 			AffineTransform at = AffineTransform.getScaleInstance(scale,scale);
 			AffineTransformOp atop;
-			int pixelSize = bufferedImage.getColorModel().getPixelSize();
 			if ((pixelSize == 8) || (width > maxCubic) || (height > maxCubic) )
 				atop = new AffineTransformOp(at,AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
 			else

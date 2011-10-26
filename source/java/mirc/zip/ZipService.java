@@ -92,7 +92,7 @@ public class ZipService extends Servlet {
 				if (!ui.equals("integrated")) ui = "classic";
 
 				//Generate the submission page.
-				String[] params = {
+				Object[] params = {
 					"ui",			ui,
 					"ssid",			ssid,
 					"name",			prefs.getAttribute("name"),
@@ -105,7 +105,8 @@ public class ZipService extends Servlet {
 					"textext",		".txt",
 					"skipext",		".dba",
 					"skipprefix",	"__",
-					"result",		""
+					"result",		"",
+					"config",		mc.getXML()
 				};
 				Document xsl = getDocument("ZipService.xsl");
 				res.write( XmlUtil.getTransformedText( mc.getXML(), xsl, params ) );
@@ -262,7 +263,8 @@ public class ZipService extends Servlet {
 				"textext",		textext,
 				"skipext",		skipext,
 				"skipprefix",	skipprefix,
-				"result",		result
+				"result",		result,
+				"config",		mc.getXML()
 			};
 			Document xsl = getDocument("ZipService.xsl");
 			res.write( XmlUtil.getTransformedText( mc.getXML(), xsl, params ) );

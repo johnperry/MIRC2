@@ -130,7 +130,8 @@ public class BasicAuthorService extends Servlet {
 					"libraryTitle",	title,
 					"prefs",		prefs,
 					"templates",	getTemplates(bauth),
-					"textext",		".txt"
+					"textext",		".txt",
+					"config",		mc.getXML()
 				};
 				Document xsl = XmlUtil.getDocument( FileUtil.getStream( "/bauth/BasicAuthorService.xsl" ) );
 				res.write( XmlUtil.getTransformedText( templateXML, xsl, params ) );

@@ -66,7 +66,12 @@ function save() {
 			if (t != "") sf.disabled = false;
 		}
 	}
+
+	var selectElement = document.getElementById("libSelect");
+	if (selectElement) ssid = selectElement.value;
+
 	var form = document.getElementById("formID");
+	form.action = "/bauth/"+ssid;
 	form.target = "_self";
 	form.submit();
 }

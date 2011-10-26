@@ -145,12 +145,13 @@ public class AuthorService extends Servlet {
 					String ui = req.getParameter("ui", "");
 					if (!ui.equals("integrated")) ui = "classic";
 
-					//Generate the submission page.
+					//Generate the template selection page.
 					Object[] params = {
 						"ui",			ui,
 						"ssid",			ssid,
 						"libraryTitle",	title,
-						"templates",	getTemplates( new File(root, "aauth") )
+						"templates",	getTemplates( new File(root, "aauth") ),
+						"config",		mc.getXML()
 					};
 					Document xsl = XmlUtil.getDocument( FileUtil.getStream( "/aauth/AuthorService.xsl" ) );
 					res.write( XmlUtil.getTransformedText( prefs, xsl, params ) );

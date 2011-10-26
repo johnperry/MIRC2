@@ -51,7 +51,15 @@
 			<script src="/JSTree.js">;</script>
 			<script src="/JSSplitPane.js">;</script>
 			<script src="/storage/MIRCdocument.js">;</script>
-			<title>MIRC document</title>
+			<xsl:variable name="title" select="normalize-space(title)"/>
+			<xsl:choose>
+				<xsl:when test="$title">
+					<title><xsl:value-of select="$title"/></title>
+				</xsl:when>
+				<xsl:otherwise>
+					<title>Case Display</title>
+				</xsl:otherwise>
+			</xsl:choose>
 		</head>
 		<xsl:choose>
 			<xsl:when test="$display='tab'">

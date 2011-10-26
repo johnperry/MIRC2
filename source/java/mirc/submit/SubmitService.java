@@ -104,7 +104,8 @@ public class SubmitService extends Servlet {
 		Object[] params = new Object[] {
 							"ui", ui,
 							"ssid", ssid,
-							"result", result
+							"result", result,
+							"config", MircConfig.getInstance().getXML()
 						};
 		String page = XmlUtil.getTransformedText( xml, xsl, params );
 		return page;

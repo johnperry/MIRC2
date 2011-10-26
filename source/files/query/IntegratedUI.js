@@ -50,9 +50,9 @@ function loaded() {
 	setModifierValues();
 	loadConferences();
 	if (user.isLoggedIn) loadFileCabinets();
-	queryAll();
 	showSessionPopup();
 	loadAdvancedQueryPopup();
+	queryAllNew();
 }
 window.onload = loaded;
 
@@ -104,7 +104,6 @@ function showNode(node, type) {
 //************************************************
 //Advanced Query Popup
 //************************************************
-var pageSize = "25";
 var sortOrder = "lmdate";
 var displayFormat = "";
 var backgroundColor = "";
@@ -123,6 +122,7 @@ function loadAdvancedQueryPopup() {
 function showAdvancedQueryPopup() {
 	var aqPopupID = "AdvancedQueryPopup";
 	var div = document.getElementById("AdvancedQuery");
+	div.style.display = "block";
 	var title = "Advanced Search";
 	var closebox = "/icons/closebox.gif";
 	showDialog(aqPopupID, 800, 335, title, closebox, null, div, null, null);
@@ -154,7 +154,7 @@ function deselectTab(tab) {
 }
 
 function setModifierValues() {
-	pageSize = getSelectedOption("maxresults");
+	maxResults = parseInt(getSelectedOption("maxresults"));
 	sortOrder = getSelectedOption("orderby");
 	displayFormat = getSelectedOption("display");
 	backgroundColor = getSelectedOption("bgcolor");
@@ -179,7 +179,7 @@ function doAdvancedQuery() {
 	deselectAll();
 	var mods = getBaseQuery();
 	mods +=	"&firstresult=" + firstResult;
-	mods += "&maxresults=" + pageSize;
+	mods += "&maxresults=" + maxResults;
 	mods += "&orderby=" + sortOrder;
 	if (displayFormat != "") mods += "&display=" + displayFormat;
 	if (backgroundColor != "") mods += "&bgcolor=" + backgroundColor;
@@ -241,7 +241,7 @@ function clearModifiers() {
 function getModifiers() {
 	var mods = "";
 	mods +=	"&firstresult=" + firstResult;
-	mods += "&maxresults=" + pageSize;
+	mods += "&maxresults=" + maxResults;
 	mods += "&orderby=" + sortOrder;
 	if (displayFormat != "") mods += "&display=" + displayFormat;
 	if (backgroundColor != "") mods += "&bgcolor=" + backgroundColor;
@@ -383,7 +383,7 @@ function approvalQueueNew() {
 function approvalQueue() {
 	var query = getBaseQuery();
 	query += "&firstresult=" + firstResult;
-	query += "&maxresults=" + pageSize;
+	query += "&maxresults=" + maxResults;
 	query += "&orderby=" + sortOrder;
 	query += "&server=" + getLocalServerIDs();
 
@@ -441,7 +441,7 @@ function doQuery(query) {
 //************************************************
 //Note: this table is used for both query results and conferences
 var scrollableTable = null;
-var blanks = "\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0";
+var blanks = "\u00A0\u00A0";
 
 function processQueryResults(req) {
 	if (queryIsActive && req.success()) {
@@ -460,6 +460,7 @@ function processQueryResults(req) {
 					appendDocument(scrollableTable.tbody, md);
 				}
 				selectAll();
+				scrollableTable.rationalize();
 				resizeScrollableTable();
 				scrollableTable.bodyTable.parentNode.onresize = resizeScrollableTable;
 			}
@@ -517,7 +518,8 @@ function appendTDA(tr, doc, tag, href) {
 	td.appendChild(img);
 	var a = document.createElement("A");
 	a.href = href;
-	a.target = "shared";
+	if (IE || CHROME) a.target = "shared";
+	else a.target = "_blank";
 	a.className = "TitleLink";
 	var text = ""
 	var node = doc.getElementsByTagName(tag);
@@ -563,7 +565,7 @@ function appendTDLocation(tr, doc) {
 function appendTD(tr, doc, tag, className) {
 	var td = document.createElement("TD");
 	if (className) td.className = className;
-	var text = ""
+	var text = "";
 	var node = doc.getElementsByTagName(tag);
 	if (node.length) {
 		node = node[0].firstChild;
@@ -614,7 +616,7 @@ function resultsTableHeadings(tr) {
 	appendTH(tr, "Specialty");
 	appendTH(tr, "Date Modified");
 	//appendTH(tr, "Rating");
-	appendTH(tr, "Acc.");
+	appendTH(tr, "Access");
 }
 
 function appendTH(tr, text) {

@@ -24,11 +24,16 @@ function save() {
 	checkText("affiliation");
 	checkText("contact");
 
+	var selectElement = document.getElementById("libSelect");
+	if (selectElement) ssid = selectElement.value;
+
 	var form = document.getElementById("formID");
+	form.action = "/aauth/"+ssid;
 	if (ui == "integrated")
 		form.target = "_self";
 	else
 		form.target = "editor";
+
 	form.submit();
 }
 

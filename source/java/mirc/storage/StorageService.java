@@ -7,6 +7,7 @@
 
 package mirc.storage;
 
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URLEncoder;
@@ -31,6 +32,7 @@ import org.rsna.ctp.objects.DicomObject;
 
 import org.rsna.util.FileUtil;
 import org.rsna.util.HttpUtil;
+import org.rsna.util.SerializerUtil;
 import org.rsna.util.StringUtil;
 import org.rsna.util.XmlUtil;
 
@@ -127,7 +129,25 @@ public class StorageService extends Servlet {
 					res.write( dob.getElementTablePage( req.userHasRole("admin") ) );
 					res.setContentType("html");
 				}
-				catch (Exception ex) { res.setResponseCode( res.servererror ); }
+				catch (Exception ex) { res.setResponseCode( res.notfound ); }
+			}
+			else if (req.getParameter("bi") != null) {
+				//This is a request for a java.awt.image.BufferedImage
+				try {
+					int frame = StringUtil.getInt( req.getParameter("frame"), 0);
+					int max = StringUtil.getInt( req.getParameter("maxWidth"), Integer.MAX_VALUE);
+					int min = StringUtil.getInt( req.getParameter("minWidth"), 96);
+					DicomObject dob = new DicomObject(file);
+					BufferedImage img = dob.getScaledBufferedImage(frame, max, min);
+					if (img != null) {
+						byte[] bytes = SerializerUtil.serialize(img);
+						res.write(bytes);
+					}
+					//Note 1: If it isn't an image, we return zero bytes, instead of notfound.
+					//Note 2: We set a special content type to indicate this is a java object.
+					res.setHeader("Content-Type", "application/java.awt.image.BufferedImage");
+				}
+				catch (Exception ex) { res.setResponseCode( res.notfound ); }
 			}
 			else {
 				//This is a request to download the DICOM file.

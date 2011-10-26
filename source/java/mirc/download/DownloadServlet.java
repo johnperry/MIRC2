@@ -79,7 +79,7 @@ public class DownloadServlet extends Servlet {
 			res.disableCaching();
 			res.send();
 		}
-		else if (admin && (length == 2) && path.element(1).equals("upload")) {
+		else if (upload && (length == 2) && path.element(1).equals("upload")) {
 			//This is a request for the upload submission page.
 			//This is only available to users with the update privilege.
 			if (req.userHasRole("update")) {

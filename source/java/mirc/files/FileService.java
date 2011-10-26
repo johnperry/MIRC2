@@ -40,7 +40,6 @@ import org.rsna.ctp.stdstages.anonymizer.IntegerTable;
 import org.rsna.ctp.stdstages.anonymizer.LookupTable;
 
 import org.rsna.ctp.objects.DicomObject;
-import org.rsna.ctp.objects.ImageObject;
 import mirc.MircConfig;
 import mirc.util.*;
 import org.rsna.util.*;

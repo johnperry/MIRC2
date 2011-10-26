@@ -128,3 +128,7 @@ select {
 	width:100%;
 }
 
+select#libSelect {
+	width:50%;
+}
+

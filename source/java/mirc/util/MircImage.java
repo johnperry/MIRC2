@@ -360,8 +360,10 @@ public class MircImage {
 			int height = bufferedImage.getHeight();
 			if (minSize > maxSize) minSize = maxSize;
 
+			int pixelSize = getPixelSize();
+
 			//See if we need to do anything at all
-			if ((getPixelSize() == 24) && (minSize <= width) && (width <= maxSize)) return bufferedImage;
+			if ((pixelSize == 24) && (minSize <= width) && (width <= maxSize)) return bufferedImage;
 
 			// Set the scale.
 			double scale;
@@ -376,7 +378,6 @@ public class MircImage {
 			// Set up the transform
 			AffineTransform at = AffineTransform.getScaleInstance(scale,scale);
 			AffineTransformOp atop;
-			int pixelSize = bufferedImage.getColorModel().getPixelSize();
 			if ((pixelSize == 8) || (width > maxCubic) || (height > maxCubic) )
 				atop = new AffineTransformOp(at, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
 			else
@@ -422,7 +423,7 @@ public class MircImage {
 	 * @param minSize the minimum width of the created JPEG.
 	 * @param quality the quality parameter, ranging from 0 to 100;
 	 * a negative value uses the default setting supplied by by ImageIO.
-	 * @return the dimensions of the JPEG that was create, or null if an error occurred.
+	 * @return the dimensions of the JPEG that was created, or null if an error occurred.
 	 */
 	public Dimension saveAsJPEG(File file, int frame, int maxSize, int minSize, int quality) {
 		FileImageOutputStream out = null;

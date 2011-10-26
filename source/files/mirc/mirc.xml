@@ -30,7 +30,7 @@
             tceenb="no"
             timeout="0"
             zipenb="yes">
-			<title>My MIRC Site</title>
+			<title>My MIRC Cases</title>
 		</Library>
 
 		<Library address="http://mirc.childrensmemorial.org/general/service" enabled="yes" deflib="yes">
@@ -97,8 +97,8 @@
 			<title>National MIRC, Singapore</title>
 		</Library>
 
-        <Library address="http://mirc.rsna.org/mircstorage/service" enabled="yes">
-            <title>The RSNA MIRC Site</title>
+        <Library address="http://mirc.rsna.org/storage/ss1" enabled="yes">
+            <title>The RSNA MIRC Library</title>
         </Library>
 
 		<Library address="http://147.140.2.19:8080/storage/ss2" enabled="yes" deflib="yes">

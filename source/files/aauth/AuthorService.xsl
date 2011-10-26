@@ -6,11 +6,13 @@
 <xsl:param name="ssid"/>
 <xsl:param name="libraryTitle"/>
 <xsl:param name="templates"/>
+<xsl:param name="config"/>
+<xsl:variable name="localLibraries" select="$config/mirc/Libraries/Library[@local='yes' and @authenb='yes']"/>
 
 <xsl:template match="/User">
 	<html>
 		<head>
-			<title>Author Service - <xsl:value-of select="$ssid"/></title>
+			<title>Author Service</title>
 			<link rel="Stylesheet" type="text/css" media="all" href="/JSPopup.css"></link>
 			<link rel="Stylesheet" type="text/css" media="all" href="/aauth/AuthorService.css"></link>
 			<script language="JavaScript" type="text/javascript" src="/JSUtil.js">;</script>
@@ -18,6 +20,14 @@
 			<script language="JavaScript" type="text/javascript" src="/aauth/AuthorService.js">;</script>
 			<script>
 				var ui = '<xsl:value-of select="$ui"/>';
+				<xsl:choose>
+					<xsl:when test="$localLibraries[@id=$ssid]">
+						var ssid = '<xsl:value-of select="$ssid"/>';
+					</xsl:when>
+					<xsl:otherwise>
+						var ssid = '<xsl:value-of select="$localLibraries[position()=1]/@id"/>';
+					</xsl:otherwise>
+				</xsl:choose>
 				var tokens = new Array();
 				<xsl:for-each select="$templates/templates/template">
 					tokens[tokens.length] = '<xsl:value-of select="token"/>';
@@ -37,13 +47,12 @@
 				</div>
 			</xsl:if>
 
-			<h1><xsl:value-of select="$libraryTitle"/> (<xsl:value-of select="$ssid"/>)</h1>
-			<h2>Author Service</h2>
+			<h1>Author Service</h1>
 
 			<form id="formID" action="" method="POST" accept-charset="UTF-8" >
 
 			<p class="note">
-				This page may be used by authors to create a MIRCdocument and submit it to the library.
+				This page may be used by authors to create a MIRCdocument and submit it to a library.
 			</p>
 
 			<p class="instruction">Insert your name, affiliation, and contact information
@@ -77,7 +86,7 @@
 				<tr>
 					<td class="text-label-top">Template:</td>
 					<td class="text-field">
-						<select class="input-length" name="templatename" id="templatename" onchange="templateChanged();">
+						<select name="templatename" id="templatename" onchange="templateChanged();">
 							<xsl:for-each select="$templates/templates/template">
 								<option value="{file}">
 									<xsl:if test="position()=1">
@@ -93,6 +102,22 @@
 				</tr>
 			</table>
 			</p>
+
+			<xsl:if test="count($localLibraries)&gt;1">
+				<p class="instruction">Select the library in which to store the MIRCdocument:</p>
+				<p class="centered">
+					<select id="libSelect" name="libSelect">
+						<xsl:for-each select="$localLibraries">
+							<option value="{@id}">
+								<xsl:if test="@id=$ssid">
+									<xsl:attribute name="selected">true</xsl:attribute>
+								</xsl:if>
+								<xsl:value-of select="title"/>
+							</option>
+						</xsl:for-each>
+					</select>
+				</p>
+			</xsl:if>
 
 			<p class="instruction">Click this button to open the selected template in the editor:
 				<input type="button" value="Continue" onclick="save();"/>
