@@ -1,6 +1,6 @@
 <project name="MIRC" default="all" basedir=".">
 
-	<property name="version" value="Z11"/>
+	<property name="version" value="Z12"/>
 
 	<property name="build" value="${basedir}/build"/>
 	<property name="source" value="${basedir}/source"/>
@@ -66,7 +66,7 @@
 			<fileset dir="${build}" includes="**" excludes="copier**"/>
 		</jar>
 
-		<jar jarfile="${build}/CTP/MIRC-copier.jar">
+		<jar jarfile="${build}/CTP/Copier.jar">
 			<manifest>
 				<attribute name="Main-Class" value="copier.MircSiteCopier"/>
 				<attribute name="Implementation-Version" value="${today} @ ${now}"/>
@@ -96,7 +96,7 @@
 		<copy overwrite="true" todir="${build}/config">
 			<fileset dir="${source}/config" includes="*.*"/>
 		</copy>
-		<jar destfile="${products}/MIRC-installer.jar">
+		<jar destfile="${products}/TFS-installer.jar">
 			<manifest>
 				<attribute name="Main-Class" value="org.rsna.installer.Installer"/>
 	            <attribute name="Date" value="${today} at ${now}"/>

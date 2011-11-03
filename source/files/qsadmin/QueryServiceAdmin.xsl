@@ -215,8 +215,8 @@
 					<tr>
 						<th class="checkbox">Enable</th>
 						<th class="checkbox">Default</th>
-						<th>Storage Service Name</th>
-						<th>Storage Service URL</th>
+						<th>Library Name</th>
+						<th>Library URL</th>
 					</tr>
 					<xsl:for-each select="Libraries/Library">
 						<xsl:variable name="n"><xsl:number/></xsl:variable>

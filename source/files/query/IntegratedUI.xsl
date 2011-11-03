@@ -194,7 +194,7 @@
 	<div class="footerRight">
 		&#160;&#160;<a href="/query?UI=classic">Classic UI</a>&#160;&#160;
 		|&#160;&#160;<a href="javascript:showHelpPopup();">Help</a>&#160;&#160;
-		|&#160;&#160;<a href="javascript:showAboutPopup();">About MIRC</a>&#160;&#160;
+		|&#160;&#160;<a href="javascript:showAboutPopup();">About TFS</a>&#160;&#160;
 		|&#160;&#160;<a href="http://mircwiki.rsna.org/index.php?title=MIRC_Articles" target="wiki">RSNA MIRC Wiki</a>&#160;&#160;
 	</div>
 	<img src="/query/RSNA.jpg"/>

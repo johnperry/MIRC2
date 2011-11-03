@@ -29,6 +29,7 @@
             subenb="yes"
             tceenb="no"
             timeout="0"
+            UI="integrated"
             zipenb="yes">
 			<title>My MIRC Cases</title>
 		</Library>

@@ -109,12 +109,12 @@ public class Tomcat {
 	//An empty array of Strings.
 	static final String[] empty = new String[] {};
 
-	//See of a directory contains an array of filenames
+	//See if a directory contains an array of filenames
 	public static boolean contentsCheck(File dir) {
 		return contentsCheck(dir, names, empty);
 	}
 
-	//See of a directory contains an array of filenames
+	//See if a directory contains an array of filenames
 	public static boolean contentsCheck(File dir, String[] include) {
 		return contentsCheck(dir, include, empty);
 	}

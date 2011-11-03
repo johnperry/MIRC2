@@ -50,9 +50,9 @@ function loaded() {
 	setModifierValues();
 	loadConferences();
 	if (user.isLoggedIn) loadFileCabinets();
-	showSessionPopup();
 	loadAdvancedQueryPopup();
 	queryAllNew();
+	showSessionPopup();
 }
 window.onload = loaded;
 
@@ -1123,9 +1123,14 @@ function Library(enb, def, addr, svrname, local) {
 //Cookie functions
 //************************************************
 function setState() {
-	var cookies = getCookieObject();
-	var session = (getCookie("MIRC", cookies) != "");
-	if (session) setSelectFromCookie("serverselect", cookies);
+	if (user.isLoggedIn) {
+		var cookies = getCookieObject();
+		setSelectFromCookie("serverselect", cookies);
+		setSelectFromCookie("maxresults", cookies);
+		setSelectFromCookie("display", cookies);
+		setCheckboxFromCookie("icons", cookies);
+		setCheckboxFromCookie("unknown", cookies);
+	}
 	else {
 		var svrsel = document.getElementById("serverselect");
 		var opts = svrsel.getElementsByTagName("OPTION");
@@ -1133,19 +1138,17 @@ function setState() {
 			if (allServers[i].deflib) opts[i].selected = true;
 		}
 	}
-	setSelectFromCookie("maxresults", cookies);
-	setSelectFromCookie("display", cookies);
-	setCheckboxFromCookie("icons", cookies);
-	setCheckboxFromCookie("unknown", cookies);
 }
 
 function setCookies() {
-	setSelectCookie("serverselect");
-	setSelectCookie("maxresults");
-	setSelectCookie("display");
-	setSelectCookie("bgcolor");
-	setCheckboxCookie("icons");
-	setCheckboxCookie("unknown");
+	if (user.isLoggedIn) {
+		setSelectCookie("serverselect");
+		setSelectCookie("maxresults");
+		setSelectCookie("display");
+		setSelectCookie("bgcolor");
+		setCheckboxCookie("icons");
+		setCheckboxCookie("unknown");
+	}
 }
 
 function setTextCookie(id) {

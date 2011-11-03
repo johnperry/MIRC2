@@ -49,10 +49,10 @@ function doResize() {
 function load() {
 	var pad = "\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0";
 	if (suppressHome != "yes") {
-		setPageHeader(pad+"MIRC Conference Center", username, homeURL, closeHandler);
+		setPageHeader(pad+"Conference Center", username, homeURL, closeHandler);
 	}
 	else {
-		setPageHeader(pad+"MIRC Conference Center", username);
+		setPageHeader(pad+"Conference Center", username);
 	}
 	menuBar.display();
 	split = new HorizontalSplit("left", "center", "right", true);

@@ -48,7 +48,7 @@ function serverSelectOK() {
 function appendServers(sel) {
 	for (var i=0; i<allServers.length; i++) {
 		var opt = document.createElement("OPTION");
-		if (allServers[i].isLocal) opt.selected = true;
+		//if (allServers[i].isLocal) opt.selected = true;
 		opt.value = i;
 		opt.appendChild(document.createTextNode(allServers[i].name));
 		sel.appendChild(opt);
@@ -106,7 +106,7 @@ function showAboutPopup() {
 	var div = document.createElement("DIV");
 	div.className = "content";
 	var h1 = document.createElement("H1");
-	h1.appendChild(document.createTextNode("RSNA MIRC"));
+	h1.appendChild(document.createTextNode("RSNA Teaching File System"));
 	h1.style.fontSize = "24pt";
 	div.appendChild(h1);
 	div.appendChild(document.createTextNode("\u00A0"));
@@ -128,7 +128,7 @@ function showAboutPopup() {
 	div.appendChild(p);
 
 	var closebox = "/icons/closebox.gif";
-	showDialog(id, w, h, "About MIRC", closebox, null, div, null, null);
+	showDialog(id, w, h, "About RSNA TFS", closebox, null, div, null, null);
 }
 
 function showHelpPopup() {
@@ -146,7 +146,7 @@ function showHelpPopup() {
 	iframe.src = "/query/help.html";
 	div.appendChild(iframe);
 	var closebox = "/icons/closebox.gif";
-	showDialog(id, w, h, "MIRC Help", closebox, null, div, null, null);
+	showDialog(id, w, h, "RSNA TFS Help", closebox, null, div, null, null);
 }
 
 function showDisclaimerPopup() {

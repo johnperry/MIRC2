@@ -82,8 +82,11 @@ public class PreferencesServlet extends Servlet {
 
 			//This is a request for the user's preferences page.
 			//Get the UI to determine whether to include the home icon.
-			String pageui = req.getParameter("pageui", "classic");
-			String[] params = new String[] { "pageui", pageui };
+			String pageUI = req.getParameter("pageui", "classic");
+
+			//Get the default UI for the site
+			String defUI = mc.getUI();
+			String[] params = new String[] { "pageUI", pageUI, "defUI", defUI };
 
 			pref = prefs.get(username, false);
 			Document xsl = XmlUtil.getDocument( FileUtil.getStream( "/prefs/PreferencesServlet.xsl" ) );

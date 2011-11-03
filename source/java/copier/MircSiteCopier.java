@@ -39,21 +39,12 @@ public class MircSiteCopier extends JFrame {
 	MainPanel mainPanel;
 	ColorPane cp;
 	Color bgColor = new Color(0xc6d8f9);
+	JCheckBox indexDocuments;
 
-	static int interval = 200;
-	static boolean forceCopy = true;
+	static final int interval = 200;
+	static final boolean forceCopy = true;
 
 	public static void main(String args[]) {
-		for (String arg : args) {
-			if (arg.equals("suppress")) forceCopy = false;
-			else if (arg.matches("\\d+")) {
-				try { interval = Integer.parseInt(arg); }
-				catch (Exception ex) { interval = 200; }
-			}
-		}
-		System.out.println("interval  = "+interval);
-		System.out.println("forceCopy = "+forceCopy);
-
 		new MircSiteCopier();
 	}
 
@@ -78,18 +69,21 @@ public class MircSiteCopier extends JFrame {
 
 		JSplitPane splitPane = new JSplitPane( JSplitPane.VERTICAL_SPLIT);
 		splitPane.setContinuousLayout(true);
+		splitPane.setResizeWeight(0.0D);
 		splitPane.setTopComponent(mainPanel);
+
 		JScrollPane jsp = new JScrollPane();
 		jsp.setViewportView(cp);
+		jsp.getViewport().setBackground(Color.white);
 		splitPane.setBottomComponent(jsp);
 
 		this.getContentPane().add( splitPane, BorderLayout.CENTER );
+		this.getContentPane().setBackground(bgColor);
 		this.addWindowListener(new WindowCloser(this));
 
 		pack();
 		positionFrame();
 		setVisible(true);
-		splitPane.setDividerLocation(0.4f);
 	}
 
 	private void positionFrame() {
@@ -118,31 +112,54 @@ public class MircSiteCopier extends JFrame {
 
 		public MainPanel() {
 			super();
-			setLayout(new BorderLayout());
 			setBackground(bgColor);
 
-			add( new TitlePanel(), BorderLayout.NORTH );
+			Box box = new Box(BoxLayout.Y_AXIS);
+			box.setBackground(bgColor);
+			this.add(box);
 
-			JPanel centerPanel = new CenterPanel();
+			box.add( Box.createVerticalStrut(15) );
+
+			JLabel title = new JLabel("MIRC Tomcat to CTP Copier");
+			title.setFont( new Font( "SansSerif", Font.BOLD, 24 ) );
+			title.setForeground( Color.BLUE );
+			Box titleBox = new Box(BoxLayout.X_AXIS);
+			titleBox.add(title);
+			box.add( titleBox );
+
+			box.add( Box.createVerticalStrut(15) );
+
 			browse = new JButton("Browse...");
 			browse.addActionListener(this);
-
-			centerPanel.add( new JLabel("Tomcat location:") );
-			centerPanel.add( Box.createHorizontalStrut(5) );
 			tomcat = new JLabel("Search:");
 			tomcat.setFont( new Font( "Monospaced", Font.BOLD, 14 ) );
+			Box tcBox = new Box(BoxLayout.X_AXIS);
+			tcBox.add( new JLabel("Tomcat location:") );
+			tcBox.add( Box.createHorizontalStrut(5) );
+			tcBox.add( tomcat );
+			tcBox.add( Box.createHorizontalStrut(10) );
+			tcBox.add( browse );
+			box.add( tcBox );
 
-			centerPanel.add( tomcat );
-			centerPanel.add( Box.createHorizontalStrut(10) );
-			centerPanel.add( browse );
-			add( centerPanel, BorderLayout.CENTER );
+			box.add( Box.createVerticalStrut(15) );
 
-			JPanel footer = new FooterPanel();
+			indexDocuments = new JCheckBox("Index documents");
+			indexDocuments.setSelected(true);
+			indexDocuments.setOpaque(false);
+			Box indexBox = new Box(BoxLayout.X_AXIS);
+			indexBox.add( indexDocuments );
+			box.add( indexBox );
+
+			box.add( Box.createVerticalStrut(15) );
+
+			Box copyBox = new Box(BoxLayout.X_AXIS);
 			start = new JButton("Copy Tomcat MIRC Site to CTP");
 			start.setEnabled(false);
 			start.addActionListener(this);
-			footer.add(start);
-			add( footer, BorderLayout.SOUTH );
+			copyBox.add(start);
+			box.add( copyBox );
+
+			box.add( Box.createVerticalStrut(15) );
 
 			ctpDir = new File(System.getProperty("user.dir"));
 			tomcatDir = Tomcat.findTomcat();
@@ -170,34 +187,6 @@ public class MircSiteCopier extends JFrame {
 				Copier copier = new Copier(tomcatDir, ctpDir, cp);
 				copier.start();
 			}
-		}
-	}
-
-	class TitlePanel extends JPanel {
-		public TitlePanel() {
-			super();
-			setBackground(bgColor);
-			JLabel title = new JLabel("MIRC Tomcat to CTP Copier");
-			title.setFont( new Font( "SansSerif", Font.BOLD, 24 ) );
-			title.setForeground( Color.BLUE );
-			add(title);
-			setBorder(BorderFactory.createEmptyBorder(20,0,20,0));
-		}
-	}
-
-	class CenterPanel extends JPanel {
-		public CenterPanel() {
-			super();
-			setBackground(bgColor);
-			setBorder(BorderFactory.createEmptyBorder(5,0,10,0));
-		}
-	}
-
-	class FooterPanel extends JPanel {
-		public FooterPanel() {
-			super();
-			setBackground(bgColor);
-			setBorder(BorderFactory.createEmptyBorder(10,0,25,0));
 		}
 	}
 
@@ -477,8 +466,9 @@ public class MircSiteCopier extends JFrame {
 
 		private void copyStorageService(String ssid, File tcDocs, File ctpDocs) {
 			cp.println(Color.black, "   copying "+tcDocs.getParentFile().getName()+" to "+ctpDocs.getParentFile().getName());
-			copyDir(tcDocs, ctpDocs);
-			if (interval > 0) {
+
+			copyDir(tcDocs, ctpDocs, 0);
+			if (indexDocuments.isSelected()) {
 				cp.print("   indexing "+ssid+"...");
 				Index index = Index.getInstance(ssid);
 				if (index != null) {
@@ -495,7 +485,7 @@ public class MircSiteCopier extends JFrame {
 			else cp.println("   skipping the index step for "+ssid);
 		}
 
-		private void copyDir(File in, File out) {
+		private void copyDir(File in, File out, int count) {
 			if (forceCopy || !out.exists()) {
 				out.mkdirs();
 				File[] files = in.listFiles();
@@ -508,10 +498,11 @@ public class MircSiteCopier extends JFrame {
 								Document xml = XmlUtil.getDocument(inFile);
 								Element root = xml.getDocumentElement();
 								if (root.getNodeName().equals("MIRCdocument")) {
+									count++;
 									Element title = XmlUtil.getFirstNamedChild(root, "title");
 									if (title != null) {
 										String s = title.getTextContent().replaceAll("\\s+"," ").trim();
-										cp.println("      "+s);
+										cp.println("      " + count + ": " + s);
 									}
 								}
 							}
@@ -521,7 +512,7 @@ public class MircSiteCopier extends JFrame {
 						outFile.setLastModified(lmdate);
 					}
 					else {
-						copyDir(inFile, outFile);
+						copyDir(inFile, outFile, count);
 					}
 				}
 			}
@@ -537,6 +528,13 @@ public class MircSiteCopier extends JFrame {
 				Element titleElement = XmlUtil.getFirstNamedChild(localLibrary, "title");
 				if (titleElement.getTextContent().trim().equals(title)) return ssid;
 			}
+
+			//If ss1 is empty, then use it
+			File mircsite = new File(ctp, "mircsite");
+			File storage = new File(mircsite, "storage");
+			File ss1 = new File(storage, "ss1");
+			File docs = new File(ss1, "docs");
+			if (!docs.exists() || (docs.listFiles().length == 0)) return "ss1";
 
 			//No luck, create a new library
 			String ssid = mircConfig.getNewLocalLibraryID();

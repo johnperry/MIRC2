@@ -41,7 +41,7 @@
 	<div id="menuBar">x</div>
 
 	<div class="main">
-		<div id="pagetitle" class="pagetitle">Search MIRC</div>
+		<div id="pagetitle" class="pagetitle">Search Teaching Files</div>
 		<div class="selectlibraries">
 			<input type="button"
 				   onclick="showServersPopup();"

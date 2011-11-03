@@ -52,10 +52,14 @@ public class MircServlet extends Servlet {
 		Path path = req.getParsedPath();
 		int length = path.length();
 
-		if (length == 1) { res.redirect("/query"); return; }
+		String function = path.element(1);
+
+		if ((length == 1) || ((length == 2) && function.equals("query"))) {
+			res.redirect("/query");
+			return;
+		}
 
 		MircConfig mc = MircConfig.getInstance();
-		String function = path.element(1);
 
 		if (function.equals("roles")) {
 			res.disableCaching();

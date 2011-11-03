@@ -54,7 +54,7 @@ public class Preferences {
 	 * when MIRC starts.
 	 * @param dir the directory in which the database is located.
 	 */
-	public static Preferences load(File dir) {
+	public static synchronized Preferences load(File dir) {
 		preferences = new Preferences(dir);
 		return preferences;
 	}
@@ -63,7 +63,7 @@ public class Preferences {
 	 * Get the singleton instance of the preferences database.
 	 * This method is intended for normal classes.
 	 */
-	public static Preferences getInstance() {
+	public static synchronized Preferences getInstance() {
 		return preferences;
 	}
 

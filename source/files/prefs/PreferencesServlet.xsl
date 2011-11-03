@@ -2,7 +2,8 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
 <xsl:output method="xml" encoding="utf-8" omit-xml-declaration="yes" />
 
-<xsl:param name="pageui"/>
+<xsl:param name="pageUI"/>
+<xsl:param name="defUI"/>
 
 <xsl:template match="/User">
 	<html>
@@ -14,11 +15,11 @@
 			<script language="JavaScript" type="text/javascript" src="/JSPopup.js">;</script>
 			<script language="JavaScript" type="text/javascript" src="/prefs/PreferencesServlet.js">;</script>
 			<script>
-				var ui = '<xsl:value-of select="$pageui"/>';
+				var ui = '<xsl:value-of select="$pageUI"/>';
 			</script>
 		</head>
 		<body>
-			<xsl:if test="$pageui='classic'">
+			<xsl:if test="$pageUI='classic'">
 				<div class="closebox">
 					<img src="/icons/home.png"
 						 onclick="window.open('/query','_self');"
@@ -33,7 +34,7 @@
 			<h1>Preferences for <xsl:value-of select="@username"/></h1>
 
 			<form id="formID" method="post" action="" accept-charset="UTF-8">
-			<input type="hidden" name="pageui" value="{$pageui}"/>
+			<input type="hidden" name="pageui" value="{$pageUI}"/>
 
 			<p class="note">
 				If you wish to change the parameters of your account, make the
@@ -46,15 +47,17 @@
 					<tr>
 						<td>Query Service user interface</td>
 						<td>
+							<xsl:variable name="classicUI"
+								select="(@UI='classic') or ((@UI!='integrated')) and ($defUI='classic'))"/>
 							<input type="radio" name="UI" value="classic">
-								<xsl:if test="not(@UI='integrated')">
+								<xsl:if test="$classicUI">
 									<xsl:attribute name="checked"/>
 								</xsl:if>
 								Classic
 							</input>
 							<br/>
 							<input type="radio" name="UI" value="integrated">
-								<xsl:if test="@UI='integrated'">
+								<xsl:if test="not($classicUI)">
 									<xsl:attribute name="checked"/>
 								</xsl:if>
 								Integrated
