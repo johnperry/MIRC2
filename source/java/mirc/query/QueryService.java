@@ -89,13 +89,21 @@ public class QueryService extends Servlet {
 		//information.
 		if ((length == 1) && req.getQueryString().trim().equals("")) {
 			String host = req.getHeader("host");
+			logger.debug("host = "+host);
 			if (host != null) {
 				String siteurl = mc.getLocalAddress();
-				String sitehost = siteurl.substring(7);
-				sitehost = sitehost.substring(0, sitehost.indexOf(":"));
-				if (!host.startsWith(sitehost)) {
-					res.redirect(siteurl + "/" + context);
-					return;
+				logger.debug("siteurl = "+siteurl);
+				if (siteurl.length() > 7) {
+					String sitehost = siteurl.substring(7);
+					int colon = sitehost.indexOf(":");
+					if (colon >= 0) {
+						sitehost = sitehost.substring(0, colon);
+						logger.debug("sitehost = "+sitehost);
+						if (!host.startsWith(sitehost)) {
+							res.redirect(siteurl + "/" + context);
+							return;
+						}
+					}
 				}
 			}
 		}

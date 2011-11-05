@@ -496,7 +496,6 @@ function appendDocument(tbody, doc) {
 	appendTDAuthor(tr, doc);
 	appendTD(tr, doc, "category")
 	appendTD(tr, doc, "lmdate", "center")
-	//appendTDText(tr, " ");
 	appendTD(tr, doc, "access");
 	tbody.appendChild(tr);
 }
@@ -521,7 +520,7 @@ function appendTDA(tr, doc, tag, href) {
 	if (IE || CHROME) a.target = "shared";
 	else a.target = "_blank";
 	a.className = "TitleLink";
-	var text = ""
+	var text = "";
 	var node = doc.getElementsByTagName(tag);
 	if (node.length) {
 		node = node[0].firstChild;
@@ -532,6 +531,7 @@ function appendTDA(tr, doc, tag, href) {
 	tr.appendChild(td);
 }
 function appendTDText(tr, text) {
+	if (trim(text) == "") text = blanks;
 	var td = document.createElement("TD");
 	td.appendChild( document.createTextNode(text) );
 	tr.appendChild(td);
@@ -540,6 +540,7 @@ function appendTDAuthor(tr, doc) {
 	var td = document.createElement("TD");
 	var text = ""
 	var authors = doc.getElementsByTagName("author");
+	var empty = true;
 	for (var i=0; i<authors.length; i++) {
 		var names = authors[i].getElementsByTagName("name");
 		for (var k=0; k<names.length; k++) {
@@ -548,16 +549,18 @@ function appendTDAuthor(tr, doc) {
 				var text = name.nodeValue;
 				td.appendChild( document.createTextNode(text) );
 				td.appendChild( document.createElement("BR") );
+				empty = false;
 			}
 		}
 	}
+	if (empty) td.appendChild( document.createTextNode(blanks) );
 	tr.appendChild(td);
 }
 function appendTDLocation(tr, doc) {
 	var td = document.createElement("TD");
 	var parent = doc.parentNode;
 	var server = parent.getElementsByTagName("server");
-	var text = ""
+	var text = blanks;
 	if (server.length != 0) text = server[0].firstChild.nodeValue;
 	td.appendChild( document.createTextNode( text ) );
 	tr.appendChild(td);
@@ -577,8 +580,6 @@ function appendTD(tr, doc, tag, className) {
 }
 
 function setScrollableTable(pane, headings) {
-	//pane.appendChild( document.createElement("BR") );
-
 	pane.style.overflow = "hidden";
 
 	var headerTable = document.createElement("TABLE");

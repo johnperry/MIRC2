@@ -20,6 +20,10 @@ public class Entry implements Serializable {
 	public String build;
 	public String ip;
 	public String email;
+	public String pname;
+	public String iname;
+	public String interest;
+	public String sitetype;
 
 	/**
 	 * Construct a download database entry.
@@ -28,11 +32,23 @@ public class Entry implements Serializable {
 	 * @param ip the IP address of the client downloading the file
 	 * @param email the email address of the client
 	 */
-	public Entry(String name, String build, String ip, String email) {
+	public Entry(String name,
+				 String build,
+				 String ip,
+				 String email,
+				 String pname,
+				 String iname,
+				 String interest,
+				 String sitetype
+				 ) {
 		this.name = name;
 		this.build = build;
 		this.ip = ip;
 		this.email = email;
+		this.pname = pname;
+		this.iname = iname;
+		this.interest = interest;
+		this.sitetype = sitetype;
 	}
 }
 

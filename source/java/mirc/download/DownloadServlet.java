@@ -66,7 +66,7 @@ public class DownloadServlet extends Servlet {
 
 		if (length == 1) {
 			//This is a request for the download page
-			res.write( getPage(upload, ui) );
+			res.write( getPage(admin, upload, ui) );
 			res.setContentType("html");
 			res.disableCaching();
 			res.send();
@@ -115,8 +115,12 @@ public class DownloadServlet extends Servlet {
 				}
 
 				String email = req.getParameter("email", "").trim();
+				String pname = req.getParameter("pname", "").trim();
+				String iname = req.getParameter("iname", "").trim();
+				String interest = req.getParameter("interest", "").trim();
+				String sitetype = req.getParameter("sitetype", "").trim();
 				String ip = req.getRemoteAddress();
-				DownloadDB.getInstance().insert(file, build, ip, email);
+				DownloadDB.getInstance().insert(file, build, ip, email, pname, iname, interest, sitetype);
 
 				res.write(file);
 				long fileLMDate = file.lastModified();
@@ -172,7 +176,7 @@ public class DownloadServlet extends Servlet {
 		res.redirect("/download?ui="+ui);
 	}
 
-	private String getPage(boolean upload, String ui) {
+	private String getPage(boolean admin, boolean upload, String ui) {
 		try {
 			Document doc = XmlUtil.getDocument();
 			Element filesElement = doc.createElement("files");
@@ -207,7 +211,10 @@ public class DownloadServlet extends Servlet {
 				}
 			}
 			Document xsl = XmlUtil.getDocument( FileUtil.getStream( "/download/DownloadServlet.xsl" ) );
-			String[] params = new String[] {"upload", (upload ? "yes" : "no"), "ui", ui};
+			String[] params = new String[] {
+				"admin", (admin ? "yes" : "no"),
+				"upload", (upload ? "yes" : "no"),
+				"ui", ui};
 			return XmlUtil.getTransformedText( doc, xsl, params );
 		}
 		catch (Exception ex) { return "Unable to create the download page."; }

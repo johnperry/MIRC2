@@ -4,7 +4,7 @@ var myStuffItems = new Array (
 		new Item("My Files", showMyFiles) );
 
 var localLibrariesItems = new Array (
-		new Item("My MIRC Library", null) );
+		new Item("My Teaching Files", null) );
 
 var authorItems = new Array (
 		new Item("Local Library", null, "localLibraryItem"),

@@ -73,12 +73,24 @@ public class DownloadDB {
 	 * @param version the version of the downloaded file.
 	 * @param ip the IP address of the client.
 	 * @param email the email address of the client.
+	 * @param pname the name of the person making the request
+	 * @param iname the institution name
+	 * @param interest personal or institutional
+	 * @param sitetype public or private
 	 */
-	public synchronized void insert(File file, String version, String ip, String email) {
+	public synchronized void insert(File file,
+									String version,
+									String ip,
+									String email,
+									String pname,
+									String iname,
+									String interest,
+									String sitetype
+									) {
 		try {
 			if (downloads != null) {
 				Long time = new Long( System.currentTimeMillis() );
-				Entry entry = new Entry( file.getName(), version, ip, email );
+				Entry entry = new Entry( file.getName(), version, ip, email, pname, iname, interest, sitetype );
 				downloads.insert( time, entry, true );
 				recman.commit();
 			}
@@ -113,6 +125,11 @@ public class DownloadDB {
 				dl.setAttribute("build", entry.build);
 				dl.setAttribute("ip", entry.ip);
 				dl.setAttribute("email", entry.email);
+				dl.setAttribute("pname", entry.pname);
+				dl.setAttribute("iname", entry.iname);
+				dl.setAttribute("interest", entry.interest);
+				dl.setAttribute("sitetype", entry.sitetype);
+
 				downloadsElement.appendChild(dl);
 				counter.add(entry.name);
 			}

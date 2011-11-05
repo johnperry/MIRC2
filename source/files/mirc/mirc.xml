@@ -6,7 +6,7 @@
 	addresstype	="dynamic"
 	masthead	="masthead.jpg"
 	mastheadheight="75"
-  	sitename	="My MIRC Site"
+  	sitename	="My Teaching Files"
   	showsitename="yes"
   	showptids	="yes"
   	timeout		="15"
@@ -31,7 +31,7 @@
             timeout="0"
             UI="integrated"
             zipenb="yes">
-			<title>My MIRC Cases</title>
+			<title>My Teaching Files</title>
 		</Library>
 
 		<Library address="http://mirc.childrensmemorial.org/general/service" enabled="yes" deflib="yes">
