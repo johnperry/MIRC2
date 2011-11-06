@@ -112,17 +112,29 @@ function showAboutPopup() {
 	div.appendChild(document.createTextNode("\u00A0"));
 	var p = document.createElement("P");
 	p.appendChild(document.createTextNode("Version "+version));
-	div.appendChild(p);
-	div.appendChild(document.createTextNode("\u00A0"));
-	p = document.createElement("P");
+	p.appendChild(document.createElement("BR"));
 	p.appendChild(document.createTextNode(date));
+
+	var deltaH = 0;
+	if (user.hasRole("admin") && (version <= rsnaVersion)) {
+		p.appendChild(document.createElement("BR"));
+		p.appendChild(document.createTextNode("["));
+		var anchor = document.createElement("A");
+		anchor.setAttribute("href", "http://mirc.rsna.org/download");
+		anchor.setAttribute("target", "download");
+		anchor.appendChild(document.createTextNode("TFS version "+rsnaVersion+" is now available"));
+		p.appendChild(anchor);
+		p.appendChild(document.createTextNode("]"));
+		deltaH = 16;
+	}
+
 	div.appendChild(p);
 
 	div.appendChild(document.createTextNode("\u00A0"));
 	p = document.createElement("P");
 	var iframe = document.createElement("IFRAME");
 	iframe.style.width = w - 30;
-	iframe.style.height = h - 190;
+	iframe.style.height = h - 171 - deltaH;
 	iframe.src = "/query/credits.html";
 	p.appendChild(iframe);
 	div.appendChild(p);

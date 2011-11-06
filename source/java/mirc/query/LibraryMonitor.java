@@ -49,6 +49,9 @@ public class LibraryMonitor extends Thread {
 		logger.debug("LibraryMonitor started");
 		while (true) {
 			try {
+				//Capture the RSNA system's version.
+				checkRSNAVersion();
+
 				//Note, start with a sleep so I can stop and start
 				//the system for development testing without
 				//peppering the world with unnecessary checks.
@@ -122,13 +125,35 @@ public class LibraryMonitor extends Thread {
 			logger.debug("MIRCquery success for "+title);
 			ok = true;
 		}
-		catch (Exception ex) {
-			logger.debug("MIRCquery timeout for "+title);
-		}
+		catch (Exception ex) { logger.debug("MIRCquery timeout for "+title); }
 		finally {
 			FileUtil.close(writer);
 			FileUtil.close(reader);
 		}
 		return ok;
+	}
+
+	//Get the Version running on the RSNA site and set it in the configuration
+	//for use by the Query Service user interfaces' "About TFS" popups.
+	private void checkRSNAVersion() {
+		BufferedReader reader = null;
+		StringWriter sw = new StringWriter();
+		HttpURLConnection conn = null;
+		char[] cbuf = new char[1024];
+		int n;
+		try {
+			URL url = new URL("http://mirc.rsna.org/mirc/version");
+			conn = (HttpURLConnection)url.openConnection();
+			conn.setRequestMethod("GET");
+			conn.setReadTimeout( 10 * 1000 );
+			conn.connect();
+
+			//See if we get a response
+			reader = new BufferedReader(new InputStreamReader( conn.getInputStream(), FileUtil.utf8 ) );
+			while ((n = reader.read(cbuf,0,1024)) != -1) sw.write(cbuf,0,n);
+		}
+		catch (Exception ignore) { }
+		finally { FileUtil.close(reader); }
+		MircConfig.getInstance().setRSNAVersion(sw.toString());
 	}
 }

@@ -71,7 +71,7 @@ public class MircConfig {
 	/**
 	 * Get the MircConfig instance.
 	 */
-	public static MircConfig getInstance() {
+	public static synchronized MircConfig getInstance() {
 		return mircConfigInstance;
 	}
 
@@ -80,7 +80,7 @@ public class MircConfig {
 	 * @param mirc the mirc.xml file.
 	 * @return the new MircConfig instance
 	 */
-	public static MircConfig load(File mirc) {
+	public static synchronized MircConfig load(File mirc) {
 		mircConfigInstance = new MircConfig(mirc);
 		return mircConfigInstance;
 	}
@@ -205,7 +205,7 @@ public class MircConfig {
 	}
 
 	//Static method to save the XML object
-	private static void saveXML() {
+	private static synchronized void saveXML() {
 		FileUtil.setText(mirc, XmlUtil.toPrettyString( mircXML ));
 	}
 
@@ -213,7 +213,7 @@ public class MircConfig {
 	 * Get the MIRC plugin root directory.
 	 * @return the MIRC plugin root directory.
 	 */
-	public File getRootDirectory() {
+	public synchronized File getRootDirectory() {
 		return dir;
 	}
 
@@ -222,7 +222,7 @@ public class MircConfig {
 	 * directory in the MIRC Plugin's root directory.
 	 * @return a new child directory of the TEMP directory.
 	 */
-	public File createTempDirectory() {
+	public synchronized File createTempDirectory() {
 		return FileUtil.createTempDirectory(TEMP);
 	}
 
@@ -230,7 +230,7 @@ public class MircConfig {
 	 * Get the MIRC configuration XML object.
 	 * @return the MIRC configuration XML DOM object.
 	 */
-	public Document getXML() {
+	public synchronized Document getXML() {
 		return mircXML;
 	}
 
@@ -255,7 +255,7 @@ public class MircConfig {
 	 * Get the local address.
 	 * @return the URL of Tomcat.
 	 */
-	public static String getLocalAddress() {
+	public synchronized static String getLocalAddress() {
 		return siteurl;
 	}
 
@@ -264,7 +264,7 @@ public class MircConfig {
 	 * This is the number of Libraries known to the MIRC site.
 	 * @return number of Library elements in the MIRC configuration XML object.
 	 */
-	public int getNumberOfLibraries() {
+	public synchronized int getNumberOfLibraries() {
 		try { return libraries.size(); }
 		catch (Exception ex) { return 0; }
 	}
@@ -272,14 +272,14 @@ public class MircConfig {
 	/**
 	 * Get the name of the MIRC site.
 	 */
-	public String getSiteName() {
+	public synchronized String getSiteName() {
 		return mircRoot.getAttribute("sitename");
 	}
 
 	/**
 	 * Get the query timeout in seconds.
 	 */
-	public int getQueryTimeout() {
+	public synchronized int getQueryTimeout() {
 		return timeout;
 	}
 
@@ -344,6 +344,14 @@ public class MircConfig {
 	}
 
 	/**
+	 * Set the RSNA site's MIRC plugin version
+	 * @param version the version of the RSNA site's MIRC plugin.
+	 */
+	public synchronized void setRSNAVersion(String version) {
+		mircRoot.setAttribute("rsnaVersion", version);
+	}
+
+	/**
 	 * Get the mode of the site (rad or vet)
 	 */
 	public synchronized String getMode() {
@@ -367,7 +375,7 @@ public class MircConfig {
 	/**
 	 * Install the extra roles defined for the site
 	 */
-	public void setDefinedRoles() {
+	public synchronized void setDefinedRoles() {
 		Users users = Users.getInstance();
 		String[] roles = getDefinedRoles();
 		for (String role : roles) {
@@ -448,7 +456,7 @@ public class MircConfig {
 	 * @return the Library element, or null if no element
 	 * exists with the specified address attribute.
 	 */
-	public Element getLibrary(String address) {
+	public synchronized Element getLibrary(String address) {
 		return libraries.get(address);
 	}
 
@@ -458,7 +466,7 @@ public class MircConfig {
 	 * @return the Library element, or null if no element
 	 * exists with the specified id.
 	 */
-	public Element getLocalLibrary(String id) {
+	public synchronized Element getLocalLibrary(String id) {
 		return getLibrary( "/storage/" + id );
 	}
 
@@ -544,7 +552,7 @@ public class MircConfig {
 	 * @param address the address of the library.
 	 * @param enabled whether the library is enabled ("yes" or "no").
 	 */
-	public Element createLocalLibrary(String id, String title, String address, String enabled) throws Exception {
+	public synchronized Element createLocalLibrary(String id, String title, String address, String enabled) throws Exception {
 		Element lib = createLibrary(title, address, enabled);
 		lib.setAttribute( "id", id );
 		lib.setAttribute( "local", "yes" );

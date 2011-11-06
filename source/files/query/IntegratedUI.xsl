@@ -18,8 +18,8 @@
 
 <head>
 	<meta name="keywords"
-		content="radiology software, MIRC, teaching files, ct, mri, mr, ultrasound,
-				radiography, education, radiology, DICOM, software, presentations, conferences"/>
+		content="radiology software, MIRC, teaching, teaching file, ct, mri, mr, ultrasound, open-source
+				radiography, education, radiology, DICOM, software, presentations, conferences, java"/>
 	<meta name="description"
 		content="MIRC is a free software server program to store radiology teaching files.
 				It was created and is supported by the Radiological Society of North America (RSNA)."/>
@@ -213,6 +213,7 @@
 		var sitename = "<xsl:value-of select="@sitename"/>";
 		var mode = "<xsl:value-of select="@mode"/>";
 		var version = "<xsl:value-of select="@version"/>";
+		var rsnaVersion = "<xsl:value-of select="@rsnaVersion"/>";
 		var date = "<xsl:value-of select="@date"/>";
 		var serverURL = "<xsl:value-of select="@siteurl"/>";
 		var selectedLocalLibrary = 0;
