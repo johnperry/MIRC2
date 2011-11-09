@@ -16,7 +16,7 @@
 <xsl:param name="skipprefix"/>
 <xsl:param name="result"/>
 <xsl:param name="config"/>
-<xsl:variable name="localLibraries" select="$config/mirc/Libraries/Library[@local='yes' and @zipenb='yes']"/>
+<xsl:variable name="localLibraries" select="$config/mirc/Libraries/Library[@local='yes' and @enabled='yes' and @zipenb='yes']"/>
 
 <xsl:template match="/mirc">
 	<html>

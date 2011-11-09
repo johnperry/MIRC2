@@ -82,16 +82,22 @@ public class SubmitService extends Servlet {
 			Path path = req.getParsedPath();
 			MircConfig mc = MircConfig.getInstance();
 			String ssid = path.element(1).trim();
-			Element lib = mc.getLocalLibrary(ssid);
-			boolean enabled = (lib != null) && lib.getAttribute("subenb").equals("yes");
+			if (ssid.startsWith("ss") && (path.length() == 2)) {
+				//This is a request for the submission page.
+				//Get an enabled local library in which to store the document.
+				Element lib = mc.getEnabledLocalLibrary(ssid, "subenb");
 
-			if ((path.length() == 2) && enabled) {
+				if (lib != null) {
+					ssid = lib.getAttribute("id"); //get the ID for the library we found.
 					res.disableCaching();
 					String ui = req.getParameter("ui", "");
 					if (!ui.equals("integrated")) ui = "classic";
 					res.write( getPage( ui, ssid, "" ) );
 					res.setContentType("html");
 					res.send();
+					return;
+				}
+				else { res.redirect("/query"); return; }
 			}
 			else { super.doGet(req, res); return; }
 		}

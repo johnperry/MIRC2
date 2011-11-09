@@ -6,7 +6,7 @@
 <xsl:param name="ssid"/>
 <xsl:param name="result"/>
 <xsl:param name="config"/>
-<xsl:variable name="localLibraries" select="$config/mirc/Libraries/Library[@local='yes' and @subenb='yes']"/>
+<xsl:variable name="localLibraries" select="$config/mirc/Libraries/Library[@local='yes' and @enabled='yes' and @subenb='yes']"/>
 
 <xsl:template match="/mirc">
 	<html>
@@ -14,9 +14,9 @@
 			<title>Submit Service - <xsl:value-of select="$ssid"/></title>
 			<link rel="Stylesheet" type="text/css" media="all" href="/JSPopup.css"></link>
 			<link rel="Stylesheet" type="text/css" media="all" href="/submit/SubmitService.css"></link>
-			<xsl:call-template name="data"/>
 			<script language="JavaScript" type="text/javascript" src="/JSUtil.js">;</script>
 			<script language="JavaScript" type="text/javascript" src="/JSPopup.js">;</script>
+			<xsl:call-template name="data"/>
 			<script language="JavaScript" type="text/javascript" src="/submit/SubmitService.js">;</script>
 		</head>
 		<body>
@@ -102,7 +102,7 @@
 </xsl:template>
 
 <xsl:template name="data">
-	<script>
+	<script language="JavaScript" type="text/javascript">
 		var ui = '<xsl:value-of select="$ui"/>';
 		<xsl:choose>
 			<xsl:when test="$localLibraries[@id=$ssid]">

@@ -9,6 +9,7 @@ package mirc.query;
 
 import java.io.File;
 import java.io.StringWriter;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
@@ -308,6 +309,33 @@ public class QueryService extends Servlet {
 		//	ClassicUI: a query results HTML page consisting of a list of links
 
 		if (req.hasParameter("xml")) {
+
+			//Sort the results
+			try {
+				logger.warn("Before sorting:\n"+XmlUtil.toPrettyString(results));
+				NodeList nl = resultsRoot.getElementsByTagName("MIRCdocument");
+				int len = nl.getLength();
+				Element[] mds = new Element[len];
+				for (int i=0; i<len; i++) {
+					Element el = (Element)nl.item(i);
+					Element parent = (Element)el.getParentNode();
+					el.setAttribute("url", parent.getAttribute("url"));
+					Element server = XmlUtil.getFirstNamedChild(parent, "server");
+					if (server != null) el.appendChild(server.cloneNode(true));
+					mds[i] = el;
+				}
+				ResultComparator rc = new ResultComparator(req.getParameter("orderby", "lmdate"));
+				Arrays.sort(mds, rc);
+				results = XmlUtil.getDocument();
+				resultsRoot = results.createElement("Results");
+				results.appendChild(resultsRoot);
+				for (int i=0; i<mds.length; i++) {
+					resultsRoot.appendChild( results.importNode(mds[i], true) );
+				}
+				logger.warn("After sorting:\n"+XmlUtil.toPrettyString(results));
+			}
+			catch (Exception returnUnsortedResults) { }
+
 			res.setContentType("xml");
 			res.write( XmlUtil.toString( results.getDocumentElement() ) );
 			res.send();

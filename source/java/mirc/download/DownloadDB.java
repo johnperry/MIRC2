@@ -74,7 +74,7 @@ public class DownloadDB {
 	 * @param ip the IP address of the client.
 	 * @param email the email address of the client.
 	 * @param pname the name of the person making the request
-	 * @param iname the institution name
+	 * @param iname the country name
 	 * @param interest personal or institutional
 	 * @param sitetype public or private
 	 */
@@ -84,13 +84,14 @@ public class DownloadDB {
 									String email,
 									String pname,
 									String iname,
+									String cname,
 									String interest,
 									String sitetype
 									) {
 		try {
 			if (downloads != null) {
 				Long time = new Long( System.currentTimeMillis() );
-				Entry entry = new Entry( file.getName(), version, ip, email, pname, iname, interest, sitetype );
+				Entry entry = new Entry( file.getName(), version, ip, email, pname, iname, cname, interest, sitetype );
 				downloads.insert( time, entry, true );
 				recman.commit();
 			}
@@ -127,6 +128,7 @@ public class DownloadDB {
 				dl.setAttribute("email", entry.email);
 				dl.setAttribute("pname", entry.pname);
 				dl.setAttribute("iname", entry.iname);
+				dl.setAttribute("cname", entry.cname);
 				dl.setAttribute("interest", entry.interest);
 				dl.setAttribute("sitetype", entry.sitetype);
 

@@ -121,21 +121,21 @@ public class AuthorService extends Servlet {
 		else if (function.startsWith("ss")) {
 			String ssid = function;
 
-			//Make sure the author service is enabled
 			MircConfig mc = MircConfig.getInstance();
-			Element lib = mc.getLocalLibrary(ssid);
-			boolean enabled = ((lib != null) && lib.getAttribute("authenb").equals("yes"));
-			if (enabled) {
 
-				res.disableCaching();
+			res.disableCaching();
 
-				//Get the user and his preferences
-				User user = req.getUser();
-				String username = user.getUsername();
-				Document prefs = Preferences.getInstance().get( username, true ).getOwnerDocument();
+			//Get the user and his preferences
+			User user = req.getUser();
+			String username = user.getUsername();
+			Document prefs = Preferences.getInstance().get( username, true ).getOwnerDocument();
 
-				if (path.length() == 2) {
-					//This is a request for the template selection page
+			if (path.length() == 2) {
+				//This is a request for the template selection page
+				//Get an enabled local library in which to store the document.
+				Element lib = mc.getEnabledLocalLibrary(ssid, "authenb");
+				if (lib != null) {
+					ssid = lib.getAttribute("id"); //get the ID for the library we found.
 
 					//Get the library name
 					Element titleElement = XmlUtil.getFirstNamedChild(lib, "title");
@@ -158,12 +158,20 @@ public class AuthorService extends Servlet {
 					res.setContentType("html");
 					res.send();
 				}
+				else { res.redirect("/query"); return; }
+			}
 
-				else {
-					//This is a request to open an existing document in the editor,
-					//coming from the "Edit" link on a MIRCdocument display.
+			else {
+				//This is a request to open an existing document in the editor,
+				//coming from the "Edit" link on a MIRCdocument display.
+
+				//First make sure authoring is enabled on library storing the document.
+				Element lib = mc.getLocalLibrary(ssid);
+				boolean enabled = ((lib != null)
+										&& lib.getAttribute("enabled").equals("yes")
+											&& lib.getAttribute("authenb").equals("yes"));
+				if (enabled) {
 					//Get the document and verify it.
-
 					Index index = Index.getInstance(ssid);
 					String docPath = path.subpath(3).substring(1);
 					File docFile = new File( index.getDocumentsDir(), docPath );
@@ -199,9 +207,8 @@ public class AuthorService extends Servlet {
 					res.setContentType("html");
 					res.send();
 				}
-
+				else res.redirect("/query");
 			}
-			else res.redirect("/query");
 		}
 		else super.doGet(req, res);
 	}

@@ -7,7 +7,7 @@
 <xsl:param name="libraryTitle"/>
 <xsl:param name="templates"/>
 <xsl:param name="config"/>
-<xsl:variable name="localLibraries" select="$config/mirc/Libraries/Library[@local='yes' and @authenb='yes']"/>
+<xsl:variable name="localLibraries" select="$config/mirc/Libraries/Library[@local='yes' and @enabled='yes' and @authenb='yes']"/>
 
 <xsl:template match="/User">
 	<html>

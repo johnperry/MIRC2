@@ -22,6 +22,7 @@ public class Entry implements Serializable {
 	public String email;
 	public String pname;
 	public String iname;
+	public String cname;
 	public String interest;
 	public String sitetype;
 
@@ -38,6 +39,7 @@ public class Entry implements Serializable {
 				 String email,
 				 String pname,
 				 String iname,
+				 String cname,
 				 String interest,
 				 String sitetype
 				 ) {
@@ -47,6 +49,7 @@ public class Entry implements Serializable {
 		this.email = email;
 		this.pname = pname;
 		this.iname = iname;
+		this.cname = cname;
 		this.interest = interest;
 		this.sitetype = sitetype;
 	}

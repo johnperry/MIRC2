@@ -439,13 +439,41 @@ public class MircConfig {
 
 	/**
 	 * Get a Set containing all the local library IDs.
-	 * @return all the StorageService names.
+	 * @return all the StorageService IDs.
 	 */
 	public synchronized Set<String> getLocalLibraryIDs() {
 		Set<String> set = new HashSet<String>();
 		for (Element lib : libraries.values()) {
 			if ( lib.getAttribute("local").equals("yes") ) {
 				set.add(lib.getAttribute("id"));
+			}
+		}
+		return set;
+	}
+
+	/**
+	 * Get a Set containing all the local library IDs
+	 * of libraries that are enabled. The Set contains
+	 * all the libraries whose <code>enabled</code> attributes
+	 * are set to "yes" and whose specified attributes
+	 * area also set to "yes".
+	 * @param attr the name of the enable attribute to test,
+	 * or null if additional enable attributes are not to be tested.
+	 * @return all the IDs of local libraries that meet
+	 * the enable criteria.
+	 */
+	public synchronized Set<String> getEnabledLocalLibraryIDs(String attr) {
+		Set<String> set = new HashSet<String>();
+		for (Element lib : libraries.values()) {
+			if ( lib.getAttribute("local").equals("yes") ) {
+				if ( lib.getAttribute ("enabled").equals("yes") ) {
+					if (attr != null) {
+						if ( lib.getAttribute(attr).equals("yes") ) {
+							set.add(lib.getAttribute("id"));
+						}
+					}
+					else set.add(lib.getAttribute("id"));
+				}
 			}
 		}
 		return set;
@@ -483,12 +511,53 @@ public class MircConfig {
 	}
 
 	/**
-	 * Get the local Library element with the specified id.
-	 * @return the Library element, or null if no element
-	 * exists with the specified id.
+	 * Get the first local Library element that is enabled.
+	 * @return the Library element, or null if no local library
+	 * is enabled.
 	 */
 	public Element getFirstEnabledLocalLibrary() {
-		Set<String> idSet = getLocalLibraryIDs();
+		Set<String> idSet = getEnabledLocalLibraryIDs(null);
+		if (idSet.size() == 0) return null;
+		String[] ids = idSet.toArray( new String[ idSet.size() ] );
+		Arrays.sort(ids);
+		return getLocalLibrary(ids[0]);
+	}
+
+	/**
+	 * Get the local Library element that is both enabled
+	 * and has the specified attribute enabled as well.
+	 * This method is intended for use by author services to
+	 * find a default library for authoring. .
+	 * @return the Library element, or null if no element
+	 * exists with the specified enable.
+	 */
+	public Element getFirstEnabledLocalLibrary(String attr) {
+		Set<String> idSet = getEnabledLocalLibraryIDs(attr);
+		if (idSet.size() == 0) return null;
+		String[] ids = idSet.toArray( new String[ idSet.size() ] );
+		Arrays.sort(ids);
+		return getLocalLibrary(ids[0]);
+	}
+
+	/**
+	 * Test the specified local library to see if it is
+	 * enabled, and return it if it is; otherwise, find
+	 * the first local library that is both enabled
+	 * and has the specified attribute enabled as well.
+	 * This method is intended for use by author services to
+	 * find a default library for authoring. .
+	 * @return the Library element, or null if no element
+	 * exists with the specified enable.
+	 */
+	public Element getEnabledLocalLibrary(String id, String attr) {
+		Element lib = getLocalLibrary(id);
+		if ( (lib != null) && lib.getAttribute("enabled").equals("yes") ) {
+			if (attr != null) {
+				if (lib.getAttribute(attr).equals("yes")) return lib;
+			}
+			else return lib;
+		}
+		Set<String> idSet = getEnabledLocalLibraryIDs(attr);
 		if (idSet.size() == 0) return null;
 		String[] ids = idSet.toArray( new String[ idSet.size() ] );
 		Arrays.sort(ids);

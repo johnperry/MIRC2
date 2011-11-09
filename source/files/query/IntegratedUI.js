@@ -57,7 +57,7 @@ function loaded() {
 window.onload = loaded;
 
 function resize() {
-	split.positionSlider();
+	if (split) split.positionSlider();
 	resizeScrollableTable();
 }
 
@@ -424,6 +424,34 @@ function prevPage() {
 }
 
 //************************************************
+//Column sort handlers
+//************************************************
+function sortOnTitle() {
+	sortOrder = "title";
+	search();
+}
+
+function sortOnAuthor() {
+	sortOrder = "author";
+	search();
+}
+
+function sortOnLibrary() {
+	sortOrder = "library";
+	search();
+}
+
+function sortOnSpecialty() {
+	sortOrder = "specialty";
+	search();
+}
+
+function sortOnLMDate() {
+	sortOrder = "lmdate";
+	search();
+}
+
+//************************************************
 //Main query
 //************************************************
 function doQuery(query) {
@@ -466,7 +494,7 @@ function processQueryResults(req) {
 			}
 			else right.appendChild(document.createTextNode("No results found."));
 		}
-		//hidePopups();
+		hidePopups();
 		resize();
 		resizeScrollableTable();
 		setStatusLine("");
@@ -558,8 +586,12 @@ function appendTDAuthor(tr, doc) {
 }
 function appendTDLocation(tr, doc) {
 	var td = document.createElement("TD");
-	var parent = doc.parentNode;
-	var server = parent.getElementsByTagName("server");
+
+	//Get the server name. First look for a server child.
+	//If there isn't one, get it from the parent.
+	var server = doc.getElementsByTagName("server");
+	if (server.length == 0) server = doc.parentNode.getElementsByTagName("server");
+
 	var text = blanks;
 	if (server.length != 0) text = server[0].firstChild.nodeValue;
 	td.appendChild( document.createTextNode( text ) );
@@ -611,22 +643,31 @@ function setScrollableTable(pane, headings) {
 
 function resultsTableHeadings(tr) {
 	appendTHCB(tr);
-	appendTHTitle(tr);
-	appendTH(tr, "Library");
-	appendTH(tr, "Author");
-	appendTH(tr, "Specialty");
-	appendTH(tr, "Date Modified");
+	appendTHTitle(tr, "sortOnTitle", "title");
+	appendTH(tr, "Library", "sortOnLibrary", "library");
+	appendTH(tr, "Author", "sortOnAuthor", "author");
+	appendTH(tr, "Specialty", "sortOnSpecialty", "specialty");
+	appendTH(tr, "Date Modified", "sortOnLMDate", "lmdate");
 	//appendTH(tr, "Rating");
 	appendTH(tr, "Access");
 }
 
-function appendTH(tr, text) {
+function appendTH(tr, text, sortMethod, sort) {
 	var th = document.createElement("TH");
-	th.appendChild(document.createTextNode(text));
+	var textNode = document.createTextNode(text);
+	if (sortMethod) {
+		if (sort == sortOrder) th.className = "sort";
+		var a = document.createElement("A");
+		a.href = "javascript:"+sortMethod+"();";
+		a.appendChild(textNode);
+		th.appendChild(a);
+	}
+	else th.appendChild(textNode);
 	tr.appendChild(th);
 }
-function appendTHTitle(tr) {
+function appendTHTitle(tr, sortMethod, sort) {
 	var th = document.createElement("TH");
+	if (sort == sortOrder) th.className = "sort";
 	var img = document.createElement("IMG");
 	img.src = expandURL;
 	img.className = "spaceRight";
@@ -634,7 +675,14 @@ function appendTHTitle(tr) {
 	img.id = "expandCollapseImg";
 	img.title = "Expand/Collapse";
 	th.appendChild(img);
-	th.appendChild(document.createTextNode("Title"));
+	var textNode = document.createTextNode("Title");
+	if (sortMethod) {
+		var a = document.createElement("A");
+		a.href = "javascript:"+sortMethod+"();";
+		a.appendChild(textNode);
+		th.appendChild(a);
+	}
+	else th.appendChild(textNode);
 	tr.appendChild(th);
 }
 function appendTHCB(tr) {
@@ -878,7 +926,7 @@ function loadConferences() {
 			"/mirc/images/minus.gif");
 	confTreeManager.load();
 	confTreeManager.display();
-	confTreeManager.expandAll();
+	//confTreeManager.expandAll();
 }
 
 function showConferenceContents(event) {
@@ -953,7 +1001,7 @@ function loadFileCabinets() {
 			"/mirc/images/minus.gif");
 	fileTreeManager.load();
 	fileTreeManager.display();
-	fileTreeManager.expandAll();
+	//fileTreeManager.expandAll();
 }
 
 //Handlers for tree selection
@@ -1126,7 +1174,14 @@ function Library(enb, def, addr, svrname, local) {
 function setState() {
 	if (user.isLoggedIn) {
 		var cookies = getCookieObject();
-		setSelectFromCookie("serverselect", cookies);
+		if (!setSelectFromCookie("serverselect", cookies)) {
+			//no serverselect cookie, enable all the local libraries
+			var svrsel = document.getElementById("serverselect");
+			var opts = svrsel.getElementsByTagName("OPTION");
+			for (var i=0; i<allServers.length; i++) {
+				if (allServers[i].isLocal) opts[i].selected = true;
+			}
+		}
 		setSelectFromCookie("maxresults", cookies);
 		setSelectFromCookie("display", cookies);
 		setCheckboxFromCookie("icons", cookies);
@@ -1192,7 +1247,7 @@ function setTextFromCookie(id, cookies) {
 
 function setSelectFromCookie(id, cookies) {
 	var ctext = cookies[id];
-	if (ctext == null) return;
+	if (ctext == null) return false;
 	var ints = ctext.split(":");
 	for (var i=0; i<ints.length; i++) {
 		ints[i] = parseInt(ints[i]);
@@ -1209,6 +1264,7 @@ function setSelectFromCookie(id, cookies) {
 			opts[k].selected = true;
 		}
 	}
+	return true;
 }
 
 function setCheckboxFromCookie(id, cookies) {

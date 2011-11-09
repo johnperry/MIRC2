@@ -24,9 +24,9 @@ div.header {
 	text-align: left;
 	border: none;
 	border-bottom: thin solid black;
-	overflow: hidden;
+	/*overflow: hidden;*/
 	white-space: nowrap;
-	height: 41px;/*35px;*/
+	height: 41px;
 }
 
 div.header input#freetext { width:250px; }
@@ -66,6 +66,11 @@ span.sitename {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-weight: normal;
 	color: black;	
+}
+
+img.cod {
+	margin-top: 5px;
+	margin-left: 10px;
 }
 
 .L1 {
@@ -159,6 +164,9 @@ div.rightpane table th {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	background: #A8C7FF;
 }
+div.rightpane table th.sort A { color: gray; }
+div.rightpane table th.none A { color: black; }
+	
 div.rightpane table td {
 	padding: 2px;
 	vertical-align: top;

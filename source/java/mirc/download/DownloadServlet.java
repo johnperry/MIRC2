@@ -117,10 +117,11 @@ public class DownloadServlet extends Servlet {
 				String email = req.getParameter("email", "").trim();
 				String pname = req.getParameter("pname", "").trim();
 				String iname = req.getParameter("iname", "").trim();
+				String cname = req.getParameter("cname", "").trim();
 				String interest = req.getParameter("interest", "").trim();
 				String sitetype = req.getParameter("sitetype", "").trim();
 				String ip = req.getRemoteAddress();
-				DownloadDB.getInstance().insert(file, build, ip, email, pname, iname, interest, sitetype);
+				DownloadDB.getInstance().insert(file, build, ip, email, pname, iname, cname, interest, sitetype);
 
 				res.write(file);
 				long fileLMDate = file.lastModified();

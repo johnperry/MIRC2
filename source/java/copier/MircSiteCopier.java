@@ -485,7 +485,7 @@ public class MircSiteCopier extends JFrame {
 			else cp.println("   skipping the index step for "+ssid);
 		}
 
-		private void copyDir(File in, File out, int count) {
+		private int copyDir(File in, File out, int count) {
 			if (forceCopy || !out.exists()) {
 				out.mkdirs();
 				File[] files = in.listFiles();
@@ -512,10 +512,11 @@ public class MircSiteCopier extends JFrame {
 						outFile.setLastModified(lmdate);
 					}
 					else {
-						copyDir(inFile, outFile, count);
+						count = copyDir(inFile, outFile, count);
 					}
 				}
 			}
+			return count;
 		}
 
 		private String getLocalLibraryID(String title) throws Exception {

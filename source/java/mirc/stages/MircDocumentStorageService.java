@@ -67,6 +67,7 @@ public class MircDocumentStorageService extends AbstractPipelineStage implements
 				//Get the library in which to store the MIRCdocument
 				MircConfig mc = MircConfig.getInstance();
 				Element lib = mc.getLocalLibrary(ssid);
+				if (lib == null) lib = mc.getFirstEnabledLocalLibrary("dcmenb");
 				if (lib == null) lib = mc.getFirstEnabledLocalLibrary();
 				if (lib == null) return fileObject; //bail out if we can't get a library
 

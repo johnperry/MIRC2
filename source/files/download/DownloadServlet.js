@@ -8,13 +8,15 @@ function get(name) {
 		var iname = trim(document.getElementById("iname").value);
 		var interest = getSelectedRadioButton("interest");
 		var sitetype = getSelectedRadioButton("sitetype");
+		var country = trim(document.getElementById("country").value);
 
 		var url = "/download/"+name
 					+"?email="+email
 						+"&pname="+pname
 							+"&iname="+iname
-								+"&interest="+interest
-									+"&sitetype="+sitetype;
+								+"&cname="+country
+									+"&interest="+interest
+										+"&sitetype="+sitetype;
 		window.open(url, "_self");
 	}
 }

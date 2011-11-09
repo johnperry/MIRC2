@@ -114,7 +114,7 @@
 		<!--<div class="L1">Cases</div>-->
 		<div class="L2" id="MyDocuments"><a href="javascript:queryMineNew();">My Cases</a><br/></div>
 		<div class="L2" id="AllDocuments"><a href="javascript:queryAllNew();">All Cases</a><br/></div>
-		<div class="L2" id="ApprovalQueue"><a href="javascript:approvalQueueNew();">Approval Queue</a><br/></div>
+		<div class="L2" id="ApprovalQueue"><a href="javascript:approvalQueueNew();">Case Approval Queue</a><br/></div>
 
 		<div id="Conferences">
 			<div class="L2x"><a href="/confs">Conferences</a></div>
@@ -126,7 +126,18 @@
 			<div id="cabs">;</div>
 		</div>
 
-		<div class="L2x" id="CaseOfTheDay"><a href="{news/url}" target="shared">Case of the Day</a><br/></div>
+		<div class="L2x" id="CaseOfTheDay">
+			<a href="{news/url}" target="shared" title="{news/title}">Case of the Day</a>
+			<br/>
+			<xsl:if test="news/image">
+				<img class="cod"
+					 src="{news/image}"
+					 width="128"
+					 title="{news/title}"
+					 onclick="window.open('{news/url}', 'shared');"/>
+				<br/>
+			</xsl:if>
+		</div>
 
 		<xsl:if test="@downloadenb='yes'">
 			<div class="L2x" id="Download">
@@ -279,9 +290,11 @@
 	<br/>
 	<div class="formatselect">
 		<select name="orderby" id="orderby" onchange="setModifierValues();" title="Select the order of query results">
-			<option value="lmdate" selected="">Last modified date</option>
-			<option value="pubdate">Creation date</option>
 			<option value="title">Document title</option>
+			<option value="library">Library</option>
+			<option value="author">Author</option>
+			<option value="specialty">Specialty</option>
+			<option value="lmdate" selected="">Last modified date</option>
 		</select>
 	</div>
 	<div class="formatselect">

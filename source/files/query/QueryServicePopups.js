@@ -116,7 +116,7 @@ function showAboutPopup() {
 	p.appendChild(document.createTextNode(date));
 
 	var deltaH = 0;
-	if (user.hasRole("admin") && (version <= rsnaVersion)) {
+	if (user.hasRole("admin") && (version < rsnaVersion)) {
 		p.appendChild(document.createElement("BR"));
 		p.appendChild(document.createTextNode("["));
 		var anchor = document.createElement("A");
