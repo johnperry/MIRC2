@@ -312,7 +312,6 @@ public class QueryService extends Servlet {
 
 			//Sort the results
 			try {
-				logger.warn("Before sorting:\n"+XmlUtil.toPrettyString(results));
 				NodeList nl = resultsRoot.getElementsByTagName("MIRCdocument");
 				int len = nl.getLength();
 				Element[] mds = new Element[len];
@@ -332,7 +331,6 @@ public class QueryService extends Servlet {
 				for (int i=0; i<mds.length; i++) {
 					resultsRoot.appendChild( results.importNode(mds[i], true) );
 				}
-				logger.warn("After sorting:\n"+XmlUtil.toPrettyString(results));
 			}
 			catch (Exception returnUnsortedResults) { }
 
