@@ -1174,25 +1174,18 @@ function Library(enb, def, addr, svrname, local) {
 //************************************************
 function setState() {
 	if (user.isLoggedIn) {
-		//set the user's cookie selections and add in the default libraries
 		var cookies = getCookieObject();
 		setSelectFromCookie("serverselect", cookies);
-		var svrsel = document.getElementById("serverselect");
-		var opts = svrsel.getElementsByTagName("OPTION");
-		for (var i=0; i<allServers.length; i++) {
-			if (allServers[i].deflib) opts[i].selected = true;
-		}
 		setSelectFromCookie("maxresults", cookies);
 		setSelectFromCookie("display", cookies);
 		setCheckboxFromCookie("icons", cookies);
 		setCheckboxFromCookie("unknown", cookies);
 	}
-	else {
-		var svrsel = document.getElementById("serverselect");
-		var opts = svrsel.getElementsByTagName("OPTION");
-		for (var i=0; i<allServers.length; i++) {
-			if (allServers[i].deflib) opts[i].selected = true;
-		}
+	//always include the default libraries
+	var svrsel = document.getElementById("serverselect");
+	var opts = svrsel.getElementsByTagName("OPTION");
+	for (var i=0; i<allServers.length; i++) {
+		if (allServers[i].deflib) opts[i].selected = true;
 	}
 }
 
