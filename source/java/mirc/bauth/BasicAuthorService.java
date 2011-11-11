@@ -190,6 +190,8 @@ public class BasicAuthorService extends Servlet {
 		String ssid = path.element(1);
 		if (ssid.startsWith("ss")) {
 
+			logger.debug("POST received for "+req.path);
+
 			//Make sure the author service is enabled
 			MircConfig mc = MircConfig.getInstance();
 			Element lib = mc.getLocalLibrary(ssid);
@@ -198,12 +200,14 @@ public class BasicAuthorService extends Servlet {
 
 				//Make a temporary directory to receive the files
 				File dir = mc.createTempDirectory();
+				logger.debug("...created tempDirectory: "+dir);
 
 				//Get the posted files
 				int maxsize = StringUtil.getInt( lib.getAttribute("maxsize"), 0 );
 				if (maxsize == 0) maxsize = 75;
 				maxsize *= 1024*1024; //make it megabytes
 				LinkedList<UploadedFile> files = req.getParts(dir, maxsize);
+				logger.debug("...received "+files.size()+" files");
 
 				//Get the requested UI for the page
 				String ui = req.getParameter("ui", "classic");
@@ -263,6 +267,7 @@ public class BasicAuthorService extends Servlet {
 				boolean anonymize = req.hasParameter("anonymize");
 
 				//Save the file and then insert all the files.
+				logger.debug("...about to insert the files");
 				FileUtil.setText(mdFile, XmlUtil.toString(mdXML));
 				MircDocument md = insertFiles(mdFile, files, anonymize);
 
@@ -272,8 +277,11 @@ public class BasicAuthorService extends Servlet {
 				File storageDir = new File(docs, StringUtil.makeNameFromDate());
 				FileUtil.createParentDirectory(storageDir);
 				File parentDir = storageDir.getParentFile();
+				if (!parentDir.exists()) logger.debug("...parentDir could not be created: "+parentDir);
 
+				logger.debug("...about to rename the document to "+storageDir);
 				if (!dir.renameTo(storageDir)) {
+					logger.warn("...rename FAILED");
 					if (storageDir.exists()) {
 						for (File f : storageDir.listFiles()) logger.debug("......"+f.getName());
 					}
@@ -283,13 +291,18 @@ public class BasicAuthorService extends Servlet {
 
 				//Index the MIRC document
 				String key = index.getKey(new File(storageDir, "MIRCdocument.xml"));
+				logger.debug("...about to index the document: "+key);
 				index.insertDocument(key);
 
 				//Success, save the author information in the preferences
+				logger.debug("...about to set the preferences for "+username+" ("+name+")");
 				Preferences.getInstance().setAuthorInfo(username, name, affiliation, contact);
 
 				//Redirect to the document
-				res.redirect("/storage/"+ssid+"/"+key);
+				String redirectPath = "/storage/"+ssid+"/"+key;
+				logger.debug("...about to redirect to "+redirectPath);
+				res.redirect(redirectPath);
+				logger.debug("...done");
 			}
 			else res.redirect("/query");
 		}

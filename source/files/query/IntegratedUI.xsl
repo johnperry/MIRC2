@@ -199,6 +199,7 @@
 		<div class="L2"><a href="/status">CTP Status</a><br/></div>
 		<div class="L2"><a href="/logs?home=/query">Log Viewer</a><br/></div>
 		<div class="L2"><a href="/level">Logger Levels</a><br/></div>
+		<div class="L2"><a href="javascript:listCookies();">List Cookies</a><br/></div>
 	</div>
 </xsl:template>
 

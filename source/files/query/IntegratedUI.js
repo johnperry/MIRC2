@@ -17,6 +17,7 @@ var expandURL = "/mirc/images/expand.png";
 var collapseURL = "/mirc/images/collapse.png";
 
 function loaded() {
+	//listCookies();
 	user = new User();
 	if (user.isLoggedIn) {
 		encodedUsername = encodeURIComponent(user.name);
@@ -1173,14 +1174,13 @@ function Library(enb, def, addr, svrname, local) {
 //************************************************
 function setState() {
 	if (user.isLoggedIn) {
+		//set the user's cookie selections and add in the default libraries
 		var cookies = getCookieObject();
-		if (!setSelectFromCookie("serverselect", cookies)) {
-			//no serverselect cookie, enable all the local libraries
-			var svrsel = document.getElementById("serverselect");
-			var opts = svrsel.getElementsByTagName("OPTION");
-			for (var i=0; i<allServers.length; i++) {
-				if (allServers[i].isLocal) opts[i].selected = true;
-			}
+		setSelectFromCookie("serverselect", cookies);
+		var svrsel = document.getElementById("serverselect");
+		var opts = svrsel.getElementsByTagName("OPTION");
+		for (var i=0; i<allServers.length; i++) {
+			if (allServers[i].deflib) opts[i].selected = true;
 		}
 		setSelectFromCookie("maxresults", cookies);
 		setSelectFromCookie("display", cookies);
@@ -1253,7 +1253,7 @@ function setSelectFromCookie(id, cookies) {
 		ints[i] = parseInt(ints[i]);
 	}
 	var el = document.getElementById(id);
-	if (el == null) return;
+	if (el == null) return false;
 	var opts = el.getElementsByTagName("OPTION");
 	for (var i=0; i<opts.length; i++) {
 		opts[i].selected = false;
