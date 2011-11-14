@@ -26,6 +26,7 @@
 	<title><xsl:value-of select="@sitename"/></title>
 	<link rel="stylesheet" href="/JSPopup.css" type="text/css"/>
 	<link rel="stylesheet" href="/JSPage.css" type="text/css"/>
+	<link rel="stylesheet" href="/query/IntegratedUIMenus.css" type="text/css"/>
 	<link rel="stylesheet" href="/query/IntegratedUI.css" type="text/css"/>
 	<script language="JavaScript" type="text/javascript" src="/JSUtil.js">;</script>
 	<script language="JavaScript" type="text/javascript" src="/JSAJAX.js">;</script>
@@ -38,7 +39,9 @@
 	<script language="JavaScript" type="text/javascript" src="/JSPage.js">;</script>
 	<script language="JavaScript" type="text/javascript" src="/JSSplitPane.js">;</script>
 	<script language="JavaScript" type="text/javascript" src="/JSScrollableTable.js">;</script>
+	<script language="JavaScript" type="text/javascript" src="/JSMenu.js">;</script>
 	<script language="JavaScript" type="text/javascript" src="/query/QueryServicePopups.js">;</script>
+	<script language="JavaScript" type="text/javascript" src="/query/IntegratedUIMenus.js">;</script>
 	<script language="JavaScript" type="text/javascript" src="/query/IntegratedUI.js">;</script>
 	<xsl:call-template name="params"/>
 	<xsl:call-template name="vet-data"/>
@@ -122,7 +125,7 @@
 		</div>
 
 		<div id="FileCabinets">
-			<div class="L2x"><a href="/files">File Cabinets</a><br/></div>
+			<div class="MenuBar" id="fileMenuBar">;</div>
 			<div id="cabs">;</div>
 		</div>
 

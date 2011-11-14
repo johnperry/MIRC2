@@ -16,6 +16,8 @@ var queryIsActive = false;
 var expandURL = "/mirc/images/expand.png";
 var collapseURL = "/mirc/images/collapse.png";
 
+var fileMenuBar;
+
 function loaded() {
 	//listCookies();
 	user = new User();
@@ -41,6 +43,11 @@ function loaded() {
 	setVisibility("ApprovalQueue", user.hasRole("publisher"));
 	setVisibility("Admin", user.hasRole("admin"));
 	setVisibility("CaseOfTheDay", (codURL != ""));
+
+	if (user.isLoggedIn) {
+		fileMenuBar = new SingleMenuBar("fileMenuBar", fileMenu);
+		fileMenuBar.display();
+	}
 
 	var freetext = document.getElementById("freetext");
 	freetext.focus();
