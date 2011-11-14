@@ -216,6 +216,7 @@ function doAdvancedQuery() {
 	deselectAll();
 	var req = new AJAX();
 	setStatusLine("Searching...");
+	showSearchingPopup();
 	queryIsActive = true;
 	req.POST("/query", mods+query+"&"+req.timeStamp(), processQueryResults);
 }
@@ -461,6 +462,7 @@ function doQuery(query) {
 	query += getModifiers();
 	var req = new AJAX();
 	setStatusLine("Searching...");
+	showSearchingPopup();
 	queryIsActive = true;
 	req.POST("/query", query+"&"+req.timeStamp(), processQueryResults);
 }

@@ -72,6 +72,29 @@
 					changed the name of the teaching file system from MIRC to TFS. Click TFS&#8209;installer.jar
 					to obtain the latest RSNA teaching file software.
 				</p>
+				<h2>Common Downloads</h2>
+				<p class="note">
+					This table provides links to the most commonly downloaded software.
+				</p>
+				<table border="1">
+					<tr>
+						<td><a href="javascript:get('CTP-installer.jar');">CTP-installer.jar</a></td>
+						<td>RSNA Clinical Trial Processor - installer for all platforms</td>
+					</tr>
+					<tr>
+						<td><a href="javascript:get('TFS-installer.jar');">TFS-installer.jar</a></td>
+						<td>RSNA Teaching File System - installer for all platforms</td>
+					</tr>
+					<tr>
+						<td><a href="javascript:get('TFS-all-in-one-installer-for-Windows.exe');">TFS-all-in-one-installer-for-Windows.exe</a></td>
+						<td>RSNA Teaching File System - installer for Windows only</td>
+					</tr>
+				</table>
+				<br/>
+				<h2>All Downloads</h2>
+				<p class="note">
+					This table provides links to the items listed above, plus other components and utilities.
+				</p>
 				<table border="1">
 					<tr>
 						<th>File</th>

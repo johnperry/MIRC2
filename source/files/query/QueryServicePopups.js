@@ -143,6 +143,23 @@ function showAboutPopup() {
 	showDialog(id, w, h, "About RSNA TFS", closebox, null, div, null, null);
 }
 
+function showSearchingPopup() {
+	var id = "searchingPopupID";
+	var pop = document.getElementById(id);
+	if (pop) pop.parentNode.removeChild(pop);
+
+	var div = document.createElement("DIV");
+	div.className = "content";
+	var w = 200;
+	var h = 90;
+	var x = document.createElement("H3");
+	x.appendChild(document.createTextNode("Searching..."));
+	x.style.fontSize = "14pt";
+	div.appendChild(x);
+	var closebox = "/icons/closebox.gif";
+	showDialog(id, w, h, "Search in progress", closebox, null, div, null, null);
+}
+
 function showHelpPopup() {
 	var id = "helpPopupID";
 	var pop = document.getElementById(id);

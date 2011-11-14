@@ -12,7 +12,7 @@
 	<property name="documentation" value="${basedir}/documentation"/>
 	<property name="title" value="MIRC"/>
 	<property name="copyright" value="Copyright 2011 Radiological Society of North America"/>
-	<property name="description" value="CTP/MIRC for teaching files"/>
+	<property name="description" value="CTP/TFS for teaching files"/>
 
 	<path id="classpath">
 		<pathelement location="${ctp}/libraries/CTP.jar"/>
