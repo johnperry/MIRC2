@@ -435,7 +435,9 @@ public class FileService extends Servlet {
 
 				uploadFile(req, res, fp);
 
-				res.redirect("/files?openpath="+dirPath);
+				String ui = req.getParameter("ui", "");
+				if (ui.equals("integrated")) res.redirect("/query");
+				else res.redirect("/files?openpath="+dirPath);
 				return;
 			}
 		}
@@ -716,7 +718,7 @@ public class FileService extends Servlet {
 		//We process all the submitted files here, in case the UI changes
 		//in the future.
 
-		//Also note: if an uploaded file is a zip file, so it is possible
+		//Also note: if an uploaded file is a zip file, it is possible
 		//that the submission will result in multiple files being stored,
 		//because the zip file will be automatically unpacked by the
 		//saveFile method.

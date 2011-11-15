@@ -41,6 +41,105 @@ function isRootFolder(node) {
 	return false;
 }
 
+var currentFileTreeNode = null;
+
+//Handlers for tree selection
+//
+function showFileDirContents(event) {
+	var source = getSource(getEvent(event));
+	currentFileTreeNode = source.treenode;
+	showCurrentFileDirContents();
+}
+
+function showCurrentFileDirContents() {
+	deselectAll();
+	var currentFileTreePath = currentFileTreeNode.getPath();
+	fileTreeManager.closePaths();
+	currentFileTreeNode.showPath();
+	queryIsActive = false;
+	var req = new AJAX();
+	req.GET("/files/mirc/"+currentFileTreePath, req.timeStamp(), null);
+	if (req.success()) {
+		var right = document.getElementById("right");
+		right.style.overflow = "auto";
+		while (right.firstChild) right.removeChild(right.firstChild);
+		var xml = req.responseXML();
+		var root = xml ? xml.firstChild : null;
+		var child = root ? root.firstChild : null;
+		while (child) {
+			if ((child.nodeType == 1) && (child.tagName == "file")) {
+				var img = document.createElement("IMG");
+				img.className = "desel";
+				img.ondblclick = cabinetFileDblClicked;
+				img.setAttribute("src", "/files/"+child.getAttribute("iconURL"));
+				img.setAttribute("title", child.getAttribute("title"));
+				img.xml = child;
+				right.appendChild(img);
+			}
+			child = child.nextSibling;
+		}
+		setFileEnables();
+	}
+	else alert("The attempt to get the directory contents failed.");
+}
+
+function cabinetFileDblClicked(theEvent) {
+	var theEvent = getEvent(theEvent)
+	stopEvent(theEvent);
+	var source = getSource(theEvent);
+	var currentClicked = getClickedFile(source);
+	if (currentClicked == -1) return;
+	var fileURL = "/files/" + source.xml.getAttribute("fileURL");
+	deselectAll();
+	source.className = "sel";
+	lastClicked = currentClicked;
+
+	if (theEvent.altKey) {
+		var filename = source.getAttribute("title");
+		if ((filename.toLowerCase().lastIndexOf(".dcm") == filename.length - 4) ||
+					(filename.replace(/[\.\d]/g,"").length == 0)) {
+			fileURL += "?list";
+		}
+	}
+	window.open(fileURL, "_blank");
+}
+
+function getClickedFile(file) {
+	var files = getCabinetFiles();
+	for (var i=0; i<files.length; i++) {
+		if (file === files[i]) {
+			return i;
+		}
+	}
+	return -1;
+}
+
+function getCabinetFiles() {
+	var right = document.getElementById("right");
+	return right.getElementsByTagName("IMG");
+}
+
+function getSelectedFiles() {
+	var files = getCabinetFiles();
+	var list = "";
+	for (var i=0; i<files.length; i++) {
+		if (files[i].className == "sel") {
+			if (list != "") list += "|";
+			list += files[i].getAttribute("title");
+		}
+	}
+	return list;
+}
+
+function getSelectedFilesCount() {
+	var files = getCabinetFiles();
+	var n = "";
+	for (var i=0; i<files.length; i++) {
+		if (files[i].className == "sel") n++;
+	}
+	return n;
+}
+
 //Handlers for the File Menu
 //
 function newFolder() {
@@ -212,6 +311,12 @@ function uploadFile() {
 	form.acceptCharset = "UTF-8";
 	form.action = "/files/uploadFile/"+path;
 	div.appendChild(form);
+
+	var hidden = document.createElement("INPUT");
+	hidden.type = "hidden";
+	hidden.name = "ui";
+	hidden.value = "integrated";
+	form.appendChild(hidden);
 
 	var p = document.createElement("P");
 	p.className = "centeredblock";

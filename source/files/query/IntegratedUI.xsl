@@ -41,7 +41,7 @@
 	<script language="JavaScript" type="text/javascript" src="/JSScrollableTable.js">;</script>
 	<script language="JavaScript" type="text/javascript" src="/JSMenu.js">;</script>
 	<script language="JavaScript" type="text/javascript" src="/query/QueryServicePopups.js">;</script>
-	<script language="JavaScript" type="text/javascript" src="/query/IntegratedUIMenus.js">;</script>
+	<script language="JavaScript" type="text/javascript" src="/query/IntegratedUIFiles.js">;</script>
 	<script language="JavaScript" type="text/javascript" src="/query/IntegratedUI.js">;</script>
 	<xsl:call-template name="params"/>
 	<xsl:call-template name="vet-data"/>
