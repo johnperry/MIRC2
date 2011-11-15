@@ -12,6 +12,34 @@ var fileItems = new Array(
 		new Item("Deselect all", deselectAllFiles, "deselectall") );
 
 var fileMenu = new Menu("File Cabinets", fileItems, "filemenu");
+var closeboxURL = "/icons/closebox.gif";
+
+//Set the enables on the File menu
+function setFileEnables() {
+
+	var nFiles = currentFileTreeNode ? getCabinetFiles().length : 0;
+	var nSelected = currentFileTreeNode ? getSelectedFilesCount() : 0;
+	var nChildDirs = currentFileTreeNode ? currentFileTreeNode.trees.length : -1;
+	var root = isRootFolder(currentFileTreeNode);
+
+	fileMenuBar.setEnable("newfolder", currentFileTreeNode);
+	fileMenuBar.setEnable("deletefolder", currentFileTreeNode && !root);
+	fileMenuBar.setEnable("renamefolder", currentFileTreeNode && !root);
+	fileMenuBar.setEnable("uploadfile", currentFileTreeNode);
+	fileMenuBar.setEnable("renamefile", (nSelected == 1));
+	fileMenuBar.setEnable("deletefiles", (nSelected > 0));
+	fileMenuBar.setEnable("exportfiles", (nSelected > 0));
+	fileMenuBar.setEnable("selectall", (nFiles > 0));
+	fileMenuBar.setEnable("deselectall", (nSelected > 0));
+}
+
+function isRootFolder(node) {
+	if (node) {
+		var path = node.getPath();
+		return (path == "Shared") || (path == "Personal");
+	}
+	return false;
+}
 
 //Handlers for the File Menu
 //
@@ -40,19 +68,23 @@ function doNewFolder(event) {
 	name = trim(name);
 	if (name.length == 0) return;
 	name = name.replace(/\s+/g,"_");
+	var path = currentFileTreeNode.getPath();
 	var req = new AJAX();
-	req.GET("/files/createFolder/"+currentPath+"/"+name, req.timeStamp(), null);
+	req.GET("/files/createFolder/"+path+"/"+name, req.timeStamp(), null);
 	if (req.success()) {
 		var xml = req.responseXML();
 		var root = xml ? xml.firstChild : null;
 		var child = root ? root.firstChild : null;
-		var tree = new Tree(currentNode.treeManager, currentNode.parent, currentNode.level);
+		var parent = currentFileTreeNode.parent;
+		var treeManager = currentFileTreeNode.treeManager;
+		var level = currentFileTreeNode.level
+		var tree = new Tree(treeManager, parent, level);
 		tree.load(child);
 		var state = treeManager.getState();
-		currentNode = currentNode.replaceChildren(tree);
+		currentFileTreeNode = currentFileTreeNode.replaceChildren(tree);
 		treeManager.display(state);
-		currentNode.expand();
-		currentNode.showPath();
+		currentFileTreeNode.expand();
+		currentFileTreeNode.showPath();
 	}
 	else alert("The attempt to create the directory failed.");
 }
@@ -82,17 +114,18 @@ function doRenameFolder(event) {
 	name = trim(name);
 	if (name.length == 0) return;
 	name = name.replace(/\s+/g,"_");
+	var treeManager = currentFileTreeNode.treeManager;
+	var path = currentFileTreeNode.getPath();
 	var req = new AJAX();
-	req.GET("/files/renameFolder/"+currentPath, "newname="+name+"&"+req.timeStamp(), null);
+	req.GET("/files/renameFolder/"+path, "newname="+name+"&"+req.timeStamp(), null);
 	if (req.success()) {
 		var xml = req.responseXML();
 		var root = xml ? xml.firstChild : null;
 		if ((root != null) && (root.tagName == "ok")) {
-			currentNode.name = name;
+			currentFileTreeNode.name = name;
 			var state = treeManager.getState();
 			treeManager.display(state);
-			currentNode.showPath();
-			menuBar.setText(currentPath);
+			currentFileTreeNode.showPath();
 			return;
 		}
 	}
@@ -142,21 +175,23 @@ function deleteFolder() {
 
 function deleteFolderHandler() {
 	hidePopups();
+	var treeManager = currentFileTreeNode.treeManager;
+	var path = currentFileTreeNode.getPath();
 	var req = new AJAX();
-	req.GET("/files/deleteFolder/"+currentPath, req.timeStamp(), null);
+	req.GET("/files/deleteFolder/"+path, req.timeStamp(), null);
 	if (req.success()) {
 		var xml = req.responseXML();
 		var root = xml ? xml.firstChild : null;
 		var child = root ? root.firstChild : null;
-		var parent = currentNode.parent;
+		var parent = currentFileTreeNode.parent;
 		var tree = new Tree(parent.treeManager, parent.parent, parent.level);
 		tree.load(child);
 		var state = treeManager.getState();
-		currentNode = currentNode.parent.replaceChildren(tree);
+		currentFileTreeNode = parent.replaceChildren(tree);
 		treeManager.display(state);
-		currentNode.expand();
+		currentFileTreeNode.expand();
 		showCurrentFileDirContents();
-		currentNode.showPath();
+		currentFileTreeNode.showPath();
 	}
 	else alert("The attempt to delete the directory failed.");
 }
@@ -168,18 +203,20 @@ function uploadFile() {
 	var div = document.createElement("DIV");
 	div.className = "content";
 
+	var path = currentFileTreeNode.getPath();
+
 	var form = document.createElement("FORM");
 	form.method = "post";
 	form.target = "_self";
 	form.encoding = "multipart/form-data";
 	form.acceptCharset = "UTF-8";
-	form.action = "/files/uploadFile/"+currentPath;
+	form.action = "/files/uploadFile/"+path;
 	div.appendChild(form);
 
 	var p = document.createElement("P");
 	p.className = "centeredblock";
 	p.appendChild(document.createTextNode("Upload to: "));
-	p.appendChild(document.createTextNode(currentPath));
+	p.appendChild(document.createTextNode(path));
 	form.appendChild(p);
 
 	var input = document.createElement("INPUT");
@@ -244,17 +281,13 @@ function exportFiles() {
 }
 
 function selectAllFiles() {
-	if (nodeType == "MircFolder") {
-		var files = getCabinetFiles();
-		for (var i=0; i<files.length; i++) files[i].className = "sel";
-		setEnables();
-	}
+	var files = getCabinetFiles();
+	for (var i=0; i<files.length; i++) files[i].className = "sel";
+	setFileEnables();
 }
 
 function deselectAllFiles() {
-	if (nodeType == "MircFolder") {
-		var files = getCabinetFiles();
-		for (var i=0; i<files.length; i++) files[i].className = "desel";
-		setEnables();
-	}
+	var files = getCabinetFiles();
+	for (var i=0; i<files.length; i++) files[i].className = "desel";
+	setFileEnables();
 }

@@ -47,6 +47,7 @@ function loaded() {
 	if (user.isLoggedIn) {
 		fileMenuBar = new SingleMenuBar("fileMenuBar", fileMenu);
 		fileMenuBar.display();
+		setFileEnables();
 	}
 
 	var freetext = document.getElementById("freetext");
@@ -1014,18 +1015,24 @@ function loadFileCabinets() {
 	//fileTreeManager.expandAll();
 }
 
+var currentFileTreeNode = null;
+
 //Handlers for tree selection
 //
 function showFileDirContents(event) {
 	var source = getSource(getEvent(event));
-	var currentNode = source.treenode;
+	currentFileTreeNode = source.treenode;
+	showCurrentFileDirContents();
+}
+
+function showCurrentFileDirContents() {
 	deselectAll();
-	var currentPath = currentNode.getPath();
+	var currentFileTreePath = currentFileTreeNode.getPath();
 	fileTreeManager.closePaths();
-	currentNode.showPath();
+	currentFileTreeNode.showPath();
 	queryIsActive = false;
 	var req = new AJAX();
-	req.GET("/files/mirc/"+currentPath, req.timeStamp(), null);
+	req.GET("/files/mirc/"+currentFileTreePath, req.timeStamp(), null);
 	if (req.success()) {
 		var right = document.getElementById("right");
 		right.style.overflow = "auto";
@@ -1045,6 +1052,7 @@ function showFileDirContents(event) {
 			}
 			child = child.nextSibling;
 		}
+		setFileEnables();
 	}
 	else alert("The attempt to get the directory contents failed.");
 }
@@ -1083,6 +1091,27 @@ function getClicked(file) {
 function getCabinetFiles() {
 	var right = document.getElementById("right");
 	return right.getElementsByTagName("IMG");
+}
+
+function getSelectedFiles() {
+	var files = getCabinetFiles();
+	var list = "";
+	for (var i=0; i<files.length; i++) {
+		if (files[i].className == "sel") {
+			if (list != "") list += "|";
+			list += files[i].getAttribute("title");
+		}
+	}
+	return list;
+}
+
+function getSelectedFilesCount() {
+	var files = getCabinetFiles();
+	var n = "";
+	for (var i=0; i<files.length; i++) {
+		if (files[i].className == "sel") n++;
+	}
+	return n;
 }
 
 //************************************************
