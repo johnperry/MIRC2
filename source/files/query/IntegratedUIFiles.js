@@ -42,6 +42,7 @@ function isRootFolder(node) {
 }
 
 var currentFileTreeNode = null;
+var lastFileClicked = -1;
 
 //Handlers for tree selection
 //
@@ -52,7 +53,7 @@ function showFileDirContents(event) {
 }
 
 function showCurrentFileDirContents() {
-	deselectAll();
+	deselectAllFiles();
 	var currentFileTreePath = currentFileTreeNode.getPath();
 	fileTreeManager.closePaths();
 	currentFileTreeNode.showPath();
@@ -71,6 +72,7 @@ function showCurrentFileDirContents() {
 				var img = document.createElement("IMG");
 				img.className = "desel";
 				img.ondblclick = cabinetFileDblClicked;
+				img.onmousedown = startImageDrag;
 				img.setAttribute("src", "/files/"+child.getAttribute("iconURL"));
 				img.setAttribute("title", child.getAttribute("title"));
 				img.xml = child;
@@ -83,16 +85,52 @@ function showCurrentFileDirContents() {
 	else alert("The attempt to get the directory contents failed.");
 }
 
+//Handlers for MIRC file cabinet selection in the right pane
+//
+function cabinetFileClicked(theEvent) {
+	theEvent = getEvent(theEvent)
+	stopEvent(theEvent);
+	var source = getSource(theEvent);
+	var currentFileClicked = getClickedFile(source);
+	if (currentFileClicked == -1) return;
+
+	if (!theEvent.shiftKey && !theEvent.ctrlKey) {
+		deselectAllFiles();
+		source.className = "sel";
+		lastFileClicked = currentFileClicked;
+	}
+
+	else if (getEvent(theEvent).ctrlKey) {
+		if (source.className == "sel") source.className = "desel";
+		else source.className ="sel";
+		lastFileClicked = currentFileClicked;
+	}
+
+	else {
+		if (lastFileClicked == -1) {
+			lastFileClicked = currentFileClicked;
+			source.className = "sel";
+		}
+		else {
+			var files = getCabinetFiles();
+			var start = Math.min(lastFileClicked,currentFileClicked);
+			var stop = Math.max(lastFileClicked,currentFileClicked);
+			for (var i=start; i<=stop; i++) files[i].className = "sel";
+		}
+	}
+	setFileEnables();
+}
+
 function cabinetFileDblClicked(theEvent) {
 	var theEvent = getEvent(theEvent)
 	stopEvent(theEvent);
 	var source = getSource(theEvent);
-	var currentClicked = getClickedFile(source);
-	if (currentClicked == -1) return;
+	var currentFileClicked = getClickedFile(source);
+	if (currentFileClicked == -1) return;
 	var fileURL = "/files/" + source.xml.getAttribute("fileURL");
-	deselectAll();
+	deselectAllFiles();
 	source.className = "sel";
-	lastClicked = currentClicked;
+	lastFileClicked = currentFileClicked;
 
 	if (theEvent.altKey) {
 		var filename = source.getAttribute("title");
@@ -255,11 +293,12 @@ function doRenameFile(event) {
 	if (div) div.parentNode.removeChild(div);
 	name = trim(name);
 	if (name.length == 0) return;
-	if (getSelectedCount() != 1) return;
-	var currentName = getSelected();
+	if (getSelectedFilesCount() != 1) return;
+	var currentName = getSelectedFiles();
+	var path = currentFileTreeNode.getPath();
 	name = name.replace(/\s+/g,"_");
 	var req = new AJAX();
-	req.GET("/files/renameFile/"+currentPath,"oldname="+currentName+"&newname="+name+"&"+req.timeStamp(), null);
+	req.GET("/files/renameFile/"+path,"oldname="+currentName+"&newname="+name+"&"+req.timeStamp(), null);
 	if (req.success()) showCurrentFileDirContents();
 	else alert("The attempt to rename the file failed.");
 }
@@ -364,7 +403,7 @@ function deleteFiles() {
 
 function deleteFilesHandler() {
 	hidePopups();
-	var selected = getSelected();
+	var selected = getSelectedFiles();
 	if (selected != "") {
 		selected = encodeURIComponent(selected);
 		var req = new AJAX();
@@ -377,11 +416,12 @@ function deleteFilesHandler() {
 }
 
 function exportFiles() {
-	var selected = getSelected();
+	var selected = getSelectedFiles();
 	if (selected != "") {
 		var ts = new AJAX().timeStamp();
 		selected = encodeURIComponent(selected);
-		window.open("/files/exportFiles/"+currentPath+"?list="+selected+"&"+ts,"_self");
+		var path = currentFileTreeNode.getPath();
+		window.open("/files/exportFiles/"+path+"?list="+selected+"&"+ts,"_self");
 	}
 }
 
@@ -395,4 +435,128 @@ function deselectAllFiles() {
 	var files = getCabinetFiles();
 	for (var i=0; i<files.length; i++) files[i].className = "desel";
 	setFileEnables();
+}
+
+//**************************************
+//**** Drag/drop handler for images ****
+//**************************************
+
+//This handler starts the drag of selected images.
+function startImageDrag(event) {
+	event = getEvent(event);
+	if (!event.altKey) {
+		var right = document.getElementById("right");
+		var scrollTop = right.scrollTop;
+		var node = getSource(event);
+		var list = new Array();
+		list[list.length] = getDragableImgDiv(node, event.clientX, event.clientY, scrollTop);
+		var files = right.getElementsByTagName("IMG");
+		for (var i=0; i<files.length; i++) {
+			if ((files[i].className == "sel") && !(files[i] === node)) {
+				list[list.length] = getDragableImgDiv(files[i], event.clientX, event.clientY, scrollTop);
+			}
+		}
+		dragImage(list, event);
+	}
+	cabinetFileClicked(event);
+}
+
+//Make a div containing an image to drag.
+function getDragableImgDiv(node, clientX, clientY, scrollTop) {
+	var pos = findObject(node);
+	setStatusLine(pos.y + "; " + scrollTop);
+	var div = document.createElement("DIV");
+	div.deltaX = clientX - parseInt(pos.x);
+	div.deltaY = clientY - parseInt(pos.y);
+	div.style.position = "absolute";
+	div.style.width = pos.w;
+	div.style.height = pos.h;
+	div.style.left = pos.x;
+	div.style.top = pos.y - scrollTop;
+	div.style.visibility = "visible";
+	div.style.display = "block";
+	div.style.overflow = "hidden";
+	div.style.zIndex = 5;
+	div.style.backgroundColor = "transparent";
+	div.style.filter = "alpha(opacity=40, style=0)";
+	div.parentScrollTop = scrollTop;
+	var img = document.createElement("IMG");
+	img.src = node.src;
+	div.appendChild(img);
+	div.title = node.title;
+	document.body.appendChild(div);
+	return div;
+}
+
+//Drag and drop an image
+function dragImage(list, event) {
+	var node = list[0];
+	if (document.addEventListener) {
+		document.addEventListener("mousemove", dragIt, false);
+		document.addEventListener("mouseup", dropIt, false);
+	}
+	else {
+		node.attachEvent("onmousemove", dragIt);
+		node.attachEvent("onmouseup", dropIt);
+		node.setCapture();
+	}
+	if (event.stopPropagation) event.stopPropagation();
+	else event.cancelBubble = true;
+	if (event.preventDefault) event.preventDefault();
+	else event.returnValue = false;
+
+	function dragIt(evt) {
+		if (!evt) evt = window.event;
+		for (var i=0; i<list.length; i++) {
+			list[i].style.left = (evt.clientX - list[i].deltaX) + "px";
+			list[i].style.top = (evt.clientY - list[i].deltaY - list[i].parentScrollTop) + "px";
+		}
+		if (evt.stopPropagation) event.stopPropagation();
+		else evt.cancelBubble = true;
+	}
+
+	function dropIt(evt) {
+		if (!evt) evt = window.event;
+		handleDrop(evt);
+		if (document.addEventListener) {
+			document.removeEventListener("mouseup", dropIt, true);
+			document.removeEventListener("mousemove", dragIt, true);
+		}
+		else {
+			node.detachEvent("onmousemove", dragIt);
+			node.detachEvent("onmouseup", dropIt);
+			node.releaseCapture();
+		}
+		if (evt.stopPropagation) event.stopPropagation();
+		else evt.cancelBubble = true;
+	}
+
+	function handleDrop(evt) {
+		var files = "";
+		for (var i=0; i<list.length; i++) {
+			if (files != "") files += "|";
+			files += list[i].title;
+			document.body.removeChild(list[i]);
+		}
+		var left = document.getElementById("left");
+		var scrollTop = left.scrollTop;
+		var pos = findObject(left);
+		if (evt.clientX > pos.w) return false;
+		var sourcePath = currentPath;
+		var destTree = treeManager.getTreeForCoords(evt.clientX, evt.clientY + scrollTop);
+		if (destTree) {
+			var destPath = destTree ? destTree.getPath() : "null";
+			if (isSharedFolder(destPath) || isPersonalFolder(destPath)) {
+				var req = new AJAX();
+				var qs = "sourcePath="+sourcePath+"&destPath="+destPath+"&files="+files+"&"+req.timeStamp();
+				req.GET("/files/copyFiles", qs, null);
+				if (req.success()) {
+					//currentNode = destTree;
+					//showCurrentFileDirContents();
+					alert("The files were copied successfully to\n"+destPath);
+				}
+				else alert("The attempt to copy the files failed.");
+			}
+		}
+	}
 }
