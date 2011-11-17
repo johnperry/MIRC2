@@ -15,8 +15,10 @@ var queryIsActive = false;
 
 var expandURL = "/mirc/images/expand.png";
 var collapseURL = "/mirc/images/collapse.png";
+var closeboxURL = "/icons/closebox.gif";
 
 var fileMenuBar;
+var confMenuBar;
 
 function loaded() {
 	//listCookies();
@@ -43,6 +45,10 @@ function loaded() {
 	setVisibility("ApprovalQueue", user.hasRole("publisher"));
 	setVisibility("Admin", user.hasRole("admin"));
 	setVisibility("CaseOfTheDay", (codURL != ""));
+
+	confMenuBar = new SingleMenuBar("confMenuBar", confMenu);
+	confMenuBar.display();
+	setConfEnables();
 
 	if (user.isLoggedIn) {
 		fileMenuBar = new SingleMenuBar("fileMenuBar", fileMenu);
@@ -942,13 +948,18 @@ function loadConferences() {
 
 function showConferenceContents(event) {
 	var source = getSource(getEvent(event));
-	var currentNode = source.treenode;
-	deselectAll();
-	currentNode.showPath();
+	currentConfTreeNode = source.treenode;
+	showCurrentConferenceContents();
+}
 
+function showCurrentConferenceContents() {
+	if (!currentConfTreeNode) return;
+	deselectAll();
+	confTreeManager.closePaths();
+	currentConfTreeNode.showPath();
 	queryIsActive = false;
 	var req = new AJAX();
-	req.GET("/confs/getAgenda", "nodeID="+currentNode.nodeID+"&"+req.timeStamp(), null);
+	req.GET("/confs/getAgenda", "nodeID="+currentConfTreeNode.nodeID+"&"+req.timeStamp(), null);
 	if (req.success()) {
 		var pane = document.getElementById("right");
 		while (pane.firstChild) pane.removeChild(pane.firstChild);
@@ -971,6 +982,7 @@ function showConferenceContents(event) {
 		else right.appendChild(document.createTextNode("The conference is empty."));
 	}
 	resize();
+	setConfEnables();
 }
 
 function conferenceTableHeadings(tr) {

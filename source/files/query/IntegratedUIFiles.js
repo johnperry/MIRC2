@@ -12,7 +12,6 @@ var fileItems = new Array(
 		new Item("Deselect all", deselectAllFiles, "deselectall") );
 
 var fileMenu = new Menu("File Cabinets", fileItems, "filemenu");
-var closeboxURL = "/icons/closebox.gif";
 
 //Set the enables on the File menu
 function setFileEnables() {
@@ -40,6 +39,12 @@ function isRootFolder(node) {
 	}
 	return false;
 }
+function isSharedFolder(path) {
+	return (path.indexOf("Shared") == 0);
+}
+function isPersonalFolder(path) {
+	return (path.indexOf("Personal") == 0);
+}
 
 var currentFileTreeNode = null;
 var lastFileClicked = -1;
@@ -53,7 +58,7 @@ function showFileDirContents(event) {
 }
 
 function showCurrentFileDirContents() {
-	deselectAllFiles();
+	deselectAll();
 	var currentFileTreePath = currentFileTreeNode.getPath();
 	fileTreeManager.closePaths();
 	currentFileTreeNode.showPath();
@@ -542,8 +547,8 @@ function dragImage(list, event) {
 		var scrollTop = left.scrollTop;
 		var pos = findObject(left);
 		if (evt.clientX > pos.w) return false;
-		var sourcePath = currentPath;
-		var destTree = treeManager.getTreeForCoords(evt.clientX, evt.clientY + scrollTop);
+		var sourcePath = currentFileTreeNode.getPath();
+		var destTree = fileTreeManager.getTreeForCoords(evt.clientX, evt.clientY + scrollTop);
 		if (destTree) {
 			var destPath = destTree ? destTree.getPath() : "null";
 			if (isSharedFolder(destPath) || isPersonalFolder(destPath)) {

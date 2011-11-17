@@ -41,6 +41,7 @@
 	<script language="JavaScript" type="text/javascript" src="/JSScrollableTable.js">;</script>
 	<script language="JavaScript" type="text/javascript" src="/JSMenu.js">;</script>
 	<script language="JavaScript" type="text/javascript" src="/query/QueryServicePopups.js">;</script>
+	<script language="JavaScript" type="text/javascript" src="/query/IntegratedUIConfs.js">;</script>
 	<script language="JavaScript" type="text/javascript" src="/query/IntegratedUIFiles.js">;</script>
 	<script language="JavaScript" type="text/javascript" src="/query/IntegratedUI.js">;</script>
 	<xsl:call-template name="params"/>
@@ -120,7 +121,7 @@
 		<div class="L2" id="ApprovalQueue"><a href="javascript:approvalQueueNew();">Case Approval Queue</a><br/></div>
 
 		<div id="Conferences">
-			<div class="L2x"><a href="/confs">Conferences</a></div>
+			<div class="MenuBar" id="confMenuBar">;</div>
 			<div id="confs">;</div>
 		</div>
 
