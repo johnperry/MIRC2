@@ -350,3 +350,15 @@ div#AdvancedQuery input.go {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-weight: bold;
 }
+
+div#FSFileControls {
+	padding: 4 0 4 0;
+}
+div#ConfControls {
+	padding: 4 0 4 0;
+}
+div#ConfControls img {
+	margin-left: 2px;
+	height: 24px;
+	width: 24px;
+}

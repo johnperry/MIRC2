@@ -882,7 +882,7 @@ public class MircDocument {
 				//some PACS vendors' implementations of the KeyObjectDescription
 				//elements in TCE manifests do. The strategy here is to remove
 				//all paragraph children of the abstract element that have the text content
-				//"None." and the wrap the supplied value in paragraphs, splitting
+				//"None." and then wrap the supplied value in paragraphs, splitting
 				//it on double-newlines.
 				if (!el.getTagName().equals("abstract")) el = (Element)el.getParentNode();
 				Node child = el.getFirstChild();

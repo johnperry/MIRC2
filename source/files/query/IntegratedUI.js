@@ -74,6 +74,7 @@ window.onload = loaded;
 function resize() {
 	if (split) split.positionSlider();
 	resizeScrollableTable();
+	resizeFilesDiv();
 }
 
 //************************************************
@@ -545,11 +546,12 @@ function appendDocument(tbody, doc) {
 	tbody.appendChild(tr);
 }
 
-function appendTDCB(tr) {
+function appendTDCB(tr, handler) {
 	var td = document.createElement("TD");
 	td.className = "tableCB";
 	var cb = document.createElement("INPUT");
 	cb.type = "checkbox";
+	if (handler) cb.onclick = handler;
 	td.appendChild(cb);
 	tr.appendChild(td);
 }
@@ -659,7 +661,7 @@ function setScrollableTable(pane, headings) {
 }
 
 function resultsTableHeadings(tr) {
-	appendTHCB(tr);
+	appendTHCB(tr, toggleSelect);
 	appendTHTitle(tr, "sortOnTitle", "title");
 	appendTH(tr, "Library", "sortOnLibrary", "library");
 	appendTH(tr, "Author", "sortOnAuthor", "author");
@@ -702,12 +704,12 @@ function appendTHTitle(tr, sortMethod, sort) {
 	else th.appendChild(textNode);
 	tr.appendChild(th);
 }
-function appendTHCB(tr) {
+function appendTHCB(tr, handler) {
 	var th = document.createElement("TH");
 	var cb = document.createElement("INPUT");
 	cb.type = "checkbox";
 	cb.id = "tableHeaderCB";
-	cb.onclick = toggleSelect;
+	if (handler) cb.onclick = handler;
 	cb.title = "Select/Deselect";
 	th.appendChild(cb);
 	tr.appendChild(th);
@@ -915,20 +917,22 @@ function toggleSelect() {
 }
 
 function displayCN() {
-	var tbody = document.getElementById("resultsTableBody");
-	var cbs = tbody.getElementsByTagName("INPUT");
-	var urls = ""
-	for (var i=0; i<cbs.length; i++) {
-		var cb = cbs[i];
-		if ((cb.type == "checkbox") && cb.checked) {
-			var td = cb.parentNode.nextSibling;
-			var a = td.getElementsByTagName("A")[0];
-			var url = a.getAttribute("href");
-			if (urls != "") urls += "|";
-			urls += url;
+	if (scrollableTable) {
+		var tbody = scrollableTable.tbody;
+		var cbs = tbody.getElementsByTagName("INPUT");
+		var urls = ""
+		for (var i=0; i<cbs.length; i++) {
+			var cb = cbs[i];
+			if ((cb.type == "checkbox") && cb.checked) {
+				var td = cb.parentNode.nextSibling;
+				var a = td.getElementsByTagName("A")[0];
+				var url = a.getAttribute("href");
+				if (urls != "") urls += "|";
+				urls += url;
+			}
 		}
+		if (urls != "") window.open("/casenav?suppressHome=yes&urls="+urls, "shared");
 	}
-	if (urls != "") window.open("/casenav?suppressHome=yes&urls="+urls, "shared");
 }
 
 //************************************************
@@ -944,72 +948,6 @@ function loadConferences() {
 	confTreeManager.load();
 	confTreeManager.display();
 	//confTreeManager.expandAll();
-}
-
-function showConferenceContents(event) {
-	var source = getSource(getEvent(event));
-	currentConfTreeNode = source.treenode;
-	showCurrentConferenceContents();
-}
-
-function showCurrentConferenceContents() {
-	if (!currentConfTreeNode) return;
-	deselectAll();
-	confTreeManager.closePaths();
-	currentConfTreeNode.showPath();
-	queryIsActive = false;
-	var req = new AJAX();
-	req.GET("/confs/getAgenda", "nodeID="+currentConfTreeNode.nodeID+"&"+req.timeStamp(), null);
-	if (req.success()) {
-		var pane = document.getElementById("right");
-		while (pane.firstChild) pane.removeChild(pane.firstChild);
-
-		var xml = req.responseXML();
-		var root = xml ? xml.firstChild : null;
-
-		var items = root.getElementsByTagName("item");
-		if (items.length > 0) {
-			pane.appendChild( makeLinks(false) );
-			scrollableTable = setScrollableTable(pane, conferenceTableHeadings);
-			for (var i=0; i<items.length; i++) {
-				var item = items[i];
-				appendAgendaItem(scrollableTable.tbody, item);
-			}
-			selectAll();
-			resizeScrollableTable();
-			scrollableTable.bodyTable.parentNode.onresize = resizeScrollableTable;
-		}
-		else right.appendChild(document.createTextNode("The conference is empty."));
-	}
-	resize();
-	setConfEnables();
-}
-
-function conferenceTableHeadings(tr) {
-	appendTH(tr, "");
-	appendTH(tr, "Title");
-	appendTH(tr, "Author");
-}
-
-function appendAgendaItem(tbody, item) {
-	var tr = document.createElement("TR");
-
-	appendTDCB(tr);
-
-	var td = document.createElement("TD");
-	var a = document.createElement("A");
-	a.href = item.getAttribute("url");
-	a.target = "shared";
-	a.className = "TitleLink";
-	a.appendChild( document.createTextNode(item.getAttribute("title") ) );
-	td.appendChild(a);
-	tr.appendChild(td);
-
-	var td = document.createElement("TD");
-	td.appendChild( document.createTextNode(item.getAttribute("subtitle") ) );
-	tr.appendChild(td);
-
-	tbody.appendChild(tr);
 }
 
 //************************************************

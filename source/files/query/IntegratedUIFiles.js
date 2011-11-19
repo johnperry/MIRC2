@@ -13,6 +13,9 @@ var fileItems = new Array(
 
 var fileMenu = new Menu("File Cabinets", fileItems, "filemenu");
 
+var currentFileTreeNode = null;
+var lastFileClicked = -1;
+
 //Set the enables on the File menu
 function setFileEnables() {
 
@@ -30,6 +33,39 @@ function setFileEnables() {
 	fileMenuBar.setEnable("exportfiles", (nSelected > 0));
 	fileMenuBar.setEnable("selectall", (nFiles > 0));
 	fileMenuBar.setEnable("deselectall", (nSelected > 0));
+
+	var ctrls = document.getElementById("FSFileControls");
+	if (!ctrls) {
+		ctrls = document.createElement("DIV");
+		ctrls.id = "FSFileControls";
+		var parent = document.getElementById("FSFilesDiv");
+		if (parent) {
+			parent.insertBefore(ctrls, parent.firstChild);
+		}
+	}
+	else while (ctrls.firstChild) ctrls.removeChild(ctrls.firstChild);
+
+	insertFileButtonControl(ctrls, newFolder, "New Folder", "Create a new folder in the current folder", currentFileTreeNode);
+	insertFileButtonControl(ctrls, renameFolder, "Rename Folder", "Rename the current folder", currentFileTreeNode && !root);
+	insertFileButtonControl(ctrls, deleteFolder, "Delete Folder", "Delete the current folder", currentFileTreeNode && !root);
+	insertFileButtonControl(ctrls, uploadFile, "Upload File", "Upload a file to the current folder", currentFileTreeNode);
+	insertFileButtonControl(ctrls, renameFile, "Rename File", "Rename the selected file", (nSelected == 1));
+	insertFileButtonControl(ctrls, deleteFiles, "Delete Files", "Delete the selected files", (nSelected > 0));
+	insertFileButtonControl(ctrls, exportFiles, "Export Files", "Download the selected files", (nSelected > 0));
+	insertFileButtonControl(ctrls, selectAllFiles, "Select All", "Select all files", (nFiles > 0));
+	insertFileButtonControl(ctrls, deselectAllFiles, "Deselect All", "Deselect all files", (nSelected > 0));
+}
+
+function insertFileButtonControl(ctrls, func, src, title, enb) {
+	if (enb) {
+		var ctrl = document.createElement("INPUT");
+		ctrl.type = "button";
+		ctrl.className = "FileControl";
+		ctrl.value = src;
+		ctrl.title = title;
+		ctrl.onclick = func;
+		ctrls.appendChild(ctrl);
+	}
 }
 
 function isRootFolder(node) {
@@ -45,9 +81,6 @@ function isSharedFolder(path) {
 function isPersonalFolder(path) {
 	return (path.indexOf("Personal") == 0);
 }
-
-var currentFileTreeNode = null;
-var lastFileClicked = -1;
 
 //Handlers for tree selection
 //
@@ -67,8 +100,12 @@ function showCurrentFileDirContents() {
 	req.GET("/files/mirc/"+currentFileTreePath, req.timeStamp(), null);
 	if (req.success()) {
 		var right = document.getElementById("right");
-		right.style.overflow = "auto";
 		while (right.firstChild) right.removeChild(right.firstChild);
+
+		var filesDiv = document.createElement("DIV");
+		filesDiv.id = "FSFilesDiv";
+		right.appendChild(filesDiv);
+		filesDiv.style.overflow = "auto";
 		var xml = req.responseXML();
 		var root = xml ? xml.firstChild : null;
 		var child = root ? root.firstChild : null;
@@ -81,13 +118,25 @@ function showCurrentFileDirContents() {
 				img.setAttribute("src", "/files/"+child.getAttribute("iconURL"));
 				img.setAttribute("title", child.getAttribute("title"));
 				img.xml = child;
-				right.appendChild(img);
+				filesDiv.appendChild(img);
 			}
 			child = child.nextSibling;
 		}
 		setFileEnables();
+		resizeFilesDiv();
 	}
 	else alert("The attempt to get the directory contents failed.");
+}
+
+function resizeFilesDiv() {
+	var filesDiv = document.getElementById("FSFilesDiv");
+	if (filesDiv) {
+		var parent = filesDiv.parentNode;
+		var parentPos = findObject(parent);
+		var filesDivPos = findObject(filesDiv);
+		var h = parentPos.h - (filesDivPos.y - parentPos.y);
+		filesDiv.style.height = ((h>0) ? h : 1);
+	}
 }
 
 //Handlers for MIRC file cabinet selection in the right pane
@@ -158,7 +207,7 @@ function getClickedFile(file) {
 }
 
 function getCabinetFiles() {
-	var right = document.getElementById("right");
+	var right = document.getElementById("FSFilesDiv");
 	return right.getElementsByTagName("IMG");
 }
 
@@ -399,7 +448,7 @@ function uploadFile() {
 function deleteFiles() {
 	var div = document.getElementById("ediv");
 	if (div) div.parentNode.removeChild(div);
-	if (getSelectedCount() > 0) {
+	if (getSelectedFilesCount() > 0) {
 		showTextDialog("ediv", 400, 195, "Are you sure?", closeboxURL, "Delete?",
 			"Are you sure you want to delete the selected files?",
 			deleteFilesHandler, hidePopups);
@@ -411,8 +460,9 @@ function deleteFilesHandler() {
 	var selected = getSelectedFiles();
 	if (selected != "") {
 		selected = encodeURIComponent(selected);
+		var path = currentFileTreeNode.getPath();
 		var req = new AJAX();
-		req.GET("/files/deleteFiles/"+currentPath, "list="+selected+"&"+req.timeStamp(), null);
+		req.GET("/files/deleteFiles/"+path, "list="+selected+"&"+req.timeStamp(), null);
 		if (req.success()) {
 			showCurrentFileDirContents();
 		}
@@ -450,7 +500,7 @@ function deselectAllFiles() {
 function startImageDrag(event) {
 	event = getEvent(event);
 	if (!event.altKey) {
-		var right = document.getElementById("right");
+		var right = document.getElementById("FSFilesDiv");
 		var scrollTop = right.scrollTop;
 		var node = getSource(event);
 		var list = new Array();
