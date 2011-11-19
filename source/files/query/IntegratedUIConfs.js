@@ -57,7 +57,7 @@ function insertConfDragControl(ctrls, func, src, title, enb) {
 		var ctrl = document.createElement("IMG");
 		ctrl.src = src;
 		ctrl.title = title;
-		ctrl.onmouseDown = func;
+		ctrl.onmousedown = func;
 		ctrls.appendChild(ctrl);
 	}
 }
@@ -117,7 +117,7 @@ function getSelectedAIs() {
 			if (cb.checked) {
 				if (list != "") list += "|";
 				var a = row.firstChild.nextSibling.firstChild;
-				list += a.getAttribute("href");;
+				list += a.getAttribute("href");
 			}
 		}
 	}
@@ -456,7 +456,167 @@ function deselectAllAgendaItems() {
 	}
 }
 
-//Drag Agenda Items
-function startAgendaItemDrag() {
-	alert("startAgendaItemDrag");
+//********************************************
+//**** Drag/drop handler for agenda items ****
+//********************************************
+//This handler starts the drag of selected agenda items.
+//In the Integrated UI, we just drag the bullet IMG.
+function startAgendaItemDrag(event) {
+	event = getEvent(event);
+	var right = document.getElementById("right");
+	var scrollTop = right.scrollTop;
+	var node = getSource(event);
+	var dragableDiv = getDragableDiv(node, event.clientX, event.clientY, scrollTop);
+	dragAgendaItem(dragableDiv, event);
+}
+
+//Make a div containing something to drag.
+function getDragableDiv(node, clientX, clientY, scrollTop) {
+	var pos = findObject(node);
+	var div = document.createElement("DIV");
+	div.deltaX = clientX - parseInt(pos.x);
+	div.deltaY = clientY - parseInt(pos.y);
+	div.style.position = "absolute";
+	//div.style.width = pos.w;
+	//div.style.height = pos.h;
+	div.style.left = pos.x;
+	div.style.top = pos.y - scrollTop;
+	div.style.visibility = "visible";
+	div.style.display = "block";
+	div.style.overflow = "hidden";
+	div.style.zIndex = 5;
+	div.style.backgroundColor = "transparent";
+	div.style.filter = "alpha(opacity=75, style=0)";
+	div.parentScrollTop = scrollTop;
+	var img = node.cloneNode(true);
+	img.removeAttribute("title");
+	img.style.height = 24;
+	img.style.width = 24;
+	div.appendChild(img);
+	insertSelectedAITitles(div);
+	document.body.appendChild(div);
+	return div;
+}
+
+function insertSelectedAITitles(div) {
+	if (scrollableTable) {
+		var rows = scrollableTable.tbody.rows;
+		var foundOne = false;
+		for (var i=0; i<rows.length; i++) {
+			var row = rows[i];
+			var cb = row.firstChild.firstChild;
+			if (cb.checked) {
+				var a = row.firstChild.nextSibling.firstChild;
+				var title = a.firstChild.cloneNode(true);
+				if (!foundOne) {
+					div.appendChild( document.createTextNode("\u00A0\u00A0") );
+					foundOne = true;
+				}
+				else {
+					div.appendChild( document.createElement("BR") );
+					div.appendChild( document.createTextNode("\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0") );
+				}
+				div.appendChild( title );
+			}
+		}
+	}
+}
+
+//Drag and drop agenda items
+function dragAgendaItem(dragableDiv, event) {
+	var lastTreeNode = null;
+	var dropped = false;
+	var node = dragableDiv;
+	if (document.addEventListener) {
+		document.addEventListener("mousemove", dragIt, false);
+		document.addEventListener("mouseup", dropIt, false);
+	}
+	else {
+		node.attachEvent("onmousemove", dragIt);
+		node.attachEvent("onmouseup", dropIt);
+		node.setCapture();
+	}
+	if (event.stopPropagation) event.stopPropagation();
+	else event.cancelBubble = true;
+	if (event.preventDefault) event.preventDefault();
+	else event.returnValue = false;
+
+	function dragIt(evt) {
+		if (!evt) evt = window.event;
+
+		if (!dropped) {
+			node.style.left = (evt.clientX - node.deltaX) + "px";
+			node.style.top = (evt.clientY - node.deltaY - node.parentScrollTop) + "px";
+
+			if (lastTreeNode) {
+				var namespan = lastTreeNode.namespan;
+				namespan.style.color = "black";
+				lastTreeNode = null;
+			}
+			var left = document.getElementById("left");
+			var scrollTop = left.scrollTop;
+			lastTreeNode = confTreeManager.getTreeForCoords(evt.clientX, evt.clientY + scrollTop);
+			if (lastTreeNode) {
+				var namespan = lastTreeNode.namespan;
+				namespan.style.color = "white";
+			}
+		}
+
+		if (evt.stopPropagation) evt.stopPropagation();
+		else evt.cancelBubble = true;
+	}
+
+	function dropIt(evt) {
+		if (!evt) evt = window.event;
+		handleDrop(evt);
+		if (document.addEventListener) {
+			document.removeEventListener("mouseup", dropIt, true);
+			document.removeEventListener("mousemove", dragIt, true);
+		}
+		else {
+			node.detachEvent("onmousemove", dragIt);
+			node.detachEvent("onmouseup", dropIt);
+			node.releaseCapture();
+		}
+		if (evt.stopPropagation) evt.stopPropagation();
+		else evt.cancelBubble = true;
+		dropped = true;
+	}
+
+	function handleDrop(evt) {
+		document.body.removeChild(node);
+		if (lastTreeNode) {
+			var namespan = lastTreeNode.namespan;
+			namespan.style.color = "black";
+			lastTreeNode = null;
+		}
+
+		var left = document.getElementById("left");
+		var scrollTop = left.scrollTop;
+		var pos = findObject(left);
+		var list = getSelectedAIs();
+		if ((list != "") && (evt.clientX < pos.w)) {
+			//This is a move to another conference (maybe)
+			var sourcePath = currentConfTreeNode.getPath();;
+			var destTree = confTreeManager.getTreeForCoords(evt.clientX, evt.clientY + scrollTop);
+			if (destTree) {
+				var destPath = destTree ? destTree.getPath() : "null";
+				if (isSharedConf(destPath) || isPersonalConf(destPath)) {
+					var req = new AJAX();
+
+					var qs = "sourceID="+currentConfTreeNode.nodeID
+								+"&targetID="+destTree.nodeID
+									+"&list="+encodeURIComponent(list)
+										+"&"+req.timeStamp();
+
+					req.GET("/confs/transferAgendaItem", qs, null);
+					if (req.success()) showCurrentConferenceContents();
+					else {
+						alert("The attempt to transfer the agenda item failed.");
+						window.open("/query", "_self");
+					}
+				}
+			}
+		}
+	}
 }

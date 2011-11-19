@@ -266,17 +266,21 @@ public class ConferenceService extends Servlet {
 			//This a request to move an agenda item from one conference to another
 			String sourceID = req.getParameter("sourceID");
 			String targetID = req.getParameter("targetID");
-			String url = req.getParameter("url");
 			Conferences confs = Conferences.getInstance();
-			Conference conf = confs.getConference(sourceID);
-			AgendaItem aItem = conf.removeAgendaItem(url);
-			confs.setConference(conf);
-			String result = "<notok/>";
-			if (aItem != null) {
-				conf = confs.getConference(targetID);
-				conf.appendAgendaItem(aItem);
-				result = confs.setConference(conf) ? "<ok/>" : "<notok/>";
+			Conference sourceConf = confs.getConference(sourceID);
+			Conference targetConf = confs.getConference(targetID);
+
+			//Get the list of agenda items.
+			String list = req.getParameter("list");
+			String[] urls = list.split("\\|");
+			//Do everything we can, and ignore errors.
+			for (int i=0; i<urls.length; i++) {
+				String url = urls[i];
+				AgendaItem aItem = sourceConf.removeAgendaItem(url);
+				if (aItem != null) targetConf.appendAgendaItem(aItem);
 			}
+			boolean ok = confs.setConference(sourceConf) && confs.setConference(targetConf);
+			String result = ok ? "<ok/>" : "<notok/>";
 			res.disableCaching();
 			res.setContentType("xml");
 			res.write( result );

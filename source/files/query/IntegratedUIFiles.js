@@ -545,6 +545,8 @@ function getDragableImgDiv(node, clientX, clientY, scrollTop) {
 
 //Drag and drop an image
 function dragImage(list, event) {
+	var lastTreeNode = null;
+	var dropped = false;
 	var node = list[0];
 	if (document.addEventListener) {
 		document.addEventListener("mousemove", dragIt, false);
@@ -566,6 +568,22 @@ function dragImage(list, event) {
 			list[i].style.left = (evt.clientX - list[i].deltaX) + "px";
 			list[i].style.top = (evt.clientY - list[i].deltaY - list[i].parentScrollTop) + "px";
 		}
+
+		if (!dropped) {
+			if (lastTreeNode) {
+				var namespan = lastTreeNode.namespan;
+				namespan.style.color = "black";
+				lastTreeNode = null;
+			}
+			var left = document.getElementById("left");
+			var scrollTop = left.scrollTop;
+			lastTreeNode = fileTreeManager.getTreeForCoords(evt.clientX, evt.clientY + scrollTop);
+			if (lastTreeNode) {
+				var namespan = lastTreeNode.namespan;
+				namespan.style.color = "white";
+			}
+		}
+
 		if (evt.stopPropagation) event.stopPropagation();
 		else evt.cancelBubble = true;
 	}
@@ -584,9 +602,15 @@ function dragImage(list, event) {
 		}
 		if (evt.stopPropagation) event.stopPropagation();
 		else evt.cancelBubble = true;
+		dropped = true;
 	}
 
 	function handleDrop(evt) {
+		if (lastTreeNode) {
+			var namespan = lastTreeNode.namespan;
+			namespan.style.color = "black";
+			lastTreeNode = null;
+		}
 		var files = "";
 		for (var i=0; i<list.length; i++) {
 			if (files != "") files += "|";
@@ -608,7 +632,7 @@ function dragImage(list, event) {
 				if (req.success()) {
 					//currentNode = destTree;
 					//showCurrentFileDirContents();
-					alert("The files were copied successfully to\n"+destPath);
+					//alert("The files were copied successfully to\n"+destPath);
 				}
 				else alert("The attempt to copy the files failed.");
 			}

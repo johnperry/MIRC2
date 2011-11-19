@@ -674,7 +674,7 @@ function dragAgendaItem(dragableAIDiv, event) {
 
 					var qs = "sourceID="+currentNode.nodeID
 								+"&targetID="+destTree.nodeID
-									+"&url="+encodeURIComponent(node.url)
+									+"&list="+encodeURIComponent(node.url)
 										+"&"+req.timeStamp();
 
 					req.GET("/confs/transferAgendaItem", qs, null);
