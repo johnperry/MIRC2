@@ -45,6 +45,14 @@ function setFileEnables() {
 	}
 	else while (ctrls.firstChild) ctrls.removeChild(ctrls.firstChild);
 
+	insertFileImgControl(ctrls, newFolder, "/mirc/images/newfolder.png", "Create a new folder in the current folder", currentFileTreeNode);
+	insertFileImgControl(ctrls, renameFolder, "/mirc/images/renamefolder.png", "Rename the current folder", currentFileTreeNode && !root);
+	insertFileImgControl(ctrls, deleteFolder, "/mirc/images/deletefolder.png", "Delete the current folder", currentFileTreeNode && !root);
+	insertFileImgControl(ctrls, uploadFile, "/mirc/images/upload.png", "Upload a file to the current folder", currentFileTreeNode);
+	insertFileImgControl(ctrls, renameFile, "/mirc/images/renamefile.png", "Rename the selected file", (nSelected == 1));
+	insertFileImgControl(ctrls, deleteFiles, "/mirc/images/deleteitem.png", "Delete the selected files", (nSelected > 0));
+	insertFileImgControl(ctrls, exportFiles, "/mirc/images/download.png", "Download the selected files", (nSelected > 0));
+/*
 	insertFileButtonControl(ctrls, newFolder, "New Folder", "Create a new folder in the current folder", currentFileTreeNode);
 	insertFileButtonControl(ctrls, renameFolder, "Rename Folder", "Rename the current folder", currentFileTreeNode && !root);
 	insertFileButtonControl(ctrls, deleteFolder, "Delete Folder", "Delete the current folder", currentFileTreeNode && !root);
@@ -54,8 +62,18 @@ function setFileEnables() {
 	insertFileButtonControl(ctrls, exportFiles, "Export Files", "Download the selected files", (nSelected > 0));
 	insertFileButtonControl(ctrls, selectAllFiles, "Select All", "Select all files", (nFiles > 0));
 	insertFileButtonControl(ctrls, deselectAllFiles, "Deselect All", "Deselect all files", (nSelected > 0));
+*/
 }
 
+function insertFileImgControl(ctrls, func, src, title, enb) {
+	if (enb) {
+		var ctrl = document.createElement("IMG");
+		ctrl.src = src;
+		ctrl.title = title;
+		ctrl.onclick = func;
+		ctrls.appendChild(ctrl);
+	}
+}
 function insertFileButtonControl(ctrls, func, src, title, enb) {
 	if (enb) {
 		var ctrl = document.createElement("INPUT");
@@ -167,9 +185,11 @@ function cabinetFileClicked(theEvent) {
 		}
 		else {
 			var files = getCabinetFiles();
-			var start = Math.min(lastFileClicked,currentFileClicked);
-			var stop = Math.max(lastFileClicked,currentFileClicked);
-			for (var i=start; i<=stop; i++) files[i].className = "sel";
+			var start = Math.min(lastFileClicked, currentFileClicked);
+			var stop = Math.max(lastFileClicked, currentFileClicked);
+			for (var i=start; i<=stop; i++) {
+				if ((i>=0) && (i<files.length)) files[i].className = "sel";
+			}
 		}
 	}
 	setFileEnables();

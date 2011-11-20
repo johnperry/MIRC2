@@ -3,8 +3,8 @@ var confItems = new Array(
 		new Item("Rename conference", renameConference, "renameconference"),
 		new Item("Delete conference", deleteConference, "deleteconference"),
 		new Item("", null),
-		new Item("New agenda item", newAgendaItem, "newagendaitem"),
-		new Item("Delete agenda items", deleteAgendaItems, "deleteagendaitems")
+		new Item("New case", newAgendaItem, "newagendaitem"),
+		new Item("Delete cases", deleteAgendaItems, "deleteagendaitems")
 	);
 
 var viewItems = new Array(
@@ -14,8 +14,8 @@ var viewItems = new Array(
 		new Item("View in Case Navigator", caseNavigator, "casenavigator") );
 
 var selectItems = new Array(
-		new Item("Select all agenda items", selectAllAI, "selectallai"),
-		new Item("Deselect all agenda items", deselectAllAI, "deselectallai") );
+		new Item("Select all cases", selectAllAI, "selectallai"),
+		new Item("Deselect all cases", deselectAllAI, "deselectallai") );
 
 var helpItems = new Array (
 		new Item("MIRC Wiki", showWiki) );
@@ -306,7 +306,7 @@ function deleteAgendaItems() {
 	if (div) div.parentNode.removeChild(div);
 	if (getSelectedAICount() > 0) {
 		showTextDialog("ediv", 400, 210, "Are you sure?", closeboxURL, "Delete?",
-			"Are you sure you want to delete the selected agenda items?",
+			"Are you sure you want to delete the selected cases?",
 			deleteAgendaItemsHandler, hidePopups);
 	}
 }
@@ -326,7 +326,7 @@ function deleteAgendaItemsHandler() {
 			}
 		}
 		else {
-			alert("The attempt to delete the agenda items failed.");
+			alert("The attempt to delete the cases failed.");
 			window.open("/query", "_self");
 		}
 	}
@@ -472,7 +472,7 @@ function newAgendaItem() {
 
 	div.appendChild(p);
 
-	showDialog("ediv", 400, 240, "New Agenda Item", closeboxURL, "New Agenda Item", div, doNewAgendaItem, hidePopups);
+	showDialog("ediv", 400, 240, "New Case", closeboxURL, "New Case", div, doNewAgendaItem, hidePopups);
 	window.setTimeout("document.getElementById('etext1').focus()", 500);
 }
 function doNewAgendaItem(event) {
@@ -495,7 +495,7 @@ function doNewAgendaItem(event) {
 			return;
 		}
 	}
-	alert("The attempt to create the agenda item failed.");
+	alert("The attempt to create the case failed.");
 }
 
 function deleteConference() {

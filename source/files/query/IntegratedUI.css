@@ -165,7 +165,7 @@ div.rightpane table th {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	background: #A8C7FF;
 }
-div.rightpane table th.sort A { color: gray; }
+div.rightpane table th.sort A { color: white; }
 div.rightpane table th.none A { color: black; }
 	
 div.rightpane table td {
@@ -353,6 +353,11 @@ div#AdvancedQuery input.go {
 
 div#FSFileControls {
 	padding: 4 0 4 0;
+}
+div#FSFileControls img {
+	margin-left: 6px;
+	height: 24px;
+	width: 24px;
 }
 div#ConfControls {
 	padding: 4 0 4 0;
