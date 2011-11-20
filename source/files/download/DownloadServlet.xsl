@@ -72,6 +72,7 @@
 					changed the name of the teaching file system from MIRC to TFS. Click TFS&#8209;installer.jar
 					to obtain the latest RSNA teaching file software.
 				</p>
+				<!--
 				<h2>Common Downloads</h2>
 				<p class="note">
 					This table provides links to the most commonly downloaded software.
@@ -91,25 +92,32 @@
 					</tr>
 				</table>
 				<br/>
-				<h2>All Downloads</h2>
 				<p class="note">
 					This table provides links to the items listed above, plus other components and utilities.
 				</p>
+				-->
 				<table border="1">
 					<tr>
 						<th>File</th>
 						<th>Description</th>
 						<th class="size">Size</th>
-						<th>Build Time</th>
-						<th>Upload Time</th>
+						<th>Version</th>
 					</tr>
 					<xsl:for-each select="file">
 						<tr>
 							<td><a href="javascript:get('{@name}');"><xsl:value-of select="@name"/></a></td>
 							<td><xsl:value-of select="@desc"/></td>
 							<td class="size"><xsl:value-of select="format-number(@size,'#,##0')"/></td>
-							<td><xsl:value-of select="@build"/></td>
-							<td><xsl:value-of select="@lastModified"/></td>
+							<td>
+								<xsl:choose>
+									<xsl:when test="@build">
+										<xsl:value-of select="@build"/>
+									</xsl:when>
+									<xsl:otherwise>
+										<xsl:value-of select="@lastModified"/>
+									</xsl:otherwise>
+								</xsl:choose>
+							</td>
 						</tr>
 					</xsl:for-each>
 				</table>

@@ -3,8 +3,8 @@ var confItems = new Array(
 		new Item("Rename conference", renameConference, "renameconference"),
 		new Item("Delete conference", deleteConference, "deleteconference"),
 		new Item("", null),
-		new Item("New agenda item", newAgendaItem, "newagendaitem"),
-		new Item("Delete agenda items", deleteAgendaItems, "deleteagendaitems"),
+		new Item("Add a case", newAgendaItem, "newagendaitem"),
+		new Item("Remove cases", deleteAgendaItems, "deleteagendaitems"),
 		new Item("", null),
 		new Item("Show normal titles", normalTitles, "normaltitles"),
 		new Item("Show unknown titles", unknownTitles, "unknowntitles"),
@@ -41,7 +41,16 @@ function setConfEnables() {
 	}
 	else while (ctrls.firstChild) ctrls.removeChild(ctrls.firstChild);
 
-	insertConfDragControl(ctrls, startAgendaItemDrag, "/icons/bullet.gif", "Drag the selected agenda items", user.isLoggedIn && (nSelected > 0));
+	insertConfDragControl(ctrls, startAgendaItemDrag, "/icons/bullet.gif", "Drag the selected casess", user.isLoggedIn && (nSelected > 0));
+	insertConfImgControl(ctrls, newConference, "/mirc/images/newfolder.png", "Create a new conference in the current conference", user.isLoggedIn && currentConfTreeNode);
+	insertConfImgControl(ctrls, renameConference, "/mirc/images/renamefolder.png", "Rename the current conference", user.isLoggedIn && currentConfTreeNode && !root);
+	insertConfImgControl(ctrls, deleteConference, "/mirc/images/deletefolder.png", "Delete the current conference", user.isLoggedIn && currentConfTreeNode && !root);
+	insertConfImgControl(ctrls, newAgendaItem, "/mirc/images/newitem.png", "Create a link to a new case in the current conference", user.isLoggedIn && currentConfTreeNode);
+	insertConfImgControl(ctrls, deleteAgendaItems, "/mirc/images/deleteitem.png", "Remove the selected cases from the conference", user.isLoggedIn && (nSelected > 0));
+	insertConfImgControl(ctrls, normalTitles, "/mirc/images/toggletitles.png", "Display titles as knowns", !showNormalTitles);
+	insertConfImgControl(ctrls, unknownTitles, "/mirc/images/toggletitles.png", "Display titles as unknowns", showNormalTitles);
+	insertConfImgControl(ctrls, displayCN, "/mirc/images/film-projector.gif", "Display the selected cases in the Case Navigator", (nSelected > 0));
+/*
 	insertConfButtonControl(ctrls, newConference, "New Conference", "Create a new conference in the current conference", user.isLoggedIn && currentConfTreeNode);
 	insertConfButtonControl(ctrls, renameConference, "Rename Conference", "Rename the current conference", user.isLoggedIn && currentConfTreeNode && !root);
 	insertConfButtonControl(ctrls, deleteConference, "Delete Conference", "Delete the current conference", user.isLoggedIn && currentConfTreeNode && !root);
@@ -49,7 +58,7 @@ function setConfEnables() {
 	insertConfButtonControl(ctrls, deleteAgendaItems, "Delete Agenda Items", "Delete the selected agenda items", user.isLoggedIn && (nSelected > 0));
 	insertConfButtonControl(ctrls, normalTitles, "Normal Titles", "Display titles as knowns", !showNormalTitles);
 	insertConfButtonControl(ctrls, unknownTitles, "Unknown Titles", "Display titles as unknowns", showNormalTitles);
-	insertConfImgControl(ctrls, displayCN, "/mirc/images/film-projector.gif", "Display the selected agenda items in the Case Navigator", (nSelected > 0));
+*/
 }
 
 function insertConfDragControl(ctrls, func, src, title, enb) {
@@ -336,7 +345,7 @@ function newAgendaItem() {
 
 	div.appendChild(p);
 
-	showDialog("ediv", 400, 240, "New Agenda Item", closeboxURL, "New Agenda Item", div, doNewAgendaItem, hidePopups);
+	showDialog("ediv", 400, 240, "New Case Link", closeboxURL, "New Case Link", div, doNewAgendaItem, hidePopups);
 	window.setTimeout("document.getElementById('etext1').focus()", 500);
 }
 function doNewAgendaItem(event) {
@@ -365,8 +374,9 @@ function doNewAgendaItem(event) {
 function deleteConference() {
 	var div = document.getElementById("ediv");
 	if (div) div.parentNode.removeChild(div);
-	showTextDialog("ediv", 400, 210, "Are you sure?", closeboxURL, "Delete?",
-		"Are you sure you want to delete the selected conference and all its subconferences?",
+	var name = currentConfTreeNode.name;
+	showTextDialog("ediv", 400, 225, "Are you sure?", closeboxURL, "Delete Conference?",
+		"Are you sure you want to delete the \""+name+"\" conference and all its subconferences?",
 		deleteConferenceHandler, hidePopups);
 }
 function deleteConferenceHandler() {
@@ -399,8 +409,8 @@ function deleteAgendaItems() {
 	var div = document.getElementById("ediv");
 	if (div) div.parentNode.removeChild(div);
 	if (getSelectedAICount() > 0) {
-		showTextDialog("ediv", 400, 210, "Are you sure?", closeboxURL, "Delete?",
-			"Are you sure you want to delete the selected agenda items?",
+		showTextDialog("ediv", 400, 210, "Are you sure?", closeboxURL, "Remove Cases?",
+			"Are you sure you want to remove the selected cases from the conference?",
 			deleteAgendaItemsHandler, hidePopups);
 	}
 }
@@ -420,7 +430,7 @@ function deleteAgendaItemsHandler() {
 			}
 		}
 		else {
-			alert("The attempt to delete the agenda items failed.");
+			alert("The attempt to remove the cases failed.");
 			window.open("/query", "_self");
 		}
 	}

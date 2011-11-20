@@ -920,7 +920,7 @@ function displayCN() {
 	if (scrollableTable) {
 		var tbody = scrollableTable.tbody;
 		var cbs = tbody.getElementsByTagName("INPUT");
-		var urls = ""
+		var urls = "";
 		for (var i=0; i<cbs.length; i++) {
 			var cb = cbs[i];
 			if ((cb.type == "checkbox") && cb.checked) {
@@ -931,7 +931,7 @@ function displayCN() {
 				urls += url;
 			}
 		}
-		if (urls != "") window.open("/casenav?suppressHome=yes&urls="+urls, "shared");
+		if (urls != "") window.open("/casenav?suppressHome=yes&urls="+encodeURIComponent(urls), "shared");
 	}
 }
 

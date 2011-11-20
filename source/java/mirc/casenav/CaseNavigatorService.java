@@ -65,6 +65,7 @@ public class CaseNavigatorService extends Servlet {
 
 		String suppressHome = req.getParameter("suppressHome", "no");
 		String urlsParam = req.getParameter("urls");
+
 		if (urlsParam != null) {
 
 			String[] urls = urlsParam.split("\\|");
