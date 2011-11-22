@@ -41,7 +41,7 @@ public class MircDocumentStorageService extends AbstractPipelineStage implements
 	 */
 	public MircDocumentStorageService(Element element) {
 		super(element);
-		ssid = element.getAttribute("libraryID");
+		ssid = element.getAttribute("ssid");
 	}
 
 	/**

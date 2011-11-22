@@ -43,6 +43,8 @@ public class TCEStorageService extends AbstractPipelineStage implements StorageS
 	File lastFileIn = null;
     int totalCount = 0;
     String ssid = "";
+    int ssidTag = 0;
+
     boolean autocreate = false;
     TCEStore store = null;
     ManifestProcessor mp = null;
@@ -59,7 +61,10 @@ public class TCEStorageService extends AbstractPipelineStage implements StorageS
 	 */
 	public TCEStorageService(Element element) {
 		super(element);
-		ssid = element.getAttribute("libraryID");
+		ssid = element.getAttribute("ssid");
+		String ssidTagString = element.getAttribute("ssidTag").trim();
+		ssidTag = StringUtil.getHexInt(ssidTagString);
+
 
 		//Get the attribute that enables creation of new accounts.
 		//Automatically created accounts are created with the password
@@ -177,20 +182,62 @@ public class TCEStorageService extends AbstractPipelineStage implements StorageS
 		//Process one manifest, creating a new MIRCdocument for it
 		//and all its referenced instances.
 		private void processManifest(File file) {
+			logger.debug("Processing manifest: "+file);
 			try {
-				//Get the library in which to store the MIRCdocument
 				MircConfig mc = MircConfig.getInstance();
-				Element lib = mc.getLocalLibrary(ssid);
-				if (lib == null) lib = mc.getFirstEnabledLocalLibrary();
+				Element lib = null;
+
+				//Get the manifest and its referenced instances.
+				//Note that a standard TCE manifest is a DicomObject,
+				//but MIRC also supports a special manifest in the form
+				//of an XML MIRCdocument containing a special element
+				//listing the instances. Thus, the following code
+				//has to handle both DicomObjects and XmlObjects.
+				FileObject manifest = FileObject.getInstance(file);
+
+				//Get the library in which to store the MIRCdocument.
+				//If the manifest is a DicomObject and there is a non-zero
+				//ssidTag, then get the ssid from the specified element.
+				//If the manifest is an XmlObject, get the ssid from the
+				//ssid attribute of the root element.
+				//If a valid ssid cannot be found, use the default ssid
+				//specified in the configuration element.
+				//If after all this, the ssid is not valid, use the first
+				//enabled library.
+				//If no library can be found, forget it.
+				if (manifest instanceof DicomObject) {
+					DicomObject dicomManifest = (DicomObject)manifest;
+					if (ssidTag != 0) {
+						String ssidFromTag = dicomManifest.getElementValue(ssidTag).trim();
+						lib = mc.getLocalLibrary(ssidFromTag);
+					}
+				}
+				else if (manifest instanceof XmlObject) {
+					XmlObject xmlObject = (XmlObject)manifest;
+					Element root = xmlObject.getDocument().getDocumentElement();
+					String ssidFromAttr = root.getAttribute("ssid").trim();
+					if (!ssidFromAttr.equals("")) {
+						lib = mc.getLocalLibrary(ssidFromAttr);
+					}
+				}
+				if (lib != null) {
+					if (!lib.getAttribute("tceenb").equals("yes")) lib = null;
+				}
 				if (lib == null) {
-					logger.warn("Unable to find an enabled library in which to create a MIRCdocument.");
-					return;
+					lib = mc.getLocalLibrary(ssid);
+					if (lib == null) lib = mc.getFirstEnabledLocalLibrary("tceenb");
+					if (lib == null) {
+						logger.warn("Unable to find an enabled library in which to create a MIRCdocument.");
+						return;
+					}
 				}
 
 				//Get the index of the selected library
 				String libID = lib.getAttribute("id");
 
-				//Get the index and find the directory containing the documents
+				logger.debug("Selected library: "+libID);
+
+				//Get the library index and find the directory containing the documents
 				Index index = Index.getInstance(libID);
 				File docs = index.getDocumentsDir();
 
@@ -201,14 +248,6 @@ public class TCEStorageService extends AbstractPipelineStage implements StorageS
 				//Make a temp child directory.
 				File temp = new File(dir, "temp");
 				temp.mkdirs();
-
-				//Get the manifest and its referenced instances.
-				//Note that a standard TCE manifest is a DicomObject,
-				//but MIRC also supports a special manifest in the form
-				//of an XML MIRCdocument containing a special element
-				//listing the instances. Thus, the following code
-				//has to handle both DicomObjects and XmlObjects.
-				FileObject manifest = FileObject.getInstance(file);
 
 				//Move the manifest to the temp directory to get it out of the queue.
 				manifest.moveToDirectory(temp, true);
@@ -242,6 +281,7 @@ public class TCEStorageService extends AbstractPipelineStage implements StorageS
 				//MircDocument object. This will tell it where to save itself.
 				File mdFile = new File(dir, "MIRCdocument.xml");
 				md.setFile(mdFile);
+				logger.debug("MIRCdocument file: "+mdFile);
 
 				//Put in the manifest and all the instances and store the updated document.
 				//Note: we have to copy the files to a temp directory to protect them
@@ -257,6 +297,7 @@ public class TCEStorageService extends AbstractPipelineStage implements StorageS
 				//provided to the system.
 				if (manifest instanceof DicomObject) {
 					md.insert((DicomObject)manifest, true);
+					logger.debug("Inserted DICOM manifest");
 				}
 
 				//Now do the references, which must all be DicomObjects.
@@ -276,12 +317,15 @@ public class TCEStorageService extends AbstractPipelineStage implements StorageS
 					}
 
 					md.insert(dob, true);
+					logger.debug("Inserted instance: "+dob.getFile());
 				}
 				md.sortImageSection();
 				md.save();
+				logger.debug("MIRCdocument saved");
 
 				//Index the document
 				index.insertDocument( index.getKey(mdFile) );
+				logger.debug("MIRCdocument indexed");
 
 				//Now we can delete the temp directory.
 				FileUtil.deleteAll(temp);

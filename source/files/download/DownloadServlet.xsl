@@ -110,7 +110,7 @@
 							<td class="size"><xsl:value-of select="format-number(@size,'#,##0')"/></td>
 							<td>
 								<xsl:choose>
-									<xsl:when test="@build">
+									<xsl:when test="string-length(normalize-space(@build)) != 0">
 										<xsl:value-of select="@build"/>
 									</xsl:when>
 									<xsl:otherwise>

@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import mirc.MircConfig;
+import org.rsna.ctp.objects.ZipObject;
 import org.rsna.multipart.UploadedFile;
 import org.rsna.server.HttpRequest;
 import org.rsna.server.HttpResponse;
@@ -99,9 +100,10 @@ public class DownloadServlet extends Servlet {
 			File file = new File(root, p);
 			if (file.exists() && !file.isDirectory()) {
 				String name = file.getName();
+				String nameLC = name.toLowerCase();
 
 				String build = "";
-				if (name.toLowerCase().endsWith(".jar")) {
+				if (nameLC.endsWith(".jar")) {
 					Hashtable<String,String> manifest = JarUtil.getManifestAttributes(file);
 					if (manifest != null) {
 						String date = manifest.get("Date");
@@ -190,11 +192,12 @@ public class DownloadServlet extends Servlet {
 				Element fileElement = doc.createElement("file");
 				filesElement.appendChild(fileElement);
 				String name = file.getName();
+				String nameLC = name.toLowerCase();
 				fileElement.setAttribute("name", name);
 				String lm = StringUtil.getDateTime( file.lastModified(), " at " );
 				fileElement.setAttribute("lastModified", lm);
 				fileElement.setAttribute("size", Long.toString( file.length() ));
-				if (name.toLowerCase().endsWith(".jar")) {
+				if (nameLC.endsWith(".jar")) {
 					Hashtable<String,String> manifest = JarUtil.getManifestAttributes(file);
 					if (manifest != null) {
 						String build = "";
@@ -209,6 +212,27 @@ public class DownloadServlet extends Servlet {
 						String desc = manifest.get("Description");
 						if (desc != null) fileElement.setAttribute("desc", desc);
 					}
+				}
+				else if (nameLC.endsWith(".zip")) {
+					try {
+						ZipObject zobj = new ZipObject(file);
+						Document manifest = zobj.getManifestDocument();
+						if (manifest != null) {
+							Element root = manifest.getDocumentElement();
+							String build = "";
+							String date = root.getAttribute("date").trim();
+							if (!date.equals("")) build = date;
+							String version = root.getAttribute("version").trim();
+							if (!version.equals("")) {
+								if (!build.equals("")) build += " ";
+								build += "["+version+"]";
+							}
+							fileElement.setAttribute("build", build);
+							String desc = root.getAttribute("description").trim();
+							if (!desc.equals("")) fileElement.setAttribute("desc", desc);
+						}
+					}
+					catch (Exception skip) { }
 				}
 			}
 			Document xsl = XmlUtil.getDocument( FileUtil.getStream( "/download/DownloadServlet.xsl" ) );

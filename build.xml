@@ -1,6 +1,6 @@
 <project name="MIRC" default="all" basedir=".">
 
-	<property name="version" value="Z19"/>
+	<property name="version" value="Z21"/>
 
 	<property name="build" value="${basedir}/build"/>
 	<property name="source" value="${basedir}/source"/>
@@ -31,7 +31,7 @@
 
 	<target name="init">
 		<tstamp>
-			<format property="today" pattern="yyyy-MM-dd"/>
+			<format property="today" pattern="yyyy.MM.dd"/>
 			<format property="now" pattern="HH:mm:ss z"/>
 		</tstamp>
 		<echo message="Time now ${now}"/>
