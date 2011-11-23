@@ -1,6 +1,6 @@
 <project name="MIRC" default="all" basedir=".">
 
-	<property name="version" value="Z21"/>
+	<property name="version" value="Z22"/>
 
 	<property name="build" value="${basedir}/build"/>
 	<property name="source" value="${basedir}/source"/>

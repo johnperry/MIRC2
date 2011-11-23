@@ -33,6 +33,7 @@ public class MircDocumentStorageService extends AbstractPipelineStage implements
     int totalCount = 0;
     int storedCount = 0;
     String ssid = "";
+    int ssidTag = 0;
 
 	/**
 	 * Construct a MircDocumentStorageService.
@@ -42,6 +43,8 @@ public class MircDocumentStorageService extends AbstractPipelineStage implements
 	public MircDocumentStorageService(Element element) {
 		super(element);
 		ssid = element.getAttribute("ssid");
+		String ssidTagString = element.getAttribute("ssidTag").trim();
+		ssidTag = StringUtil.getHexInt(ssidTagString);
 	}
 
 	/**
@@ -60,16 +63,36 @@ public class MircDocumentStorageService extends AbstractPipelineStage implements
 		//Store the object
 		if (fileObject instanceof DicomObject) {
 			try {
+				MircConfig mc = MircConfig.getInstance();
+				Element lib = null;
+
 				DicomObject dob = (DicomObject)fileObject;
 				String siUID = dob.getStudyInstanceUID();
 				String sopiUID = dob.getSOPInstanceUID();
 
-				//Get the library in which to store the MIRCdocument
-				MircConfig mc = MircConfig.getInstance();
-				Element lib = mc.getLocalLibrary(ssid);
-				if (lib == null) lib = mc.getFirstEnabledLocalLibrary("dcmenb");
-				if (lib == null) lib = mc.getFirstEnabledLocalLibrary();
-				if (lib == null) return fileObject; //bail out if we can't get a library
+				//Get the library in which to store the MIRCdocument.
+				//If there is a non-zero ssidTag, then get the ssid from
+				//the specified element.
+				//If a valid ssid cannot be found, use the default ssid
+				//specified in the configuration element.
+				//If after all this, the ssid is not valid, use the first
+				//enabled library.
+				//If no library can be found, forget it.
+				if (ssidTag != 0) {
+					String ssidFromTag = dob.getElementValue(ssidTag).trim();
+					lib = mc.getLocalLibrary(ssidFromTag);
+				}
+				if (lib != null) {
+					if (!lib.getAttribute("dcmenb").equals("yes")) lib = null;
+				}
+				if (lib == null) {
+					lib = mc.getLocalLibrary(ssid);
+					if (lib == null) lib = mc.getFirstEnabledLocalLibrary("dcmenb");
+					if (lib == null) {
+						logger.warn("Unable to find an enabled library in which to create a MIRCdocument.");
+						return fileObject;
+					}
+				}
 
 				//Get the index of the selected library
 				String libID = lib.getAttribute("id");
