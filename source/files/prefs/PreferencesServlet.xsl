@@ -95,7 +95,7 @@
 						<td><input class="text" type="text" name="affiliation" value="{@affiliation}"/></td>
 					</tr>
 					<tr>
-						<td>Contact infomation</td>
+						<td>Contact information</td>
 						<td><input class="text" type="text" name="contact" value="{@contact}"/></td>
 					</tr>
 				</table>
