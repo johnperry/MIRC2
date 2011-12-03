@@ -65,12 +65,7 @@ public class ResultComparator implements Comparator {
 					if (primary1 == null) return -1;
 					c = primary1.getTextContent().compareToIgnoreCase(primary2.getTextContent());
 					if (c != 0) return c;
-
-					secondary2 = XmlUtil.getFirstNamedChild(eo2, "lmdate");
-					if (secondary2 == null) return 1;
-					secondary1 = XmlUtil.getFirstNamedChild(eo1, "lmdate");
-					if (secondary1 == null) return -1;
-					return -secondary1.getTextContent().compareTo(secondary2.getTextContent());
+					return compareDates(eo1, eo2);
 
 				case 1:
 					//primary: library; secondary: lmdate
@@ -80,12 +75,7 @@ public class ResultComparator implements Comparator {
 					if (primary1 == null) return -1;
 					c = primary1.getTextContent().compareToIgnoreCase(primary2.getTextContent());
 					if (c != 0) return c;
-
-					secondary2 = XmlUtil.getFirstNamedChild(eo2, "lmdate");
-					if (secondary2 == null) return 1;
-					secondary1 = XmlUtil.getFirstNamedChild(eo1, "lmdate");
-					if (secondary1 == null) return -1;
-					return -secondary1.getTextContent().compareTo(secondary2.getTextContent());
+					return compareDates(eo1, eo2);
 
 				case 2:
 					//primary: library; secondary: lmdate
@@ -95,17 +85,12 @@ public class ResultComparator implements Comparator {
 					if (primary1 == null) return -1;
 					//get the name children
 					primary2 = XmlUtil.getFirstNamedChild(primary2, "name");
-					if (primary2 == null) return 1;
+					if (primary2 == null) return -1;
 					primary1 = XmlUtil.getFirstNamedChild(primary1, "name");
-					if (primary1 == null) return -1;
+					if (primary1 == null) return 1;
 					c = primary1.getTextContent().compareToIgnoreCase(primary2.getTextContent());
 					if (c != 0) return c;
-
-					secondary2 = XmlUtil.getFirstNamedChild(eo2, "lmdate");
-					if (secondary2 == null) return 1;
-					secondary1 = XmlUtil.getFirstNamedChild(eo1, "lmdate");
-					if (secondary1 == null) return -1;
-					return -secondary1.getTextContent().compareTo(secondary2.getTextContent());
+					return compareDates(eo1, eo2);
 
 				case 3:
 					//primary: specialty; secondary: lmdate
@@ -115,23 +100,22 @@ public class ResultComparator implements Comparator {
 					if (primary1 == null) return -1;
 					c = primary1.getTextContent().compareToIgnoreCase(primary2.getTextContent());
 					if (c != 0) return c;
-
-					secondary2 = XmlUtil.getFirstNamedChild(eo2, "lmdate");
-					if (secondary2 == null) return 1;
-					secondary1 = XmlUtil.getFirstNamedChild(eo1, "lmdate");
-					if (secondary1 == null) return -1;
-					return -secondary1.getTextContent().compareTo(secondary2.getTextContent());
+					return compareDates(eo1, eo2);
 
 				default:
 					//primary: lmdate
-					secondary2 = XmlUtil.getFirstNamedChild(eo2, "lmdate");
-					if (secondary2 == null) return 1;
-					secondary1 = XmlUtil.getFirstNamedChild(eo1, "lmdate");
-					if (secondary1 == null) return -1;
-					return -secondary1.getTextContent().compareTo(secondary2.getTextContent());
+					return compareDates(eo1, eo2);
 			}
 		}
 		else return 0;
+	}
+
+	private int compareDates(Element eo1, Element eo2) {
+		Element date2 = XmlUtil.getFirstNamedChild(eo2, "lmdate");
+		if (date2 == null) return -1;
+		Element date1 = XmlUtil.getFirstNamedChild(eo1, "lmdate");
+		if (date1 == null) return 1;
+		return -date1.getTextContent().compareTo(date2.getTextContent());
 	}
 
 }
