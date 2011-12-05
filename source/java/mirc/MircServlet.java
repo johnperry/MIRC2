@@ -134,6 +134,13 @@ public class MircServlet extends Servlet {
 			res.setResponseCode( res.notfound );
 			res.send();
 		}
+		else if (function.equals("phi") && req.userHasRole("admin")) {
+			File phi = new File( MircConfig.getInstance().getRootDirectory(), "phi" );
+			File log = new File( phi, "AccessLog.txt" );
+			res.write(log);
+			res.setContentType(log);
+			res.send();
+		}
 		else super.doGet(req, res);
 	}
 

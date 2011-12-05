@@ -244,6 +244,8 @@ public class StorageService extends Servlet {
 					//fail because the browser won't be able to store the file;
 					res.send();
 					zipFile.delete();
+					AccessLog.logAccess(req, doc);
+					return;
 				}
 				else {
 					//Export is not authorized.
@@ -274,6 +276,7 @@ public class StorageService extends Servlet {
 				res.setContentType("xml");
 				res.disableCaching();
 				res.send();
+				AccessLog.logAccess(req, doc);
 				return;
 			}
 
@@ -285,6 +288,7 @@ public class StorageService extends Servlet {
 			res.write( XmlUtil.getTransformedText( doc, xsl, params ) );
 			res.setContentType("html");
 			res.send();
+			AccessLog.logAccess(req, doc);
 		}
 	}
 

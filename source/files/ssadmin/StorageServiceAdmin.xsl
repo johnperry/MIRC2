@@ -124,14 +124,6 @@
 						</td>
 					</tr>
 					<tr>
-						<td>Access Log enabled</td>
-						<td>
-							<input type="checkbox" name="{@id}-acclog" value="yes">
-								<xsl:if test="@acclog='yes'"><xsl:attribute name="checked">checked</xsl:attribute></xsl:if>
-							</input>
-						</td>
-					</tr>
-					<tr>
 						<td class="buttons" colspan="2">
 							<xsl:if test="not($numdocs=0)">
 								<input class="button" type="button" value="List the index" onclick="window.open('/ssadmin/list/{@id}','_self');"/>

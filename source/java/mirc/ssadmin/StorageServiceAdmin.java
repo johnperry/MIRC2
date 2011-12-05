@@ -193,7 +193,6 @@ public class StorageServiceAdmin extends Servlet {
 				String zipenb = req.getParameter(id+"-zipenb", "no");
 				String dcmenb = req.getParameter(id+"-dcmenb", "no");
 				String tceenb = req.getParameter(id+"-tceenb", "no");
-				String acclog = req.getParameter(id+"-acclog", "no");
 
 				Element lib = mc.getLocalLibrary(id);
 				lib.setAttribute( "timeout", timeout );
@@ -205,7 +204,8 @@ public class StorageServiceAdmin extends Servlet {
 				lib.setAttribute( "zipenb", zipenb );
 				lib.setAttribute( "dcmenb", dcmenb );
 				lib.setAttribute( "tceenb", tceenb );
-				lib.setAttribute( "acclog", acclog );
+
+				lib.removeAttribute( "acclog" ); //clean up unused attribute
 
 				setChild(lib, "title", title, false);
 				setChild(lib, "tagline", tagline, true);

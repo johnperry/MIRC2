@@ -15,7 +15,6 @@
 	<Libraries>
 
 		<Library
-            acclog="no"
             address="/storage/ss1"
             authenb="yes"
             autoindex="yes"
