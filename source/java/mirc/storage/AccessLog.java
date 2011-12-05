@@ -24,6 +24,7 @@ import mirc.MircConfig;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 /**
  * Static method for logging access to and export of MIRCdocuments containing PHI.
@@ -45,11 +46,6 @@ public class AccessLog {
 			//See if the MIRCdocument has PHI
 			Element phi = XmlUtil.getFirstNamedChild(xmlDocument, "phi");
 			if (phi == null) return;
-
-			//There is PHI in the document, get the identifying parameters
-			String siuid = XmlUtil.getValueViaPath(phi, "phi/study/si-uid");
-			String ptid = XmlUtil.getValueViaPath(phi, "phi/study/pt-id");
-			String ptname = XmlUtil.getValueViaPath(phi, "phi/study/pt-name");
 
 			//Get the document path
 			String path = req.getPath();
@@ -74,9 +70,7 @@ public class AccessLog {
 							   userip,
 							   path,
 							   params,
-							   siuid,
-							   ptid,
-							   ptname);
+							   phi);
 		}
 		catch (Exception unable) {
 			logger.warn("Unable to create an access log entry for a PHI access.", unable);
@@ -116,16 +110,24 @@ public class AccessLog {
 								String userip,
 								String path,
 								String params,
-								String siuid,
-								String ptid,
-								String ptname) {
+								Element phi) {
 		if (accessLog != null) {
-			accessLog.info(datetime + " - " + event + " by " + username + " @" + userip
-							+ indent + "path:   " + path
-							+ indent + "params: " + params
-							+ indent + "SIUID:  " + siuid
-							+ indent + "Pt ID:  " + ptid
-							+ indent + "Name:   " + ptname);
+			StringBuffer sb = new StringBuffer();
+			sb.append(datetime + " - " + event + " by " + username + " @" + userip);
+			sb.append(  indent + "path:   " + path
+					  + indent + "params: " + params);
+			NodeList nl = phi.getElementsByTagName("study");
+			for (int i=0; i<nl.getLength(); i++) {
+				Element study = (Element)nl.item(i);
+				String siuid = XmlUtil.getValueViaPath(study, "study/si-uid");
+				String ptid = XmlUtil.getValueViaPath(study, "study/pt-id");
+				String ptname = XmlUtil.getValueViaPath(study, "study/pt-name");
+				sb.append(  indent + "SIUID:  " + siuid
+						  + indent + "Pt ID:  " + ptid
+						  + indent + "Name:   " + ptname);
+				if (i < nl.getLength()-1) sb.append(indent + "---");
+			}
+			accessLog.info(sb.toString());
 		}
 	}
 }
