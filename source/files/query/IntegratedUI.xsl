@@ -231,7 +231,7 @@
 		var version = "<xsl:value-of select="@version"/>";
 		var rsnaVersion = "<xsl:value-of select="@rsnaVersion"/>";
 		var date = "<xsl:value-of select="@date"/>";
-		var serverURL = "<xsl:value-of select="@siteurl"/>";
+		var serverURL = "<xsl:value-of select="normalize-space(@siteurl)"/>";
 		var selectedLocalLibrary = 0;
 		var localLibraries = <xsl:text>new Array(</xsl:text>
 			<xsl:for-each select="Libraries/Library[@local='yes']">
@@ -256,9 +256,9 @@
 				<xsl:if test="position() != last()">,</xsl:if>
 			</xsl:for-each>
 			);
-		var disclaimerURL = '<xsl:value-of select="@disclaimerurl"/>';
-		var codURL = '<xsl:value-of select="news/url"/>';
-		var sessionPopup = '<xsl:value-of select="@popup"/>';
+		var disclaimerURL = '<xsl:value-of select="normalize-space(@disclaimerurl)"/>';
+		var codURL = '<xsl:value-of select="normalize-space(news/url)"/>';
+		var sessionPopup = '<xsl:value-of select="normalize-space(@popup)"/>';
 	</script>
 </xsl:template>
 

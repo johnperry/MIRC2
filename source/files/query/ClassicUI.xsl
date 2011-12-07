@@ -102,20 +102,22 @@
 </xsl:template>
 
 <xsl:template name="news">
+	<xsl:variable name="imageURL" select="normalize-space(news/image)"/>
+	<xsl:variable name="codURL" select="normalize-space(news/url)"/>
 	<xsl:choose>
 		<xsl:when test="news/image">
 			<div class="news" id="news">
-				<a href="{news/url}" target="cod">
-					<img src="{news/image}" width="128"/>
+				<a href="{$codURL}" target="cod">
+					<img src="{$imageURL}" width="128"/>
 				</a>
 				<xsl:text> </xsl:text>
-				<a href="{news/url}" target="cod">Case of the Day</a>
+				<a href="{$codURL}" target="cod">Case of the Day</a>
 			</div>
 		</xsl:when>
 		<xsl:when test="news/title">
 			<div class="news" id="news">
 				<br/>Today's Interesting Document:<br/>
-				<a href="{news/url}" target="cod">
+				<a href="{$codURL}" target="cod">
 					<xsl:value-of select="news/title"/>
 				</a>
 			</div>
@@ -460,8 +462,8 @@
 				<xsl:if test="position() != last()">,</xsl:if>
 			</xsl:for-each>
 			);
-		var disclaimerURL = '<xsl:value-of select="@disclaimerurl"/>';
-		var sessionPopup = '<xsl:value-of select="@popup"/>';
+		var disclaimerURL = '<xsl:value-of select="normalize-space(@disclaimerurl)"/>';
+		var sessionPopup = '<xsl:value-of select="normalize-space(@popup)"/>';
 	</script>
 </xsl:template>
 
