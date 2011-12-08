@@ -7,6 +7,12 @@
 <xsl:param name="options"/>
 <xsl:param name="species"/>
 
+<xsl:variable name="normalizedSitename" select="normalize-space(/mirc/@sitename)"/>
+<xsl:variable name="sitename">
+	<xsl:if test="$normalizedSitename"><xsl:value-of select="$normalizedSitename"/></xsl:if>
+	<xsl:if test="not($normalizedSitename)"><xsl:text>RSNA TFS</xsl:text></xsl:if>
+</xsl:variable>
+
 <xsl:template match="*|@*|text()">
 	<xsl:copy>
 		<xsl:apply-templates select="*|@*|text()"/>
@@ -23,7 +29,7 @@
 	<meta name="description"
 		content="MIRC is a free software server program to store radiology teaching files.
 				It was created and is supported by the Radiological Society of North America (RSNA)."/>
-	<title><xsl:value-of select="@sitename"/></title>
+	<title><xsl:value-of select="$sitename"/></title>
 	<link rel="stylesheet" href="/JSPopup.css" type="text/css"/>
 	<link rel="stylesheet" href="/JSPage.css" type="text/css"/>
 	<link rel="stylesheet" href="/query/IntegratedUIMenus.css" type="text/css"/>
@@ -71,7 +77,7 @@
 <xsl:template name="header">
 <div class="header">
 	<div class="headerLeft">
-		<span class="sitename"><xsl:value-of select="@sitename"/></span>
+		<span class="sitename"><xsl:value-of select="$sitename"/></span>
 	</div>
 	<div class="headerRight">
 
@@ -226,7 +232,7 @@
 
 <xsl:template name="params">
 	<script>
-		var sitename = "<xsl:value-of select="@sitename"/>";
+		var sitename = "<xsl:value-of select="$sitename"/>";
 		var mode = "<xsl:value-of select="@mode"/>";
 		var version = "<xsl:value-of select="@version"/>";
 		var rsnaVersion = "<xsl:value-of select="@rsnaVersion"/>";

@@ -7,6 +7,12 @@
 <xsl:param name="options"/>
 <xsl:param name="species"/>
 
+<xsl:variable name="normalizedSitename" select="normalize-space(/mirc/@sitename)"/>
+<xsl:variable name="sitename">
+	<xsl:if test="normalizedSitename"><xsl:value-of select="$normalizedSitename"/></xsl:if>
+	<xsl:if test="not(normalizedSitename)"><xsl:text>RSNA TFS</xsl:text></xsl:if>
+</xsl:variable>
+
 <xsl:template match="*|@*|text()">
 	<xsl:copy>
 		<xsl:apply-templates select="*|@*|text()"/>
@@ -23,7 +29,7 @@
 	<meta name="description"
 		content="MIRC is a free software server program to store radiology teaching files.
 				It was created and is supported by the Radiological Society of North America (RSNA)."/>
-	<title><xsl:value-of select="@sitename"/></title>
+	<title><xsl:value-of select="$sitename"/></title>
 	<link rel="stylesheet" href="/JSMenu.css" type="text/css"/>
 	<link rel="stylesheet" href="/JSPopup.css" type="text/css"/>
 	<link rel="stylesheet" href="/query/ClassicUI.css" type="text/css"/>
@@ -74,7 +80,7 @@
 <div class="header" style="background:url(/query/{@masthead}); background-repeat: no-repeat;">
 	<xsl:if test="@showsitename='yes'">
 		<div class="sitename">
-			<span><xsl:value-of select="@sitename"/></span>
+			<span><xsl:value-of select="$sitename"/></span>
 		</div>
 	</xsl:if>
 	<div class="sitelogo" style="height:{@mastheadheight}">&#160;</div>
