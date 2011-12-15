@@ -108,8 +108,7 @@ public class TCEStorageService extends AbstractPipelineStage implements StorageS
 	/**
 	 * Store an object. If the storage attempt fails, quarantine the
 	 * input object if a quarantine was defined in the configuration,
-	 * and return null to stop further processing. Non-DicomObjects are
-	 * passed on without storage.
+	 * and return null to stop further processing.
 	 * @param fileObject the object to store.
 	 * @return the original FileObject.
 	 */
@@ -317,6 +316,7 @@ public class TCEStorageService extends AbstractPipelineStage implements StorageS
 					}
 
 					md.insert(dob, true);
+					if (!dob.isAdditionalTFInfo()) md.insertDicomElements(dob);
 					logger.debug("Inserted instance: "+dob.getFile());
 				}
 				md.sortImageSection();
