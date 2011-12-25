@@ -29,7 +29,46 @@
 <xsl:param name="doc-path"/>
 <xsl:param name="doc-index-entry"/>
 
-<xsl:param name="readAuthorization" select="/MIRCdocument/authorization/read"/>
+<xsl:param name="read-authorization" select="/MIRCdocument/authorization/read"/>
+
+<xsl:variable name="processed-title">
+	<xsl:variable name="ttl" select="normalize-space(/MIRCdocument/title)"/>
+	<xsl:variable name="alt" select="normalize-space(/MIRCdocument/alternative-title)"/>
+	<xsl:variable name="cat" select="normalize-space(/MIRCdocument/category)"/>
+	<xsl:variable name="ttl-present" select="string-length($ttl) &gt; 0"/>
+	<xsl:variable name="alt-present" select="string-length($alt) &gt; 0"/>
+	<xsl:variable name="cat-present" select="string-length($cat) &gt; 0"/>
+	<xsl:choose>
+		<xsl:when test="$unknown='yes'">
+			<xsl:choose>
+				<xsl:when test="$alt-present">
+					<xsl:value-of select="$alt"/>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:choose>
+						<xsl:when test="$cat-present">
+							<xsl:text>Unknown - </xsl:text>
+							<xsl:value-of select="$cat"/>
+						</xsl:when>
+						<xsl:otherwise>
+							<xsl:text>Unknown</xsl:text>
+						</xsl:otherwise>
+					</xsl:choose>
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:when>
+		<xsl:otherwise>
+			<xsl:choose>
+				<xsl:when test="$ttl-present">
+					<xsl:value-of select="$ttl"/>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:text>TFS Case</xsl:text>
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:otherwise>
+	</xsl:choose>
+</xsl:variable>
 
 <xsl:template match="*|@*|text()">
 	<xsl:copy>
@@ -51,15 +90,7 @@
 			<script src="/JSTree.js">;</script>
 			<script src="/JSSplitPane.js">;</script>
 			<script src="/storage/MIRCdocument.js">;</script>
-			<xsl:variable name="title" select="normalize-space(title)"/>
-			<xsl:choose>
-				<xsl:when test="$title">
-					<title><xsl:value-of select="$title"/></title>
-				</xsl:when>
-				<xsl:otherwise>
-					<title>Case Display</title>
-				</xsl:otherwise>
-			</xsl:choose>
+			<title><xsl:value-of select="$processed-title"/></title>
 		</head>
 		<xsl:choose>
 			<xsl:when test="$display='tab'">
@@ -309,33 +340,8 @@
 	</xsl:for-each>
 </xsl:template>
 
-<xsl:template name="tab-title">
-	<h1><xsl:value-of select="title"/></h1>
-</xsl:template>
-
 <xsl:template name="page-title">
-	<xsl:choose>
-		<xsl:when test="$unknown='yes'">
-			<xsl:choose>
-				<xsl:when test="alternative-title">
-					<h1><xsl:value-of select="normalize-space(alternative-title)"/></h1>
-				</xsl:when>
-				<xsl:otherwise>
-					<xsl:choose>
-						<xsl:when test="//category">
-							<h1>Unknown - <xsl:value-of select="//category"/></h1>
-						</xsl:when>
-						<xsl:otherwise>
-							<h1>Unknown</h1>
-						</xsl:otherwise>
-					</xsl:choose>
-				</xsl:otherwise>
-			</xsl:choose>
-		</xsl:when>
-		<xsl:otherwise>
-			<h1><xsl:value-of select="normalize-space(title)"/></h1>
-		</xsl:otherwise>
-	</xsl:choose>
+	<h1><xsl:value-of select="$processed-title"/></h1>
 </xsl:template>
 
 <xsl:template match="author">
@@ -582,7 +588,7 @@
 </xsl:template>
 
 <xsl:template name="publish-button">
-	<xsl:if test="$publish-url and not(contains($readAuthorization,'*'))">
+	<xsl:if test="$publish-url and not(contains($read-authorization,'*'))">
 		<tr>
 			<td>
 				<input type="button" value="Publish" title="Publish this document"
@@ -993,7 +999,6 @@
 
 <xsl:template name="script-init">
 	<script>
-
 		<xsl:variable name="remove">"'</xsl:variable>
 		<xsl:variable name="title"><xsl:value-of select="normalize-space(/MIRCdocument/title)"/></xsl:variable>
 		<xsl:variable name="alttitle"><xsl:value-of select="normalize-space(/MIRCdocument/alternative-title)"/></xsl:variable>

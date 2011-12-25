@@ -291,7 +291,10 @@ public class MircSiteCopier extends JFrame {
 									}
 								}
 							}
-							users.addUser(ctpUser);
+							if (!users.addUser(ctpUser)) {
+								cp.println("   ***UNABLE TO ADD USER: \""+username+"\"");
+								System.out.println("UNABLE TO ADD USER: \""+username+"\"");
+							}
 						}
 						else cp.println("   skipping pre-existing user: \""+username+"\"");
 					}
@@ -348,6 +351,7 @@ public class MircSiteCopier extends JFrame {
 					}
 					else cp.println("      authors.xml file does not exist (skipping)");
 				}
+				prefs.close();
 			}
 			catch (Exception ex) {
 				cp.print(StringUtil.getStackTrace(ex));

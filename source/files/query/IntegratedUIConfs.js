@@ -189,13 +189,14 @@ function appendAgendaItem(tbody, item) {
 
 	var td = document.createElement("TD");
 	var a = document.createElement("A");
-	a.href = item.getAttribute("url");
 	a.target = "shared";
 	a.className = "TitleLink";
 	if (showNormalTitles) {
+		a.href = item.getAttribute("url");
 		a.appendChild( document.createTextNode(item.getAttribute("title") ) );
 	}
 	else {
+		a.href = item.getAttribute("url")+"?unknown=yes";
 		a.appendChild( document.createTextNode(item.getAttribute("alttitle") ) );
 	}
 

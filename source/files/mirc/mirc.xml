@@ -33,53 +33,53 @@
 			<title>My Teaching Files</title>
 		</Library>
 
-		<Library address="http://mirc.childrensmemorial.org/general/service" enabled="yes" deflib="yes">
-			<title>CMH: Children's Memorial Hospital General Pediatric Cases</title>
-		</Library>
+        <Library address="http://mirc.childrensmemorial.org/storage/ss12" enabled="yes">
+            <title>CMH: Children&apos;s Memorial Hospital General Pediatric Cases</title>
+        </Library>
 
-		<Library address="http://mirc.childrensmemorial.org/cardiovascular/service" enabled="yes">
-			<title>CMH:Cardiovascular</title>
-		</Library>
+        <Library address="http://mirc.childrensmemorial.org/storage/ss10" enabled="yes">
+            <title>CMH: Fourth Year Board Review Cases</title>
+        </Library>
 
-		<Library address="http://mirc.childrensmemorial.org/chest/service" enabled="yes">
-			<title>CMH:Chest and Airway</title>
-		</Library>
+        <Library address="http://mirc.childrensmemorial.org/storage/ss6" enabled="yes">
+            <title>CMH: Module 1: Emergency Radiology</title>
+        </Library>
 
-		<Library address="http://mirc.childrensmemorial.org/emergency/service" enabled="yes">
-			<title>CMH:Emergency Radiology</title>
-		</Library>
+        <Library address="http://mirc.childrensmemorial.org/storage/ss13" enabled="yes">
+            <title>CMH: Module 2: Chest and Airway</title>
+        </Library>
 
-		<Library address="http://mirc.childrensmemorial.org/Boards/service" enabled="yes">
-			<title>CMH:Fourth Year Board Review Cases</title>
-		</Library>
+        <Library address="http://mirc.childrensmemorial.org/storage/ss4" enabled="yes">
+            <title>CMH: Module 3: Cardiovascular</title>
+        </Library>
 
-		<Library address="http://mirc.childrensmemorial.org/GI/service" enabled="yes">
-			<title>CMH:GI Tract</title>
-		</Library>
+        <Library address="http://mirc.childrensmemorial.org/storage/ss7" enabled="yes">
+            <title>CMH: Module 4: Musculoskeletal System</title>
+        </Library>
 
-		<Library address="http://mirc.childrensmemorial.org/GU/service" enabled="yes">
-			<title>CMH:GU Tract</title>
-		</Library>
+        <Library address="http://mirc.childrensmemorial.org/storage/ss3" enabled="yes">
+            <title>CMH: Module 5: GI Tract</title>
+        </Library>
 
-		<Library address="http://mirc.childrensmemorial.org/ICU/service" enabled="yes">
-			<title>CMH:Intensive Care Units</title>
-		</Library>
+        <Library address="http://mirc.childrensmemorial.org/storage/ss8" enabled="yes">
+            <title>CMH: Module 6: GU Tract</title>
+        </Library>
 
-		<Library address="http://mirc.childrensmemorial.org/musculoskeletal/service" enabled="yes">
-			<title>CMH:Musculoskeletal System</title>
-		</Library>
+        <Library address="http://mirc.childrensmemorial.org/storage/ss11" enabled="yes">
+            <title>CMH: Module 7: Neuroradiology</title>
+        </Library>
 
-		<Library address="http://mirc.childrensmemorial.org/Neuroradiology/service" enabled="yes">
-			<title>CMH:Neuroradiology</title>
-		</Library>
+        <Library address="http://mirc.childrensmemorial.org/storage/ss5" enabled="yes">
+            <title>CMH: Module 8: Oncology</title>
+        </Library>
 
-		<Library address="http://mirc.childrensmemorial.org/oncology/service" enabled="yes">
-			<title>CMH:Oncology</title>
-		</Library>
+        <Library address="http://mirc.childrensmemorial.org/storage/ss2" enabled="yes">
+            <title>CMH: Module 9: Intensive Care Units</title>
+        </Library>
 
-		<Library address="http://mirc.childrensmemorial.org/syndromes/service" enabled="yes">
-			<title>CMH:Systemic Diseases and Syndromes</title>
-		</Library>
+        <Library address="http://mirc.childrensmemorial.org/storage/ss9" enabled="yes">
+            <title>CMH: Module10: Systemic Diseases and Syndromes</title>
+        </Library>
 
 		<Library address="http://pubimage.hcuge.ch/4DACTION/_XML_MIRCQUERY/" enabled="yes">
 			<title>Casimage</title>
