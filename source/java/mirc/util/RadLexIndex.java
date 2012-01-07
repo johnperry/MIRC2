@@ -45,10 +45,23 @@ public class RadLexIndex {
 	public static synchronized void loadIndex(File dir) {
 		if (recman == null) {
 			try {
-				File indexFile = new File(dir, indexName);
-				recman = JdbmUtil.getRecordManager(indexFile.getAbsolutePath());
-				index = JdbmUtil.getBTree(recman, radlexTreeName);
-				if (index.size() == 0) createIndex(dir);
+				File libraries = new File("libraries");
+				File jarFile = new File(libraries, "MIRC.jar");
+				long jarFileLM = jarFile.lastModified();
+				File dbFile = new File(dir, indexName + ".db");
+				File lgFile = new File(dir, indexName + ".lg");
+
+				if ( !dbFile.exists() || !lgFile.exists()
+						|| (jarFileLM > dbFile.lastModified())
+							|| (jarFileLM > lgFile.lastModified()) ) {
+					createIndex(dir);
+				}
+				else {
+					File indexFile = new File(dir, indexName);
+					recman = JdbmUtil.getRecordManager(indexFile.getAbsolutePath());
+					index = JdbmUtil.getBTree(recman, radlexTreeName);
+					if (index.size() == 0) createIndex(dir);
+				}
 			}
 			catch (Exception ignore) { }
 		}
@@ -125,6 +138,8 @@ public class RadLexIndex {
 	 * is located.
 	 */
 	public static synchronized void createIndex(File dir) {
+
+		logger.info("RadLex index rebuild started.");
 		File indexFile = new File(dir, indexName);
 		String filename = indexFile.getAbsolutePath();
 
@@ -149,21 +164,16 @@ public class RadLexIndex {
 				if ((child.getNodeType() == Node.ELEMENT_NODE) && child.getNodeName().equals("term")) {
 					Element term = (Element)child;
 					String id = term.getAttribute("id");
-					Node name = term.getFirstChild();
-					while (name != null) {
-						if ((name.getNodeType() == Node.ELEMENT_NODE) && name.getNodeName().equals("name")) {
-							String nameString = name.getTextContent();
-							Term t = new Term(id, nameString);
-							addTerm(t);
-							break;
-						}
-						name = name.getNextSibling();
-					}
+					String text = term.getTextContent().trim();
+					if (!id.equals("") && !text.equals("")) addTerm( new Term(id, text) );
 				}
 				child = child.getNextSibling();
 			}
+			logger.info("RadLex index rebuild complete ("+index.size()+" index entries).");
 		}
-		catch (Exception quit) { }
+		catch (Exception quit) {
+			logger.info("RadLex index rebuild failed.");
+		}
 		finally {
 			try {
 				//Commit and close the database to force the database into a clean state.
