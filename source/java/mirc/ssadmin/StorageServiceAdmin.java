@@ -303,12 +303,14 @@ public class StorageServiceAdmin extends Servlet {
 	 * @return true if the deletion succeeded; false otherwise.
 	 */
 	public static boolean deleteDocument(String ssid, String docref) {
+
 		boolean ok = false;
 		Index index = Index.getInstance(ssid);
 		if (index != null) {
 			ok = index.removeDocument(docref);
 			index.commit();
 		}
+
 		if (ok) {
 			//Now delete the directory containing the MIRCdocument.
 			//Note: docref points to the MIRCdocument XML file.

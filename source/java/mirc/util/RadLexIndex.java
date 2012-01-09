@@ -37,6 +37,7 @@ public class RadLexIndex {
 	private static final String xmlResource = "/mirc/"+xmlName;
 	private static final String radlexTreeName = "radlex";
 	private static BTree index = null;
+	private static boolean busy = false;
 
 	/**
 	 * Load the RadLex index from the JDBM files,

@@ -132,6 +132,11 @@ public class SubmitService extends Servlet {
 
 		String ct = req.getContentType().toLowerCase();
 
+		logger.debug("POST received:");
+		logger.debug("...path:             "+req.path);
+		logger.debug("...Content-Type:     "+req.getContentType());
+
+
 		//If this request is not a multipart form and the user is not authenticated,
 		//return a 401 to trigger a resubmission with credentials. This is for
 		//applications like FileSender or the third-party authoring tools.
@@ -141,6 +146,7 @@ public class SubmitService extends Servlet {
 			res.setResponseCode( res.unauthorized );
 			res.setHeader("WWW-Authenticate", "Basic realm=\"MIRC\"");
 			res.send();
+			logger.debug("...response: unauthorized");
 			return;
 		}
 
@@ -183,6 +189,7 @@ public class SubmitService extends Servlet {
 			FileOutputStream fos = new FileOutputStream(x);
 			if (FileUtil.copy( is, fos, req.getContentLength() )) file = x;
 		}
+		logger.debug("...received file:    "+file);
 
 		//Note: It is important not to get the query parameters until
 		//after the multipart form has been parsed. The parsing process
@@ -195,12 +202,8 @@ public class SubmitService extends Servlet {
 		//of the identified library's documents directory ("docs"),
 		//it is treated as an update from a third-party author tool;
 		//otherwise, it is treated as a new document.
-		String docref = path.subpath(2);
-		Path docrefPath = new Path(docref);
-		if ((docrefPath.length() > 1) && docrefPath.element(0).equals(documentsDir.getName())) {
-			docref = docref.substring(1);
-		}
-		else docref = "";
+
+		String docref = (path.element(2).equals(documentsDir.getName())) ? path.subpath(3) : "";
 		boolean isDocumentUpdate = !docref.equals("");
 		boolean preserveOwners = req.hasParameter("preserveOwners");
 		String ui = req.getParameter("ui", "");
@@ -211,6 +214,12 @@ public class SubmitService extends Servlet {
 		//results pages. If the parameter is present, the form is suppressed
 		//but the result of the submission is still provided.
 		boolean suppress = (req.getParameter("suppress") != null) || (req.getParameter("ppt") != null);
+
+		logger.debug("...docref:           "+docref);
+		logger.debug("...isDocumentUpdate: "+isDocumentUpdate);
+		logger.debug("...preserveOwners:   "+preserveOwners);
+		logger.debug("...suppress:         "+suppress);
+		logger.debug("...ui:               "+ui);
 
 		//If we didn't get a file, just go back to the query page.
 		if (file == null) { res.redirect("/query"); return; }
@@ -244,13 +253,16 @@ public class SubmitService extends Servlet {
 				//This is an update of an existing MIRCdocument.
 				//Remove the old version and put the new one in its place.
 				try {
+					logger.debug("...updating the document");
 					//First parse the old document and see if the user is authorized to change it.
 					File oldFile = new File(documentsDir, docref);
 					Document docXML = XmlUtil.getDocument(oldFile);
 					boolean canUpdate = StorageService.userIsAuthorizedTo("update", docXML, req);
 					if (canUpdate) {
+						logger.debug("...document update is authorized");
 						//Okay, remove the old document.
-						StorageServiceAdmin.deleteDocument(ssid, docref);
+						boolean ok = StorageServiceAdmin.deleteDocument(ssid, documentsDir.getName()+docref);
+						logger.debug("...remove old document: result = "+ok);
 
 						//Now rename the new directory to the old name so the URL
 						//has a chance of staying the same
@@ -260,10 +272,16 @@ public class SubmitService extends Servlet {
 							//to the new file in the old directory.
 							mainFile = new File( oldDirFile, mainFile.getName() );
 							result.append("The document has been updated.|");
+							logger.debug("...document update succeeded");
 						}
+						else logger.debug("...document update failed");
 					}
+					else logger.debug("...document update is not authorized - processing as a new submission");
+
 				}
-				catch (Exception processAsANewSubmission) { }
+				catch (Exception processAsANewSubmission) {
+					logger.debug("...update failed, processing as a new submission", processAsANewSubmission);
+				}
 			}
 
 			String docpath = mainFile.getAbsolutePath();
@@ -277,10 +295,14 @@ public class SubmitService extends Servlet {
 			setAuthorization(mainFile, username, isAutoindex, isPublisher, (isDocumentUpdate || preserveOwners));
 
 			//Now index the document.
-			if (index.insertDocument(docpath))
+			if (index.insertDocument(docpath)) {
 				result.append("The site index has been updated.|");
-			else
+				logger.debug("...site index updated");
+			}
+			else {
 				result.append("The attempt to update the site index failed.|");
+				logger.debug("...unable to update the site index");
+			}
 		}
 		finish(res, ui, ssid, result, suppress);
 	}
