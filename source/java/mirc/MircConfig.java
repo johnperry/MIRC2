@@ -140,24 +140,36 @@ public class MircConfig {
 	//Set the siteurl from the system IP address if dynamic addressing is enabled.
 	private static String getSiteURL() {
 		String siteurl = mircRoot.getAttribute("siteurl");
+		String oldurl = siteurl;
 		boolean dynamic = mircRoot.getAttribute("addresstype").equals("dynamic");
+		Configuration ctp = Configuration.getInstance();
+		int serverPort = ctp.getServerPort();
+		boolean serverSSL = ctp.getServerSSL();
+		boolean isNumeric = false;
+		boolean isHTTP = true;
+		boolean isHTTPS = false;
+		int port = 80;
 
-		boolean replace = dynamic;
 		try {
 			URL url = new URL(siteurl);
 			String protocol = url.getProtocol();
 			String host = url.getHost();
-			boolean numeric = (host.replaceAll("[\\d\\.\\s]","").trim().length() == 0);
-			if (!protocol.equalsIgnoreCase("http")) replace = true;
-			else if (!numeric) replace = false;
-		}
-		catch (Exception ex) { replace = true; }
+			isNumeric = (host.replaceAll("[\\d\\.\\s]","").trim().length() == 0);
+			isHTTP = protocol.equalsIgnoreCase("http");
+			isHTTPS = protocol.equalsIgnoreCase("https");
 
-		if (replace) {
-			Configuration ctp = Configuration.getInstance();
-			siteurl = "http://" + ctp.getIPAddress() + ":" + ctp.getServerPort();
-			mircRoot.setAttribute("siteurl", siteurl);
+			protocol = "http" + (serverSSL ? "s" : "");
+			if (dynamic && isNumeric) {
+				siteurl = protocol + "://" + ctp.getIPAddress() + ":" + ctp.getServerPort();
+				mircRoot.setAttribute("siteurl", siteurl);
+			}
+			else if ((serverSSL != isHTTPS) || (serverPort != port)) {
+				siteurl = protocol + "://" + host + ":" + ctp.getServerPort();
+				mircRoot.setAttribute("siteurl", siteurl);
+			}
+			logger.info("Site URL: "+siteurl);
 		}
+		catch (Exception ex) { }
 		return siteurl;
 	}
 
@@ -289,7 +301,7 @@ public class MircConfig {
 	 * @return true if the URL is on the same server as the query service.
 	 */
 	public static boolean isLocal(String url) {
-		return (!url.startsWith("http://") || url.startsWith(siteurl));
+		return ((!url.startsWith("http://") && !url.startsWith("https://")) || url.startsWith(siteurl));
 	}
 
 	/**

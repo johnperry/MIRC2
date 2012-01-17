@@ -9,6 +9,7 @@ package mirc.query;
 
 import java.io.File;
 import java.io.StringWriter;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -90,22 +91,21 @@ public class QueryService extends Servlet {
 		//information.
 		if ((length == 1) && req.getQueryString().trim().equals("")) {
 			String host = req.getHeader("host");
-			logger.debug("host = "+host);
 			if (host != null) {
 				String siteurl = mc.getLocalAddress();
-				logger.debug("siteurl = "+siteurl);
-				if (siteurl.length() > 7) {
-					String sitehost = siteurl.substring(7);
-					int colon = sitehost.indexOf(":");
-					if (colon >= 0) {
-						sitehost = sitehost.substring(0, colon);
-						logger.debug("sitehost = "+sitehost);
-						if (!host.startsWith(sitehost)) {
-							res.redirect(siteurl + "/" + context);
-							return;
-						}
+				try {
+					URL url = new URL(siteurl);
+					String sitehost = url.getHost();
+					int k = sitehost.indexOf(":");
+					if (k > 0) sitehost = sitehost.substring(0,k);
+					k = host.indexOf(":");
+					if (k > 0) host = host.substring(0,k);
+					if (!sitehost.equalsIgnoreCase(host)) {
+						res.redirect(siteurl + "/" + context);
+						return;
 					}
 				}
+				catch (Exception noRedirect) { }
 			}
 		}
 
@@ -117,10 +117,7 @@ public class QueryService extends Servlet {
 
 		//See what kind of GET this is by checking the query string.
 		String queryString = req.getQueryString();
-		if ((queryString == null) ||
-				(queryString.trim().length() == 0) ||
-					(req.getParameter("queryUID") == null)) {
-
+		if ((queryString.trim().length() == 0) || (req.getParameter("queryUID") == null)) {
 			//This is a GET for the query page.
 			UI ui = getUI(req);
 			res.setContentType("html");
