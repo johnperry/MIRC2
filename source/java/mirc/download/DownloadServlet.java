@@ -72,7 +72,7 @@ public class DownloadServlet extends Servlet {
 			res.disableCaching();
 			res.send();
 		}
-		else if (admin && (length == 2) && path.element(1).equals("report")) {
+		else if ((admin || upload) && (length == 2) && path.element(1).equals("report")) {
 			//This is a request for the download summary report
 			res.setContentType("xml");
 			Document doc = DownloadDB.getInstance().getXML();

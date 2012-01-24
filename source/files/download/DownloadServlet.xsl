@@ -130,7 +130,7 @@
 							<a href="/download/upload?ui={$ui}">Upload a file</a>
 							<br/>
 						</xsl:if>
-						<xsl:if test="$admin='yes'">
+						<xsl:if test="($admin='yes') or ($upload='yes')">
 							<a href="/download/report" target="report">Report</a>
 						</xsl:if>
 					</p>
