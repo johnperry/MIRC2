@@ -67,7 +67,6 @@ function loaded() {
 	if (user.isLoggedIn) loadFileCabinets();
 	loadAdvancedQueryPopup();
 	queryAllNew();
-	showSessionPopup();
 }
 window.onload = loaded;
 
@@ -516,6 +515,7 @@ function processQueryResults(req) {
 		resize();
 		resizeScrollableTable();
 		setStatusLine("");
+		showSessionPopup();
 	}
 }
 

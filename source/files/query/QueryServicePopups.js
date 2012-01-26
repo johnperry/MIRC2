@@ -209,5 +209,8 @@ function showSessionPopup() {
 		else if (sessionPopup == "notes") {
 			showDisclaimerPopup();
 		}
+		else if (sessionPopup == "login") {
+			if (!user.isLoggedIn) loginLogout();
+		}
 	}
 }

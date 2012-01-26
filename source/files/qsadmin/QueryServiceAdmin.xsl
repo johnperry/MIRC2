@@ -95,8 +95,15 @@
 								Notes
 							</input>
 							<br/>
+							<input type="radio" name="popup" value="login">
+								<xsl:if test="@popup='login'">
+									<xsl:attribute name="checked"/>
+								</xsl:if>
+								Login
+							</input>
+							<br/>
 							<input type="radio" name="popup" value="none">
-								<xsl:if test="not(@popup='help') and not(@popup='notes')">
+								<xsl:if test="not(@popup='help') and not(@popup='notes') and not(@popup='login')">
 									<xsl:attribute name="checked"/>
 								</xsl:if>
 								None
