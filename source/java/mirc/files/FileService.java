@@ -814,6 +814,14 @@ public class FileService extends Servlet {
 		}
 		else {
 			File target = new File(fp.filesDir, filename);
+			//Fix the filename if necessary
+			target = new File(target.getAbsolutePath());
+			File parent = target.getParentFile();
+			String name = target.getName();
+			name = name.replaceAll("\\s+", "_");
+			name = name.replace("%20", "_");
+			target = new File(parent, name);
+			//Make sure the rename will succeed
 			deleteTarget(fp, target);
 			//Now rename the dataFile into the target
 			if (dataFile.renameTo(target)) {

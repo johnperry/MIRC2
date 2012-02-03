@@ -76,9 +76,6 @@ public class MIRC extends AbstractPlugin {
 		//configuration to obtain the server IP address and port.
 		MircConfig.load(configFile);
 
-		//Load the RadLex index
-		RadLexIndex.loadIndex(root);
-
 		//Load the Preferences
 		Preferences.load( root );
 
@@ -128,6 +125,9 @@ public class MIRC extends AbstractPlugin {
 
 		//Install the redirector
 		installRedirector();
+
+		//Load the RadLex index
+		RadLexIndex.loadIndex(root);
 
 		//Start the LibraryMonitor
 		new LibraryMonitor().start();

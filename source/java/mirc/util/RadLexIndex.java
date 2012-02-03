@@ -44,27 +44,38 @@ public class RadLexIndex {
 	 * creating the JDBM files if necessary.
 	 */
 	public static synchronized void loadIndex(File dir) {
-		if (recman == null) {
-			try {
-				File libraries = new File("libraries");
-				File jarFile = new File(libraries, "MIRC.jar");
-				long jarFileLM = jarFile.lastModified();
-				File dbFile = new File(dir, indexName + ".db");
-				File lgFile = new File(dir, indexName + ".lg");
+		RadLexIndexLoader loader = new RadLexIndexLoader(dir);
+		loader.start();
+	}
 
-				if ( !dbFile.exists() || !lgFile.exists()
-						|| (jarFileLM > dbFile.lastModified())
-							|| (jarFileLM > lgFile.lastModified()) ) {
-					createIndex(dir);
+	static class RadLexIndexLoader extends Thread {
+		File dir;
+		public RadLexIndexLoader(File dir) {
+			this.dir = dir;
+		}
+		public void run() {
+			if (recman == null) {
+				try {
+					File libraries = new File("libraries");
+					File jarFile = new File(libraries, "MIRC.jar");
+					long jarFileLM = jarFile.lastModified();
+					File dbFile = new File(dir, indexName + ".db");
+					File lgFile = new File(dir, indexName + ".lg");
+
+					if ( !dbFile.exists() || !lgFile.exists()
+							|| (jarFileLM > dbFile.lastModified())
+								|| (jarFileLM > lgFile.lastModified()) ) {
+						createIndex(dir);
+					}
+					else {
+						File indexFile = new File(dir, indexName);
+						recman = JdbmUtil.getRecordManager(indexFile.getAbsolutePath());
+						index = JdbmUtil.getBTree(recman, radlexTreeName);
+						if (index.size() == 0) createIndex(dir);
+					}
 				}
-				else {
-					File indexFile = new File(dir, indexName);
-					recman = JdbmUtil.getRecordManager(indexFile.getAbsolutePath());
-					index = JdbmUtil.getBTree(recman, radlexTreeName);
-					if (index.size() == 0) createIndex(dir);
-				}
+				catch (Exception ignore) { }
 			}
-			catch (Exception ignore) { }
 		}
 	}
 

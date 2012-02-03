@@ -613,6 +613,7 @@ function appendTDLocation(tr, doc) {
 
 	var text = blanks;
 	if (server.length != 0) text = server[0].firstChild.nodeValue;
+	while (text.length < 10) text += blanks;
 	td.appendChild( document.createTextNode( text ) );
 	tr.appendChild(td);
 }
