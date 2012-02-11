@@ -88,7 +88,7 @@ public class MircServer extends Thread {
 		try {
 			URL url = new URL(urlString);
 			if (url.getUserInfo() != null) Authenticator.setDefault(new QueryAuthenticator(url));
-			HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+			HttpURLConnection conn = HttpUtil.getConnection(url);
 			conn.setRequestMethod("POST");
 			conn.setRequestProperty("Content-Type","text/xml; charset=\"UTF-8\"");
 
@@ -125,16 +125,10 @@ public class MircServer extends Thread {
 		catch (MalformedURLException e) {
 			serverResponse = makeExceptionResponse("Malformed URL: "+urlString);
 		}
-		catch (IOException e) {
+		catch (Exception e) {
 			serverResponse =
 				makeExceptionResponse(
-					"IO Error during connection: " + urlString + "<br/>" + e.getMessage() );
-		}
-		catch (IllegalStateException e) {
-			serverResponse = makeExceptionResponse("Programming error in the MircServer class.");
-		}
-		catch (NullPointerException e) {
-			serverResponse = makeExceptionResponse("Programming error in the MircServer class.");
+					"Error during connection: " + urlString + "<br/>" + e.getMessage() );
 		}
 
 		//Add the server name and URL to the MIRCqueryresult

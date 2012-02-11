@@ -301,6 +301,8 @@ public class StorageService extends Servlet {
 	 */
 	public void doPost(HttpRequest req, HttpResponse res ) throws Exception {
 
+		logger.debug("Query received:\n"+req.toString());
+
 		//All responses will be XML
 		res.setContentType("xml");
 
@@ -345,6 +347,7 @@ public class StorageService extends Servlet {
 			Query query = null;
 			try {
 				Document mircQueryXML = XmlUtil.getDocument(mircQueryString);
+				logger.debug("Query document:\n"+XmlUtil.toPrettyString(mircQueryXML));
 				query = new Query(mircQueryXML);
 			}
 			catch (Exception e) {
