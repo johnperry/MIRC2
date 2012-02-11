@@ -983,6 +983,8 @@ public class MircDocument {
 		Element parent = (Element)insertionPoint.getParentNode();
 		if (!parent.getTagName().equals("image-section")) return;
 
+		boolean suppressOriginalFormat = insertionPoint.getAttribute("suppressOriginalFormat").equals("yes");
+
 		//Get the paneWidth from the image-section element.
 		//This is the space allocated in the display for the images.
 		int paneWidth = StringUtil.getInt( parent.getAttribute("image-pane-width"), 700 );
@@ -1031,10 +1033,12 @@ public class MircDocument {
 				image.appendChild(full);
 			}
 
-			Element dcm = doc.createElement("alternative-image");
-			dcm.setAttribute("src", name);
-			dcm.setAttribute("role", "original-format");
-			image.appendChild(dcm);
+			if (!suppressOriginalFormat) {
+				Element dcm = doc.createElement("alternative-image");
+				dcm.setAttribute("src", name);
+				dcm.setAttribute("role", "original-format");
+				image.appendChild(dcm);
+			}
 
 			//Put in the order-by element to allow sorting
 			try { image.appendChild( getOrderByElement(dicomObject, image) ); }

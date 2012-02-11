@@ -97,6 +97,10 @@
 			<title>National MIRC, Singapore</title>
 		</Library>
 
+        <Library address="http://mircabc.abchospital.com:8080/storage/ss1" enabled="yes">
+            <title>The American British Cowdray Medical Center, I.A.P. (México)</title>
+        </Library>
+
         <Library address="http://mirc.rsna.org/storage/ss1" enabled="yes">
             <title>The RSNA MIRC Library</title>
         </Library>
