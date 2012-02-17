@@ -211,7 +211,6 @@ function initTabs() {
 			}
 			else done = true;
 		}
-		alert(tabText);
 	}
 }
 
