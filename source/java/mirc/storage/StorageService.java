@@ -301,7 +301,8 @@ public class StorageService extends Servlet {
 	 */
 	public void doPost(HttpRequest req, HttpResponse res ) throws Exception {
 
-		logger.debug("Query received:\n"+req.toString());
+		long currentTime = System.currentTimeMillis();
+		logger.debug("Query received for "+req.path);
 
 		//All responses will be XML
 		res.setContentType("xml");
@@ -347,7 +348,7 @@ public class StorageService extends Servlet {
 			Query query = null;
 			try {
 				Document mircQueryXML = XmlUtil.getDocument(mircQueryString);
-				logger.debug("Query document:\n"+XmlUtil.toPrettyString(mircQueryXML));
+				//logger.debug("Query document:\n"+XmlUtil.toPrettyString(mircQueryXML));
 				query = new Query(mircQueryXML);
 			}
 			catch (Exception e) {
@@ -413,6 +414,7 @@ public class StorageService extends Servlet {
 			//Return the result.
 			res.write( XmlUtil.toString(root) );
 			res.send();
+			logger.debug("Response returned for "+req.path+" ("+(System.currentTimeMillis() - currentTime)+"ms)");
 			return;
 		}
 

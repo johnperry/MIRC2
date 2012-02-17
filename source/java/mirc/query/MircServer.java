@@ -82,6 +82,7 @@ public class MircServer extends Thread {
 	 */
 	public void run() {
 
+		long currentTime = System.currentTimeMillis();
 		logger.debug("Sending query to "+urlString);
 
 		String serverResponse = "";
@@ -156,7 +157,7 @@ public class MircServer extends Thread {
 		//Return the result
 		queryService.acceptQueryResult(this, result);
 
-		logger.debug("Response from "+urlString+" returned to the QueryService");
+		logger.debug("Response returned for "+urlString+" ("+(System.currentTimeMillis() - currentTime)+"ms)");
 	}
 
 	//Make an error response as a MIRCqueryresult..

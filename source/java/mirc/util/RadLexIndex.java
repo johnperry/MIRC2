@@ -151,7 +151,7 @@ public class RadLexIndex {
 	 */
 	public static synchronized void createIndex(File dir) {
 
-		logger.info("RadLex index rebuild started.");
+		logger.info("RadLex index rebuild started");
 		File indexFile = new File(dir, indexName);
 		String filename = indexFile.getAbsolutePath();
 
@@ -181,7 +181,7 @@ public class RadLexIndex {
 				}
 				child = child.getNextSibling();
 			}
-			logger.info("RadLex index rebuild complete ("+index.size()+" index entries).");
+			logger.info("RadLex index rebuild complete ("+index.size()+" index entries)");
 		}
 		catch (Exception quit) {
 			logger.info("RadLex index rebuild failed.");

@@ -81,6 +81,7 @@ public class QueryService extends Servlet {
 	 */
 	public void doGet(HttpRequest req, HttpResponse res) throws Exception {
 
+
 		MircConfig mc = MircConfig.getInstance();
 		Path path = req.getParsedPath();
 		int length = path.length();
@@ -119,10 +120,20 @@ public class QueryService extends Servlet {
 		String queryString = req.getQueryString();
 		if ((queryString.trim().length() == 0) || (req.getParameter("queryUID") == null)) {
 			//This is a GET for the query page.
+
+			long t0 = System.currentTimeMillis();
+			logger.debug("");
+			logger.debug("Query page request received at "+t0+"ms");
+
 			UI ui = getUI(req);
 			res.setContentType("html");
 			res.write( ui.getPage() );
 			res.send();
+
+			long time = System.currentTimeMillis();
+			logger.debug("Query page returned: ("+(time-t0)+"ms)");
+			logger.debug("Query page returned at "+time);
+			logger.debug("");
 		}
 		else {
 			//The query string is not blank or missing, so this is a GET from
@@ -176,7 +187,10 @@ public class QueryService extends Servlet {
 	 */
 	public void doPost(HttpRequest req, HttpResponse res) throws Exception {
 
-		logger.debug("Query received:\n"+req.toString());
+		long currentTime = System.currentTimeMillis();
+		logger.debug("");
+		logger.debug("Query received: "+currentTime);
+		logger.debug("Query content: "+req.content);
 
 		String requestContentType = req.getContentType();
 		if (requestContentType.toLowerCase().indexOf("application/x-www-form-urlencoded") >= 0) {
@@ -193,7 +207,9 @@ public class QueryService extends Servlet {
 			res.send();
 		}
 
-		logger.debug("...query serviced");
+		logger.debug("Query serviced ("+(System.currentTimeMillis() - currentTime)+"ms)");
+		logger.debug("Query complete: "+System.currentTimeMillis()+"ms)");
+		logger.debug("");
 	}
 
 	// This function actually services the query for the doGet and doPost methods.
