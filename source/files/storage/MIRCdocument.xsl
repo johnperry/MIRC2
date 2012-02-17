@@ -618,7 +618,7 @@
 				</xsl:call-template>
 			</xsl:attribute>
 		</xsl:if>
-		<xsl:apply-templates select="*[not('href')] | @* | text()"/>
+		<xsl:apply-templates select="*[not(name()='href')] | @* | text()"/>
 	</xsl:element>
 </xsl:template>
 
@@ -630,11 +630,8 @@
 					<xsl:with-param name="text" select="normalize-space(src)"/>
 				</xsl:call-template>
 			</xsl:attribute>
-			<xsl:apply-templates select="*[not('src')] | @* | text()"/>
 		</xsl:if>
-		<xsl:if test="not(src)">
-			<xsl:apply-templates select="* | @* | text()"/>
-		</xsl:if>
+		<xsl:apply-templates select="*[not(name()='src')] | @* | text()"/>
 	</iframe>
 </xsl:template>
 
