@@ -1606,44 +1606,48 @@
 </xsl:template>
 
 <xsl:template match="iframe">
-	<xsl:if test="@src">
-		<p class="p5" item-type="iframe">
-			<table class="techtable">
-				<tr><td colspan="2" style="text-align:center;">External Web Page Frame</td></tr>
-				<tr>
-					<td>External Page URL:</td>
-					<td><input type="text" class="w300" value="{@src}" onclick="setCurrentObject(event);"></input></td>
-				</tr>
-				<tr>
-					<td>Frame width:</td>
-					<td><input type="text" class="w300" value="{@width}" onclick="setCurrentObject(event);"></input></td>
-				</tr>
-				<tr>
-					<td>Frame height:</td>
-					<td><input type="text" class="w300" value="{@height}" onclick="setCurrentObject(event);"></input></td>
-				</tr>
-				<tr>
-					<td>Enable scrolling:</td>
-					<td>
-						<select class="w300" onclick="setCurrentObject(event);">
-							<option value="no">
-								<xsl:if test="@scrolling='no'">
-									<xsl:attribute name="selected">true</xsl:attribute>
-								</xsl:if>
-								no
-							</option>
-							<option value="yes">
-								<xsl:if test="@scrolling='yes'">
-									<xsl:attribute name="selected">true</xsl:attribute>
-								</xsl:if>
-								yes
-							</option>
-						</select>
-					</td>
-				</tr>
-			</table>
-		</p>
-	</xsl:if>
+	<xsl:variable name="url">
+		<xsl:choose>
+			<xsl:when test="src"><xsl:value-of select="src"/></xsl:when>
+			<xsl:otherwise><xsl:value-of select="@src"/></xsl:otherwise>
+		</xsl:choose>
+	</xsl:variable>
+	<p class="p5" item-type="iframe">
+		<table class="techtable">
+			<tr><td colspan="2" style="text-align:center;">External Web Page Frame</td></tr>
+			<tr>
+				<td>External Page URL:</td>
+				<td><input type="text" class="w300" value="{$url}" onclick="setCurrentObject(event);"></input></td>
+			</tr>
+			<tr>
+				<td>Frame width:</td>
+				<td><input type="text" class="w300" value="{@width}" onclick="setCurrentObject(event);"></input></td>
+			</tr>
+			<tr>
+				<td>Frame height:</td>
+				<td><input type="text" class="w300" value="{@height}" onclick="setCurrentObject(event);"></input></td>
+			</tr>
+			<tr>
+				<td>Enable scrolling:</td>
+				<td>
+					<select class="w300" onclick="setCurrentObject(event);">
+						<option value="no">
+							<xsl:if test="@scrolling='no'">
+								<xsl:attribute name="selected">true</xsl:attribute>
+							</xsl:if>
+							no
+						</option>
+						<option value="yes">
+							<xsl:if test="@scrolling='yes'">
+								<xsl:attribute name="selected">true</xsl:attribute>
+							</xsl:if>
+							yes
+						</option>
+					</select>
+				</td>
+			</tr>
+		</table>
+	</p>
 </xsl:template>
 
 <xsl:template match="image">
