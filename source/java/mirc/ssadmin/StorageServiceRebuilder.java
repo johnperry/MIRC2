@@ -27,7 +27,7 @@ public class StorageServiceRebuilder extends Thread {
 	 * Construct a StorageServiceRebuilder.
 	 */
 	protected StorageServiceRebuilder() {
-		super();
+		super("StorageServiceRebuilder");
 		isBusy = false;
 	}
 

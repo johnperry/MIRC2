@@ -41,7 +41,7 @@ public class LibraryMonitor extends Thread {
 	 * Construct a LibraryMonitor.
 	 */
 	public LibraryMonitor() {
-		super();
+		super("LibraryMonitor");
 		this.setPriority(Thread.MIN_PRIORITY);
 	}
 

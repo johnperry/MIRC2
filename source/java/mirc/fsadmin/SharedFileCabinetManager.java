@@ -28,6 +28,7 @@ public class SharedFileCabinetManager extends Thread {
 	 * from the shared file cabinet after they time out.
 	 */
 	public SharedFileCabinetManager(File root) {
+		super("SharedFileCabinetManager");
 		this.root = root;
 		File shared = new File(root, "Shared");
 		this.filesDir = new File(shared, "Files");

@@ -53,6 +53,7 @@ public class MircServer extends Thread {
 			String serverName,
 			String mircQuery,
 			QueryService queryService) {
+		super("MircServer-"+urlString);
 		this.urlString = urlString;
 		this.sessionID = sessionID;
 		this.serverName = serverName;

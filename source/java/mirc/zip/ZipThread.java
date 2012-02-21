@@ -104,6 +104,7 @@ public class ZipThread extends Thread {
 				boolean overwriteTemplate,
 				boolean anonymize) throws Exception {
 
+		super("Zip Service ZipThread");
 		this.ssid = ssid;
 		this.submission = submission;
 		this.template = template;

@@ -51,6 +51,7 @@ public class RadLexIndex {
 	static class RadLexIndexLoader extends Thread {
 		File dir;
 		public RadLexIndexLoader(File dir) {
+			super("RadLexIndexLoader");
 			this.dir = dir;
 		}
 		public void run() {

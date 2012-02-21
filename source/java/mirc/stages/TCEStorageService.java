@@ -163,7 +163,7 @@ public class TCEStorageService extends AbstractPipelineStage implements StorageS
 		public boolean running = false;
 
 		public ManifestProcessor() {
-			super();
+			super("TCE Service ManifestProcessor");
 		}
 
 		public void run() {

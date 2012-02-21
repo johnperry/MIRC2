@@ -249,6 +249,7 @@ public class TCEStore {
 	class GarbageCollector extends Thread {
 		long timeout = 60L * 60L * 1000L;
 		public GarbageCollector() {
+			super("TCE Service GarbageCollector");
 			this.setPriority(Thread.MIN_PRIORITY);
 		}
 		public void run() {
