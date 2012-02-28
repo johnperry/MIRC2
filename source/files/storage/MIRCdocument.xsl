@@ -84,6 +84,7 @@
 			<link rel="Stylesheet" type="text/css" media="all" href="/storage/MIRCdocument.css"></link>
 			<script src="/JSUtil.js">;</script>
 			<script src="/JSAJAX.js">;</script>
+			<script src="/JSCookies.js">;</script>
 			<script src="/storage/MIRCimage.js">;</script>
 			<xsl:call-template name="script-init"/>
 			<script src="/JSPopup.js">;</script>

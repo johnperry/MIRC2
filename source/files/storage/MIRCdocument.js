@@ -56,6 +56,8 @@ function mirc_onload() {
 		var pos = findObject(document.body);
 		var leftWidth = pos.w / 4;
 		if (display == 'tab')  leftWidth = 90;
+		var maxrightpane = getCookie("maxrightpane");
+		if ((maxrightpane != null) && (maxrightpane == "yes")) leftWidth = 1;
 		horizontalSplit = new HorizontalSplit("leftside", "divider", "rightside", true,
 												leftWidth, true,
 												1, 1, splitHandler);
@@ -755,11 +757,13 @@ function keyDown(event) {
 	}
 	else if (kc == 33) { //PAGE UP
 		if (horizontalSplit) horizontalSplit.moveSliderTo(1, displayImage);
+		setCookie("maxrightpane", "yes");
 		return;
 	}
 	else if (kc == 34) { //PAGE DOWN
 		var pos = findObject(document.body);
 		if (horizontalSplit) horizontalSplit.moveSliderTo(pos.w - imagePaneWidth - 7, displayImage);
+		setCookie("maxrightpane", "no");
 		return;
 	}
 
