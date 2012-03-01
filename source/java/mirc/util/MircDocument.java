@@ -1622,9 +1622,12 @@ public class MircDocument {
 	private static void processElement(Element element, DicomObject dicomObject) {
 
 		if (dicomTag(element)) {
-			String text = getDicomElementText(element, dicomObject);
-			Node node = element.getOwnerDocument().createTextNode(text);
-			element.getParentNode().replaceChild( node, element );
+			String text = getDicomElementText(element, dicomObject).trim();
+			boolean rc = element.getAttribute("requireContent").trim().toLowerCase().equals("yes");
+			if (!rc || !text.equals("")) {
+				Node node = element.getOwnerDocument().createTextNode(text);
+				element.getParentNode().replaceChild( node, element );
+			}
 		}
 
 		else if (element.getTagName().equals("block")) {
