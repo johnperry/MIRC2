@@ -48,6 +48,7 @@ function loaded() {
 /**/if (logTime) timing += "split created ("+((new Date()).getTime() - t0)+"ms)\n";
 
 	setVisibility("MyDocuments", user.hasRole("author"));
+	setVisibility("DraftDocuments", user.hasRole("author"));
 	setVisibility("AuthorTools", user.hasRole("author"));
 	setVisibility("FileCabinets", user.isLoggedIn);
 	setVisibility("ApprovalQueue", user.hasRole("publisher"));
@@ -337,6 +338,7 @@ function getLocalServerIDs() {
 function deselectAll() {
 	deselectCollection("MyDocuments");
 	deselectCollection("AllDocuments");
+	deselectCollection("DraftDocuments");
 	deselectCollection("ApprovalQueue");
 	deselectLink("Download");
 	if (confTreeManager) confTreeManager.closePaths();
@@ -415,6 +417,16 @@ function queryAllNew() {
 function queryAll() {
 	doQuery(getBaseQuery());
 	selectCollection(queryAll, "AllDocuments");
+}
+
+function queryAllTemp() {
+	firstResult = 1;
+	queryTemp();
+}
+
+function queryTemp() {
+	doQuery(getBaseQuery() + "&temp=yes");
+	selectCollection(queryTemp, "DraftDocuments");
 }
 
 function approvalQueueNew() {

@@ -40,6 +40,13 @@ public class Query extends Hashtable<String, String> {
 		this.put("freetext", freetext);
 	}
 
+	public Query(boolean tempOnly) {
+		super();
+		isBlankQuery = true;
+		containsNonFreetextQueries = tempOnly;
+		if (tempOnly) this.put("temp", "yes");
+	}
+
 	/**
 	 * Construct a Query from an XML document in the form
 	 * described on the RSNA MIRC wiki.

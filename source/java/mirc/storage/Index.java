@@ -149,6 +149,7 @@ public class Index {
 			openDatabase("language");
 			openDatabase("owner");
 			openDatabase("pubreq");
+			openDatabase("temp");
 		}
 		catch (Exception ex) {
 			logger.warn("Unable to create/open the index");
@@ -486,9 +487,14 @@ public class Index {
 		//Index the access from the index entry
 		fields.get("access").indexString(id, mie.access);
 
-		//Index the pubreq from the root element
+		//Index the pubreq attribute from the root element
 		if (root.getAttribute("pubreq").equals("yes")) {
 			fields.get("pubreq").indexString(id, "yes");
+		}
+
+		//Index the temp attribute from the root element
+		if (root.getAttribute("temp").equals("yes")) {
+			fields.get("temp").indexString(id, "yes");
 		}
 
 		//Now do all the query fields

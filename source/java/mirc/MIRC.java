@@ -10,6 +10,7 @@ package mirc;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.util.*;
 import mirc.aauth.*;
 import mirc.addimg.*;
 import mirc.bauth.*;
@@ -74,7 +75,7 @@ public class MIRC extends AbstractPlugin {
 		//because the CTP Configuration is not yet instantiated when
 		//the constructor is called, and MircConfig calls the CTP
 		//configuration to obtain the server IP address and port.
-		MircConfig.load(configFile);
+		MircConfig mc = MircConfig.load(configFile);
 
 		//Load the Preferences
 		Preferences.load( root );
@@ -121,7 +122,7 @@ public class MIRC extends AbstractPlugin {
 		}
 
 		//Install the defined roles
-		MircConfig.getInstance().setDefinedRoles();
+		mc.setDefinedRoles();
 
 		//Install the redirector
 		installRedirector();
@@ -131,6 +132,16 @@ public class MIRC extends AbstractPlugin {
 
 		//Start the LibraryMonitor
 		new LibraryMonitor().start();
+
+		//Start the DraftDocumentMonitors
+		Set<String> ssids = mc.getLocalLibraryIDs();
+		for (String ssid : ssids) {
+			Element lib = mc.getLocalLibrary(ssid);
+			if (lib != null) {
+				int timeout = StringUtil.getInt(lib.getAttribute("timeout"));
+				if (timeout > 0) new DraftDocumentMonitor(ssid, timeout).start();
+			}
+		}
 
 		logger.info("MIRC Plugin started");
 	}

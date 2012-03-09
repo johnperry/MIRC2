@@ -34,6 +34,9 @@ public class MircDocumentStorageService extends AbstractPipelineStage implements
     int storedCount = 0;
     String ssid = "";
     int ssidTag = 0;
+    int caseTag = 0;
+    String templateName = "";
+    String defaultTemplateName = "DicomServiceTemplate.xml";
 
 	/**
 	 * Construct a MircDocumentStorageService.
@@ -42,9 +45,22 @@ public class MircDocumentStorageService extends AbstractPipelineStage implements
 	 */
 	public MircDocumentStorageService(Element element) {
 		super(element);
+
+		//Get the library identifier
 		ssid = element.getAttribute("ssid");
 		String ssidTagString = element.getAttribute("ssidTag").trim();
-		ssidTag = StringUtil.getHexInt(ssidTagString);
+		ssidTag = DicomObject.getElementTag(ssidTagString);
+
+		//Get the identifier to be used for the document directory
+		String caseTagString = element.getAttribute("caseTag").trim();
+		caseTag = DicomObject.getElementTag(caseTagString);
+		if (caseTag == 0) caseTag = DicomObject.getElementTag("StudyInstanceUID");
+
+		//Get the name of the template to use.
+		//No path information is allowed.
+		templateName = element.getAttribute("template").trim();
+		if (templateName.equals("")) templateName = defaultTemplateName;
+		else templateName = new File(templateName).getName();
 	}
 
 	/**
@@ -68,6 +84,8 @@ public class MircDocumentStorageService extends AbstractPipelineStage implements
 
 				DicomObject dob = (DicomObject)fileObject;
 				String siUID = dob.getStudyInstanceUID();
+				String caseName = StringUtil.filterName( dob.getElementValue(caseTag) );
+				if (caseName.equals("")) caseName = siUID;
 				String sopiUID = dob.getSOPInstanceUID();
 
 				//Get the library in which to store the MIRCdocument.
@@ -103,14 +121,16 @@ public class MircDocumentStorageService extends AbstractPipelineStage implements
 
 				//See if there is a MircDocument already in place,
 				//and if not, create one from the template.
-				File mdDir = new File(docs, siUID);
+				File mdDir = new File(docs, caseName);
 				File mdFile = new File(mdDir, "MIRCdocument.xml");
 				MircDocument md;
 				if (!mdFile.exists()) {
 					mdDir.mkdirs();
 					//Get the template
-					File template = new File( docs.getParentFile(), "DicomServiceTemplate.xml" );
-					template = FileUtil.getFile( template, "/storage/DicomServiceTemplate.xml" );
+					//The strategy is to use the one that is specfied in configuration,
+					//if it exists, and the default one if the specified one doesn't exist.
+					File template = new File( docs.getParentFile(), templateName );
+					template = FileUtil.getFile( template, "/storage/"+defaultTemplateName );
 					md = new MircDocument(template);
 					md.saveAs(mdFile);
 				}

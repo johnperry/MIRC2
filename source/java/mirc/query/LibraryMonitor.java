@@ -84,8 +84,14 @@ public class LibraryMonitor extends Thread {
 				}
 			}
 		}
-		if (changes > 0) mc.sortLibraries(); //Note: this does an automatic save and load
-		logger.info("Remote library availability scan complete ("+((changes>0)?changes:"no")+" changes were detected)");
+		if (changes > 0) {
+			mc.sortLibraries(); //Note: this does an automatic save and load
+			logger.info("Remote library availability scan complete ("
+						+ ((changes>0) ? changes : "no")
+						+ " change"
+						+ ((changes==1) ? " was" : "s were")
+						+ " detected)");
+		}
 	}
 
 	//Query a server and return true if it responded within the timeout.

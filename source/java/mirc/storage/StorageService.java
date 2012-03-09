@@ -282,7 +282,7 @@ public class StorageService extends Servlet {
 
 			//OK, transform the document and return the result
 			String xslResource = "/storage/MIRCdocument.xsl";
-			File xslFile = new File( root, xslResource );
+			File xslFile = new File( file.getParentFile(), "MIRCdocument.xsl" );
 			Document xsl = XmlUtil.getDocument( FileUtil.getStream( xslFile, xslResource ) );
 			Object[] params = getParams( req, doc );
 			res.write( XmlUtil.getTransformedText( doc, xsl, params ) );

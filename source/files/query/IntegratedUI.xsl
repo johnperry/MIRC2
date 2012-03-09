@@ -124,6 +124,7 @@
 		<!--<div class="L1">Cases</div>-->
 		<div class="L2" id="MyDocuments"><a href="javascript:queryMineNew();">My Cases</a><br/></div>
 		<div class="L2" id="AllDocuments"><a href="javascript:queryAllNew();">All Cases</a><br/></div>
+		<div class="L2" id="DraftDocuments"><a href="javascript:queryTemp();">Draft Cases</a><br/></div>
 		<div class="L2" id="ApprovalQueue"><a href="javascript:approvalQueueNew();">Case Approval Queue</a><br/></div>
 
 		<div id="Conferences">
