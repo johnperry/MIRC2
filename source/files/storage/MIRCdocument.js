@@ -791,7 +791,7 @@ function exportToMyRsnaFiles(url) {
 
 	function myRsnaResult() {
 		if (req.success()) {
-			alert(req.responseText);
+			alert(req.responseText());
 		}
 	}
 }

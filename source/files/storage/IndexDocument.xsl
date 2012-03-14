@@ -8,6 +8,7 @@
 	<doc>
 		<MIRCdocument>
 			<xsl:copy-of select="@path"/>
+			<xsl:copy-of select="@temp"/>
 			<xsl:call-template name="title"/>
 			<xsl:copy-of select="alternative-title"/>
 			<xsl:copy-of select="author"/>

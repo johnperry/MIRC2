@@ -13,6 +13,8 @@
 <xsl:param name="version">Z1</xsl:param>
 <xsl:param name="activetab">1</xsl:param>
 
+<xsl:param name="draft" select="/MIRCdocument/@temp"/>
+
 <xsl:template match="*|@*">
   <xsl:copy>
     <xsl:apply-templates select="*|@*|text()" />
@@ -527,13 +529,22 @@
 </xsl:template>
 
 <xsl:template name="title">
+	<xsl:variable name="norm-title" select="normalize-space(title)"/>
+	<xsl:variable name="norm-alttitle" select="normalize-space(alternative-title)"/>
 	<div class="sectionPage" type="title">
 		<h1>Title</h1>
 		<p class="p1">
 			Enter the title of the document as you want it displayed for normal viewing.
 		</p>
 		<textarea class="title">
-			<xsl:value-of select="normalize-space(title)"/>
+			<xsl:choose>
+				<xsl:when test="($draft='yes') and ($norm-alttitle!='')">
+					<xsl:value-of select="$norm-alttitle"/>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:value-of select="$norm-title"/>
+				</xsl:otherwise>
+			</xsl:choose>
 		</textarea>
 		<br/><br/><br/>
 		<p class="p1" hideable="true">
@@ -542,7 +553,7 @@
 			want this feature, you can leave this field blank.
 		</p>
 		<textarea class="title" hideable="true">
-			<xsl:value-of select="normalize-space(alternative-title)"/>
+			<xsl:value-of select="$norm-alttitle)"/>
 		</textarea>
 	</div>
 </xsl:template>

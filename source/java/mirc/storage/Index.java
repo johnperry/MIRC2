@@ -323,6 +323,7 @@ public class Index {
 			boolean isAdmin = (user != null) && user.hasRole("admin");
 			if (!isOpen && !isAdmin) set = filterOnAccess(set, user);
 			if (mq.containsAgeQuery) set = filterOnAge(set, mq);
+			if (!mq.isTempQuery) removeTempDocs(set);
 			return set.toArray(new IndexEntry[set.size()]);
 		}
 
@@ -353,13 +354,24 @@ public class Index {
 				else ids = IndexDatabase.intersection(ids, temp);
 			}
 		}
-
 		//Now apply the access and age filters, if necessary.
 		HashSet<IndexEntry> set = getMIESet(ids);
 		boolean isAdmin = (user != null) && user.hasRole("admin");
 		if (!isOpen && !isAdmin) set = filterOnAccess(set, user);
 		if (mq.containsAgeQuery) set = filterOnAge(set, mq);
+
+		//Now remove temp documents if necessary
+		if (!mq.isTempQuery) removeTempDocs(set);
+
 		return set.toArray( new IndexEntry[ set.size() ] );
+	}
+
+	private void removeTempDocs(HashSet<IndexEntry> set) {
+		HashSet<IndexEntry> temps = new HashSet<IndexEntry>();
+		for (IndexEntry ie : set) {
+			if (ie.isTemp) temps.add( ie );
+		}
+		for (IndexEntry ie : temps) set.remove( ie );
 	}
 
 	private HashSet<IndexEntry> filterOnAccess( HashSet<IndexEntry> mieSet, User user ) {

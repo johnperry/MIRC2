@@ -9,6 +9,7 @@ package mirc.util;
 
 import java.io.File;
 import java.util.Hashtable;
+import mirc.prefs.Preferences;
 import org.apache.log4j.Logger;
 
 /**
@@ -59,7 +60,7 @@ public class MyRsnaSessions {
 		}
 		if (mrs == null) {
 			//Okay, we don't have an open session in the cache; create a new one.
-			MyRsnaUser mru = MyRsnaUsers.getInstance().getMyRsnaUser(mircUsername);
+			MyRsnaUser mru = Preferences.getInstance().getMyRsnaUser(mircUsername);
 			if (mru != null) {
 				mrs = new MyRsnaSession(mru);
 				if (mrs.login()) {

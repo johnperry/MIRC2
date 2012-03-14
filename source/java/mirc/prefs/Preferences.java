@@ -14,6 +14,7 @@ import jdbm.helper.FastIterator;
 import jdbm.htree.HTree;
 import jdbm.RecordManager;
 import mirc.MircConfig;
+import mirc.util.MyRsnaUser;
 import org.apache.log4j.Logger;
 import org.rsna.util.JdbmUtil;
 import org.rsna.util.XmlUtil;
@@ -163,6 +164,25 @@ public class Preferences {
 			String pw = myrsna.getAttribute("password").trim();
 			boolean ok = (!un.equals("") && !pw.equals(""));
 			return (ok ? myrsna : null);
+		}
+		catch (Exception ex) { return null; }
+	}
+
+	/**
+	 * Get the user's MyRsnaUser, or null if one does not exist.
+	 * @return the the user's MyRsnaUser, or null if one does not exist
+	 * or if either the MyRSNA username or password is blank.
+	 */
+	public synchronized MyRsnaUser getMyRsnaUser(String username) {
+		try {
+			Element user = (Element)prefs.get(username);
+			if (user == null) return null;
+			Element myrsna = XmlUtil.getFirstNamedChild(user, "myrsna");
+			if (myrsna == null) return null;
+			String un = myrsna.getAttribute("username").trim();
+			String pw = myrsna.getAttribute("password").trim();
+			boolean ok = (!un.equals("") && !pw.equals(""));
+			return (ok ? new MyRsnaUser(un, pw) : null);
 		}
 		catch (Exception ex) { return null; }
 	}

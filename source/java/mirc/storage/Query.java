@@ -20,6 +20,7 @@ public class Query extends Hashtable<String, String> {
 	static final Logger logger = Logger.getLogger(Query.class);
 
 	public boolean isBlankQuery = true;
+	public boolean isTempQuery = false;
 	public boolean containsNonFreetextQueries = false;
 
 	public boolean unknown = false;
@@ -43,6 +44,7 @@ public class Query extends Hashtable<String, String> {
 	public Query(boolean tempOnly) {
 		super();
 		isBlankQuery = true;
+		isTempQuery = tempOnly;
 		containsNonFreetextQueries = tempOnly;
 		if (tempOnly) this.put("temp", "yes");
 	}
@@ -75,6 +77,7 @@ public class Query extends Hashtable<String, String> {
 					this.put(dbname, text);
 					containsNonFreetextQueries = true;
 				}
+				if (dbname.equals("temp")) isTempQuery = true;
 			}
 			else if (child.getNodeType() == Node.TEXT_NODE) {
 				sb.append(" " + child.getTextContent());

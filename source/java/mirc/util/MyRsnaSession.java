@@ -226,8 +226,10 @@ public class MyRsnaSession {
 
 			//post the request and get the response
 			String result = getResponse(req.post());
+			logger.debug("MyRsnaRiles response:\n"+result);
 
 			Document resultDoc = getDocument(result);
+
 			if (resultDoc != null) return getValue(resultDoc, "success").equals("true");
 			return false;
 		}

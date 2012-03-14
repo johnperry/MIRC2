@@ -1,4 +1,4 @@
-<Configuration>
+<Configuration log="yes">
     <Server port="80"/>
     <Plugin
         class="mirc.MIRC"
@@ -7,6 +7,7 @@
     <Pipeline name="File Service Pipeline">
         <ImportService
             calledAETTag="00120010"
+            callingAETTag="00120020"
             class="org.rsna.ctp.stdstages.DicomImportService"
             logConnections="rejected"
             name="File Service DicomImportService"
@@ -30,6 +31,7 @@
     </Pipeline>
     <Pipeline name="DICOM Service Pipeline">
         <ImportService
+            calledAETTag="00120010"
             class="org.rsna.ctp.stdstages.DicomImportService"
             logConnections="rejected"
             name="DICOM Service DicomImportService"
@@ -46,12 +48,15 @@
         <StorageService
             class="mirc.stages.MircDocumentStorageService"
             name="MircDocumentStorageService"
-            ssid="ss1"
             quarantine="quarantines/DicomService/MircDocumentStorageService"
-            root="roots/DicomService/MircDocumentStorageService"/>
+            root="roots/DicomService/MircDocumentStorageService"
+            ssid="ss1"
+            ssidTag="00120010"
+            caseTag="PatientID"/>
     </Pipeline>
     <Pipeline name="TCE Service Pipeline">
         <ImportService
+            calledAETTag="00120010"
             class="org.rsna.ctp.stdstages.DicomImportService"
             logConnections="rejected"
             name="TCE Service DicomImportService"
@@ -66,12 +71,13 @@
             quarantine="quarantines/TCEService/HttpImportService"
             root="roots/TCEService/HttpImportService"/>
         <StorageService
+            anonymize="yes"
             class="mirc.stages.TCEStorageService"
             name="TCEStorageService"
-            ssid="ss1"
-            anonymize="yes"
-            script="scripts/TCEServiceAnonymizer.script"
             quarantine="quarantines/TCEService/TCEStorageService"
-            root="roots/TCEService/TCEStorageService"/>
+            root="roots/TCEService/TCEStorageService"
+            script="scripts/TCEServiceAnonymizer.script"
+            ssid="ss1"
+            ssidTag="00120010"/>
     </Pipeline>
 </Configuration>

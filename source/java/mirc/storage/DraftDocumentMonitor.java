@@ -31,7 +31,8 @@ public class DraftDocumentMonitor extends Thread {
 
 	String ssid;
 	int timeDepth;
-	static final long anHour = 60 * 60 * 1000;
+	static final long aMinute = 60 * 1000;
+	static final long anHour = 60 * aMinute;
 	static final long aDay = 24 * anHour;
 
 	/**
@@ -50,6 +51,7 @@ public class DraftDocumentMonitor extends Thread {
 	public void run() {
 		if (timeDepth > 0) {
 			try {
+				sleep(aMinute); //just to let the system come up (unnecessary)
 				while (true) {
 					checkDocuments();
 					sleep(aDay);

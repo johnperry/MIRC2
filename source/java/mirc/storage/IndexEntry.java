@@ -25,6 +25,7 @@ public class IndexEntry implements Serializable {
 	static final long serialVersionUID = 1;
 
 	public Element md		= null;
+	public boolean isTemp	= false;
 	public String title		= "";
 	public String pubdate	= "";
 	public long lmdate		= 0;
@@ -82,6 +83,7 @@ public class IndexEntry implements Serializable {
 						}
 						xChild = xChild.getNextSibling();
 					}
+					isTemp = md.getAttribute("temp").equals("yes");
 				}
 				if (name.equals("sm")) {
 					//Unpack the summary element

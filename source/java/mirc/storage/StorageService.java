@@ -18,6 +18,9 @@ import mirc.MircConfig;
 import mirc.prefs.Preferences;
 import mirc.ssadmin.StorageServiceAdmin;
 
+import mirc.util.MyRsnaSession;
+import mirc.util.MyRsnaSessions;
+
 import org.apache.log4j.Logger;
 
 import org.rsna.servlets.Servlet;
@@ -196,9 +199,9 @@ public class StorageService extends Servlet {
 					String ext = ".zip";
 					String extParameter = req.getParameter("ext", "").trim();
 					if (!extParameter.equals("")) ext = "." + extParameter;
-					String name = file.getName();
-					name = name.substring(0, name.length()-4) + ext;
-					File zipFile = new File(file.getParentFile(), name);
+					File parent = file.getParentFile();
+					String name = parent.getName() + ext;
+					File zipFile = new File(parent, name);
 
 					//Insert the path attribute (if necessary) for third party author tools.
 					//The path attribute starts with the ssid, as in: "ss1/docs/...".
@@ -772,17 +775,14 @@ public class StorageService extends Servlet {
 	}
 
 	private boolean exportToMyRsna(User user, File zipFile) {
-		/*
 		try {
 			if (user == null) return false;
-			MyRsnaSession mrs = MyRsnaSessions.getInstance().getMyRsnaSession(mircUsername);
+			MyRsnaSession mrs = MyRsnaSessions.getInstance().getMyRsnaSession(user.getUsername());
 			if (mrs == null) return false;
 			boolean result = mrs.postFile(zipFile, null);
 			return result;
 		}
-		catch (Exception ex) { return false; }
-		*/
-		return true;
+		catch (Exception ex) { logger.warn("..."+ex.getMessage(),ex); return false; }
 	}
 
 	private String exportToDestination(User user, File zipFile, String url) {
