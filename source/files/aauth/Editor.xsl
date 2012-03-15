@@ -553,7 +553,7 @@
 			want this feature, you can leave this field blank.
 		</p>
 		<textarea class="title" hideable="true">
-			<xsl:value-of select="$norm-alttitle)"/>
+			<xsl:value-of select="$norm-alttitle"/>
 		</textarea>
 	</div>
 </xsl:template>
@@ -567,14 +567,15 @@
 			the bottom of the page. To remove an author, remove the text in the author's
 			name field.
 		</p>
-		<xsl:for-each select="author">
+		<xsl:variable name="authors" select="author[ (name!='') and not(contains(name, '(draft)')) ]"/>
+		<xsl:for-each select="$authors/author">
 			<xsl:call-template name="author">
 				<xsl:with-param name="author-name" select="name"/>
 				<xsl:with-param name="author-affiliation" select="affiliation"/>
 				<xsl:with-param name="author-contact" select="contact"/>
 			</xsl:call-template>
 		</xsl:for-each>
-		<xsl:if test="not(author)">
+		<xsl:if test="not($authors) or ($draft='yes')">
 			<xsl:call-template name="author">
 				<xsl:with-param name="author-name" select="$prefs/User/@name"/>
 				<xsl:with-param name="author-affiliation" select="$prefs/User/@affiliation"/>

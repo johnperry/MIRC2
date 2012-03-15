@@ -121,7 +121,12 @@ public class MircServer extends Thread {
 			if (!hcf) serverResponse = svrsw.toString();
 			else {
 				serverResponse = makeExceptionResponse("No response from the server.");
-				logger.warn("Read aborted by interrupt: "+url+"\nResponse:\n"+svrsw.toString());
+				String svrresp = svrsw.toString();
+				if (svrresp.length() > 1000) svrresp = svrresp.substring(0, 1000) + "...";
+				if (svrresp.length() > 0)
+					logger.warn("Read aborted by interrupt: "+url+"\nResponse:\n"+svrresp);
+				else
+					logger.warn("Read aborted by interrupt: "+url);
 			}
 		}
 		catch (MalformedURLException e) {
