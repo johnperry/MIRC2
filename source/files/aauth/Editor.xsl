@@ -568,7 +568,7 @@
 			name field.
 		</p>
 		<xsl:variable name="authors" select="author[ (name!='') and not(contains(name, '(draft)')) ]"/>
-		<xsl:for-each select="$authors/author">
+		<xsl:for-each select="$authors">
 			<xsl:call-template name="author">
 				<xsl:with-param name="author-name" select="name"/>
 				<xsl:with-param name="author-affiliation" select="affiliation"/>

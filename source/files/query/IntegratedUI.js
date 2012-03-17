@@ -768,15 +768,35 @@ function makeLinks(includeNextPrev) {
 		div.appendChild( makeLink(prevPage, "/icons/go-previous.png", "Previous Page") );
 		div.appendChild( makeLink(nextPage, "/icons/go-next.png", "Next Page") );
 	}
+	div.appendChild( makeUnknownsLink() );
 	div.appendChild( makeLink(displayCN, "/mirc/images/film-projector.gif", "Display the selected cases in the Case Navigator") );
 	return div;
 }
+
 function makeLink(func, src, title) {
 	var img = document.createElement("IMG");
 	img.src = src;
 	img.title = title;
 	img.onclick = func;
 	return img;
+}
+
+function makeUnknownsLink() {
+	var img = document.createElement("IMG");
+	img.id = "toggleQueryTitles";
+	img.src = "/mirc/images/toggletitles.png";
+	img.title = (unknown ? "Display titles as knowns" : "Display titles as unknown");
+	img.onclick = toggleTitles;
+	return img;
+}
+
+function toggleTitles() {
+	unknown = !unknown;
+	var img = document.getElementById("toggleQueryTitles");
+	if (img) img.title = (unknown ? "Display titles as knowns" : "Display titles as unknown");
+	var unk = document.getElementById("unknown");
+	if (unk) unk.checked = unknown;
+	repeatSearch();
 }
 
 function toggleExpandCollapse() {

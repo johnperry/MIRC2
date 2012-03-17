@@ -17,6 +17,7 @@ import org.rsna.ctp.objects.FileObject;
 import org.rsna.ctp.pipeline.AbstractPipelineStage;
 import org.rsna.ctp.pipeline.StorageService;
 import org.w3c.dom.Element;
+import org.rsna.util.DigestUtil;
 import org.rsna.util.FileUtil;
 import org.rsna.util.StringUtil;
 
@@ -83,10 +84,13 @@ public class MircDocumentStorageService extends AbstractPipelineStage implements
 				Element lib = null;
 
 				DicomObject dob = (DicomObject)fileObject;
+				String sopiUID = dob.getSOPInstanceUID();
 				String siUID = dob.getStudyInstanceUID();
 				String caseName = StringUtil.filterName( dob.getElementValue(caseTag) );
 				if (caseName.equals("")) caseName = siUID;
-				String sopiUID = dob.getSOPInstanceUID();
+
+				//Hash the caseName so it can't contain PHI
+				caseName = DigestUtil.hash( caseName, 20 ); //limit it to 20 characters
 
 				//Get the library in which to store the MIRCdocument.
 				//If there is a non-zero ssidTag, then get the ssid from
