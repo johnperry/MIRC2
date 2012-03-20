@@ -793,7 +793,7 @@ function makeUnknownsLink() {
 function toggleTitles() {
 	unknown = !unknown;
 	var img = document.getElementById("toggleQueryTitles");
-	if (img) img.title = (unknown ? "Display titles as knowns" : "Display titles as unknown");
+	if (img) img.title = (unknown ? "Display titles as knowns" : "Display titles as unknowns");
 	var unk = document.getElementById("unknown");
 	if (unk) unk.checked = unknown;
 	repeatSearch();

@@ -265,7 +265,7 @@ public class StorageServiceAdmin extends Servlet {
 		Index index = Index.getInstance(ssid);
 		if ((lib == null) || (index == null)) return getPage();
 
-		IndexEntry[] docs = index.query("");
+		IndexEntry[] docs = index.getAllDocuments();
 		index.sortByLMDate(docs);
 
 		if (line < 0) line = 0;

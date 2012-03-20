@@ -216,6 +216,16 @@ public class MircDocument {
 	}
 
 	/**
+	 * Determine whether the document is a draft. A document is
+	 * a draft if its root element has the <code>temp</code> atttibute set to "yes".
+	 * @return true if the document is a draft.
+	 */
+	public boolean isDraft() {
+		Element root = doc.getDocumentElement();
+		return root.getAttribute("temp").equals("yes");
+	}
+
+	/**
 	 * Make the document non-public.
 	 */
 	public void makeNonPublic() {

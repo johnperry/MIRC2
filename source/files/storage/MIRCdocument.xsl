@@ -582,7 +582,7 @@
 		<tr>
 			<td>
 				<input type="button" value="Edit" title="Edit this document"
-					onclick="openURL('{$edit-url}','_blank');"/>
+					onclick="openURL('{$edit-url}','_self');"/>
 			</td>
 		</tr>
 	</xsl:if>

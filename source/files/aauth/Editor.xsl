@@ -124,12 +124,14 @@
 				<xsl:with-param name="src">/aauth/buttons/save.gif</xsl:with-param>
 				<xsl:with-param name="id">save-button</xsl:with-param>
 			</xsl:call-template>
-			<xsl:call-template name="tool">
-				<xsl:with-param name="title">Save the document and preview it in a separate window</xsl:with-param>
-				<xsl:with-param name="onclick">previewClicked();</xsl:with-param>
-				<xsl:with-param name="src">/aauth/buttons/preview.gif</xsl:with-param>
-				<xsl:with-param name="id">preview-button</xsl:with-param>
-			</xsl:call-template>
+			<xsl:if test="not($draft='yes')">
+				<xsl:call-template name="tool">
+					<xsl:with-param name="title">Save the document and preview it in a separate window</xsl:with-param>
+					<xsl:with-param name="onclick">previewClicked();</xsl:with-param>
+					<xsl:with-param name="src">/aauth/buttons/preview.gif</xsl:with-param>
+					<xsl:with-param name="id">preview-button</xsl:with-param>
+				</xsl:call-template>
+			</xsl:if>
 		</span>
 
 		<span class="toolLabel">Sections:&#160;</span>

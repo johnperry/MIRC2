@@ -296,6 +296,18 @@ public class Index {
 	}
 
 	/**
+	 * Get the (unsorted) array of all IndexEntry objects
+	 * for MIRCdocuments in the index, includng temp documents.
+	 * It does not restrict the results in any way,
+	 * even on a library that is operating in restricted
+	 * mode. This method should only be used by admin functions.
+	 * @return all the documents in the index.
+	 */
+	public IndexEntry[] getAllDocuments() {
+		return idToMIEShadow.values().toArray(new IndexEntry[idToMIEShadow.size()]);
+	}
+
+	/**
 	 * Get the (unsorted) array of IndexEntry objects
 	 * for MIRCdocuments that match a specified query.
 	 * This method does a freetext search only.

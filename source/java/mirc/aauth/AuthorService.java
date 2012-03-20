@@ -399,55 +399,126 @@ public class AuthorService extends Servlet {
 						//Make sure the existing document authorizes the user to update it
 						if (!oldmd.authorizes("update", user)) { res.redirect("/query"); return; }
 
-						//Okay, we can do the update, set the update MircDocment to point to the old document
-						md.setFile( docFile );
+						//Okay, we are allowed to do the update.
 
-						//Insert any files referenced in the file cabinets
-						insertFiles(md, user, jpegQuality);
+						if (!oldmd.isDraft()) {
+							//This is an update of an existing document that is not a draft
+							//document that was automatically created by the DICOM Service.
+							//Set the update MircDocment to point to the existing document
+							md.setFile( docFile );
 
-						//Fix the SVG references and create the SVG files
-						updateAnnotationFiles(md, jpegQuality);
+							//Insert any files referenced in the file cabinets
+							insertFiles(md, user, jpegQuality);
 
-						//See if there is a conflict between the read
-						//authorization and the user's roles.
-						md.setPublicationRequest(canPublish);
+							//Fix the SVG references and create the SVG files
+							updateAnnotationFiles(md, jpegQuality);
 
-						//Save and index the document
-						md.save();
-						String key = index.getKey( docFile );
-						index.insertDocument( key );
+							//See if there is a conflict between the read
+							//authorization and the user's roles.
+							md.setPublicationRequest(canPublish);
 
-						//See if this is a preview
-						String preview = req.getParameter("preview", "");
-						if (preview.equals("true")) {
-							res.redirect( "/storage" + path.subpath(1) + "?preview" );
-							return;
+							//Save and index the document
+							md.save();
+							String key = index.getKey( docFile );
+							index.insertDocument( key );
+
+							//See if this is a preview
+							String preview = req.getParameter("preview", "");
+							if (preview.equals("true")) {
+								res.redirect( "/storage" + path.subpath(1) + "?preview" );
+								return;
+							}
+
+							//No, return the editor form
+							Document prefs = Preferences.getInstance().get( username, true ).getOwnerDocument();
+							File dir = docFile.getParentFile();
+							String dirPath = "/storage/" + ssid + "/" + index.getKey(dir) + "/";
+							String authPath = "/aauth/" + ssid + "/" + key;
+
+							Document xsl = XmlUtil.getDocument( FileUtil.getStream( "/aauth/Editor.xsl" ) );
+							Object[] params =
+								new Object[] {
+									"prefs",	prefs,
+									"ssid",		ssid,
+									"dirpath",	dirPath,
+									"authpath",	authPath,
+									"icons",	getIcon96(dir),
+									"date",		"", //existing document; don't modify the date
+									"mode",		mc.getMode(),
+									"options",	mc.enumeratedValues,
+									"species",	mc.speciesValues,
+									"version",	mc.getVersion(),
+									"activetab",activeTab
+								};
+							res.write( XmlUtil.getTransformedText( md.getXML(), xsl, params ) );
+							res.setContentType("html");
+							res.send();
 						}
 
-						//No, return the editor form
-						Document prefs = Preferences.getInstance().get( username, true ).getOwnerDocument();
-						File dir = docFile.getParentFile();
-						String dirPath = "/storage/" + ssid + "/" + index.getKey(dir) + "/";
-						String authPath = "/aauth/" + ssid + "/" + key;
+						else {
+							//Okay, things get a tiny bit tricky here.
+							//
+							//The existing document is a draft. In order to prevent the DICOM Service
+							//from being able to add images to the document after the author has saved it,
+							//we will rename the existing document directory and delete the reference to
+							//the existing document from the index. Once that is done, we can update
+							//the document in its new location.
+							//
+							//By convention, manually created documents are stored in directories named
+							//in the form YYYYMMDDhhmmsssss. The DICOM Service stores the documents it
+							//creates in directories named by the hash of the grouping element (typically
+							//PatientID or StudyInstanceUID).
 
-						Document xsl = XmlUtil.getDocument( FileUtil.getStream( "/aauth/Editor.xsl" ) );
-						Object[] params =
-							new Object[] {
-								"prefs",	prefs,
-								"ssid",		ssid,
-								"dirpath",	dirPath,
-								"authpath",	authPath,
-								"icons",	getIcon96(dir),
-								"date",		"", //existing document; don't modify the date
-								"mode",		mc.getMode(),
-								"options",	mc.enumeratedValues,
-								"species",	mc.speciesValues,
-								"version",	mc.getVersion(),
-								"activetab",activeTab
-							};
-						res.write( XmlUtil.getTransformedText( md.getXML(), xsl, params ) );
-						res.setContentType("html");
-						res.send();
+							//Make a new directory name in the same library as the existing document.
+							File oldDocDir = docFile.getParentFile();
+							File newDocDir = new File(oldDocDir.getParentFile(), StringUtil.makeNameFromDate());
+
+							//Rename the existing document's directory to the new name.
+							if (!oldDocDir.renameTo(newDocDir)) {
+								//This should never happen.
+								logger.warn("Unable to rename "+oldDocDir+" to "+newDocDir);
+							}
+
+							//Delete the old document from the index. Note that docFile currently points to the
+							//document in the old location, so it can be used to obtain the key under which the
+							//old document was stored.
+							String key = index.getKey( docFile );
+							index.removeDocument( key );
+
+							//Point to the document in the new location. Note that this is
+							//the last use of docFile while it points to the old location.
+							docFile = new File(newDocDir, docFile.getName());
+
+							//Now we can update the document using docFile pointing to the new location.
+							md.setFile( docFile );
+
+							//Insert any files referenced in the file cabinets
+							insertFiles(md, user, jpegQuality);
+
+							//Fix the SVG references and create the SVG files
+							updateAnnotationFiles(md, jpegQuality);
+
+							//See if there is a conflict between the read authorization and the user's roles.
+							md.setPublicationRequest(canPublish);
+
+							//Save and index the document.
+							//Note that the file property of md now points to the new location, as does docFile.
+							md.save();
+							key = index.getKey( docFile );
+							index.insertDocument( key );
+
+							//Now we have to return a page. The question is which page.
+							//What we can't do is return the editor page directly, because
+							//the browser has accessed the editor via a URL that points
+							//to the document in the old location, so any further updates
+							//will fail because the document isn't there anymore.
+							//Instead, we will send a redirect to the browser to cause it
+							//to reopen the editor in the new location.
+
+							//Get the URL that points to the editor for the document in the new location.
+							String url = "/aauth/" + ssid + "/" + key;
+							res.redirect(url);
+						}
 					}
 				}
 			}
