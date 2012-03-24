@@ -18,7 +18,7 @@
             address="/storage/ss1"
             authenb="yes"
             autoindex="yes"
-            dcmenb="no"
+            dcmenb="yes"
             deflib="yes"
             enabled="yes"
             id="ss1"
@@ -26,7 +26,7 @@
             local="yes"
             maxsize="75"
             subenb="yes"
-            tceenb="no"
+            tceenb="yes"
             timeout="0"
             UI="integrated"
             zipenb="yes">

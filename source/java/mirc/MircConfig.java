@@ -637,6 +637,11 @@ public class MircConfig {
 		Element lib = createLibrary(title, address, enabled);
 		lib.setAttribute( "id", id );
 		lib.setAttribute( "local", "yes" );
+		lib.setAttribute( "dcmenb", "yes" );
+		lib.setAttribute( "subenb", "yes" );
+		lib.setAttribute( "zipenb", "yes" );
+		lib.setAttribute( "authenb", "yes" );
+		lib.setAttribute( "tceenb", "yes" );
 		return lib;
 	}
 
