@@ -49,7 +49,7 @@ public class QueryService extends Servlet {
 	static final Logger logger = Logger.getLogger(QueryService.class);
 
 	Set<MircServer> serverThreads = null;
-	Document results = null;
+	volatile Document results = null;
 
 	/**
 	 * Construct a QueryService that delegates to other Query Services
