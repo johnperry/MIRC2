@@ -31,6 +31,8 @@
 
 <xsl:param name="read-authorization" select="/MIRCdocument/authorization/read"/>
 
+<xsl:param name="base-date"/>
+
 <xsl:variable name="processed-title">
 	<xsl:variable name="ttl" select="normalize-space(/MIRCdocument/title)"/>
 	<xsl:variable name="alt" select="normalize-space(/MIRCdocument/alternative-title)"/>
@@ -1075,6 +1077,18 @@
 				<xsl:variable name="cCaption" select="normalize-space(image-caption[@display='click'])"/>
 				<xsl:if test="$aCaption">
 					temp.addCAPTION('cCaption', "<xsl:value-of select="$cCaption"/>");
+				</xsl:if>
+				<xsl:if test="not($aCaption) and not($cCaption) and ($base-date != 0) and order-by">
+					<xsl:variable name="date" select="normalize-space(order-by/@date)"/>
+					<xsl:if test="$date and ($date != 0)">
+						<xsl:variable name="delta" select="number($date) - number($base-date)"/>
+						<xsl:if test="$delta = 0">
+							temp.addCAPTION('aCaption', 'Baseline study');
+						</xsl:if>
+						<xsl:if test="$delta != 0">
+							temp.addCAPTION('aCaption', 'Follow-up study at <xsl:value-of select="$delta"/> days');
+						</xsl:if>
+					</xsl:if>
 				</xsl:if>
 				IMAGES.addIMAGESET(temp);
 			</xsl:for-each>

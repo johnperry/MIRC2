@@ -64,7 +64,7 @@
 						<td><input class="text" type="text" name="{@id}-tagline" value="{tagline}"/></td>
 					</tr>
 					<tr>
-						<td>Draft documents timeout (days, default=0)</td>
+						<td>Draft documents autodelete (days, default=0)</td>
 						<td><input class="text" type="text" name="{@id}-timeout" value="{@timeout}"/></td>
 					</tr>
 					<tr>

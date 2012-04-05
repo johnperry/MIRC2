@@ -79,12 +79,12 @@ public class MircDocumentStorageService extends AbstractPipelineStage implements
 
 		//Store the object
 		if (fileObject instanceof DicomObject) {
+
 			try {
 				MircConfig mc = MircConfig.getInstance();
 				Element lib = null;
 
 				DicomObject dob = (DicomObject)fileObject;
-				String sopiUID = dob.getSOPInstanceUID();
 				String siUID = dob.getStudyInstanceUID();
 				String caseName = StringUtil.filterName( dob.getElementValue(caseTag) );
 				if (caseName.equals("")) caseName = siUID;
@@ -138,12 +138,20 @@ public class MircDocumentStorageService extends AbstractPipelineStage implements
 					md = new MircDocument(template);
 					md.saveAs(mdFile);
 				}
-				else md = new MircDocument(mdFile);
+				else {
+					md = new MircDocument(mdFile);
+				}
 
-				//Add the object to the MIRCdocument
-				File newName = new File( fileObject.getFile().getParentFile(), sopiUID+".dcm" );
-				fileObject.renameTo(newName);
-				md.insertObject(fileObject, false, null, false);
+				//Hash the SOPInstanceUID to prevent PHI leakage through the filename.
+				String sopiUID = dob.getSOPInstanceUID();
+				String hashed_sopiUID = DigestUtil.hash(sopiUID, 15);
+				String hashed_name = hashed_sopiUID + ".dcm";
+				File newName = new File( dob.getFile().getParentFile(), hashed_name );
+				dob.renameTo(newName);
+
+				//Insert the object, allowing overwrites to prevent duplicate images in the document
+				md.insertDicomElements(dob);
+				md.insert(dob, true);
 
 				//Sort the image section, if it exists
 				md.sortImageSection();
@@ -159,6 +167,7 @@ public class MircDocumentStorageService extends AbstractPipelineStage implements
 			}
 			catch (Exception ex) {
 				//If we didn't store the object, then quarantine it and abort.
+				logger.debug("...unable to process object; object quarantined",ex);
 				if (quarantine != null) quarantine.insert(fileObject);
 				return null;
 			}

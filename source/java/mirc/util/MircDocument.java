@@ -12,6 +12,7 @@ import java.io.*;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Enumeration;
+import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.LinkedList;
@@ -41,6 +42,8 @@ import org.rsna.ctp.stdstages.anonymizer.IntegerTable;
 import org.rsna.ctp.stdstages.anonymizer.LookupTable;
 import org.rsna.ctp.stdstages.DicomAnonymizer;
 import org.rsna.server.User;
+import org.rsna.util.DateUtil;
+import org.rsna.util.DigestUtil;
 import org.rsna.util.FileUtil;
 import org.rsna.util.StringUtil;
 import org.rsna.util.XmlUtil;
@@ -278,6 +281,27 @@ public class MircDocument {
 			}
 			read.setTextContent( readText );
 		}
+	}
+
+    /**
+     * Determine whether the MircDocument contains an image
+     * element referencing a specific file.
+     * @param name the filename.
+     * @return true if the document contains a reference to the file; false otherwise.
+     */
+	public boolean containsImage(String name) {
+		if (doc == null) return false;
+		NodeList imageList = doc.getDocumentElement().getElementsByTagName("image");
+		for (int i=0; i<imageList.getLength(); i++) {
+			Element image = (Element)imageList.item(i);
+			if (image.getAttribute("src").equals(name)) return true;
+			NodeList altList = image.getElementsByTagName("alternative-image");
+			for (int k=0; k<altList.getLength(); k++) {
+				Element alt = (Element)altList.item(k);
+				if (alt.getAttribute("src").equals(name)) return true;
+			}
+		}
+		return false;
 	}
 
     /**
@@ -732,14 +756,6 @@ public class MircDocument {
 
 		//And handle any insert-image elements
 		insertImage(dicomObject, modifyDoc);
-	}
-
-	private boolean containsImage(String name) {
-		NodeList nl = doc.getDocumentElement().getElementsByTagName("image");
-		for (int i=0; i<nl.getLength(); i++) {
-			if (((Element)nl.item(i)).getAttribute("src").equals(name)) return true;
-		}
-		return false;
 	}
 
 	//Insert data from a TCE manifest.
@@ -1376,6 +1392,8 @@ public class MircDocument {
 			if (aOrderBy == null) return -1;
 			if (bOrderBy == null) return +1;
 			int c;
+			if ((c = compareInt(aOrderBy, bOrderBy, "date")) != 0) return c;
+			if ((c = compareInt(aOrderBy, bOrderBy, "time")) != 0) return c;
 			if ((c = compareText(aOrderBy, bOrderBy, "study")) != 0) return c;
 			if ((c = compareInt(aOrderBy, bOrderBy, "series")) != 0) return c;
 			if ((c = compareInt(aOrderBy, bOrderBy, "acquisition")) != 0) return c;
@@ -1393,8 +1411,8 @@ public class MircDocument {
 		//Return -1 if the attribute values are in sequence,
 		//zero if they are the same, or +1 if they are out of order.
 		private int compareInt(Element a, Element b, String attrName) {
-			int aValue = StringUtil.getInt(a.getAttribute(attrName), 0);
-			int bValue = StringUtil.getInt(b.getAttribute(attrName), 0);
+			long aValue = StringUtil.getLong(a.getAttribute(attrName), 0);
+			long bValue = StringUtil.getLong(b.getAttribute(attrName), 0);
 			if (aValue < bValue) return -1;
 			if (aValue == bValue) return 0;
 			return +1;
@@ -1406,9 +1424,21 @@ public class MircDocument {
 	}
 
 	//Get a string containing the order-by element for a DicomObject
+	static long oneDayInMillis = 24 * 3600 * 1000;
 	private Element getOrderByElement(DicomObject dicomObject, Element image) throws Exception {
 		Element orderBy = image.getOwnerDocument().createElement("order-by");
-		orderBy.setAttribute("study", dicomObject.getStudyInstanceUID());
+
+		long days = 0;
+		try {
+			GregorianCalendar gc = DateUtil.getCalendar( dicomObject.getStudyDate() );
+			days = gc.getTimeInMillis() / oneDayInMillis;
+			orderBy.setAttribute("date", Long.toString(days));
+			long time = DateUtil.getTime( dicomObject.getStudyTime() );
+			orderBy.setAttribute("time", Long.toString(time));
+		}
+		catch (Exception ignore) { }
+
+		orderBy.setAttribute("study", DigestUtil.hash(dicomObject.getStudyInstanceUID(), 6));
 		orderBy.setAttribute("series", dicomObject.getSeriesNumber());
 		orderBy.setAttribute("acquisition", dicomObject.getAcquisitionNumber());
 		orderBy.setAttribute("instance", dicomObject.getInstanceNumber());

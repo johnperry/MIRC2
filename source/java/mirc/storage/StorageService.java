@@ -742,6 +742,9 @@ public class StorageService extends Servlet {
 		String unknown = req.getParameter("unknown");
 		if (unknown == null) unknown = "no";
 
+		//Get the baseline study date.
+		long baseDate = getBaseDate(doc);
+
 		//Okay, put the parameters in the array.
 		Object[] params = new Object[] {
 			"today",				today,
@@ -769,9 +772,36 @@ public class StorageService extends Servlet {
 
 			"dir-path",				dirPath,
 			"doc-path",				docPath,
-			"doc-index-entry",		docIndexEntry
+			"doc-index-entry",		docIndexEntry,
+
+			"base-date",			Long.toString(baseDate)
 		};
 		return params;
+	}
+
+	//Get the earliest study date in the order-by elements
+	//in the document. If there is only one date, return zero,
+	//indicating that no date processing is to be done
+	//during the transformation. Date processing automatically
+	//generates captions for images that don't have captions.
+	//The automatically generated caption provides the offset
+	//from the baseline date for the study of which the image
+	//is a part.
+	private long getBaseDate(Document doc) {
+		HashSet<Long> dates = new HashSet<Long>();
+		NodeList nl = doc.getDocumentElement().getElementsByTagName("order-by");
+		for (int i=0; i<nl.getLength(); i++) {
+			Element e = (Element)nl.item(i);
+			long date = StringUtil.getLong(e.getAttribute("date"));
+			if (date > 0) dates.add( new Long(date) );
+		}
+		if (dates.size() < 2) return 0;
+		long basedate = 0;
+		for (Long date : dates) {
+			long dateValue = date.longValue();
+			if ((basedate == 0) || (dateValue < basedate)) basedate = dateValue;
+		}
+		return basedate;
 	}
 
 	private boolean exportToMyRsna(User user, File zipFile) {
