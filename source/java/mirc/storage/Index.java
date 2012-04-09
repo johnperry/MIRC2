@@ -56,7 +56,7 @@ public class Index {
 	 * @param ssid the ID of the local library.
 	 * @return the index object, or null if the index does not exist.
 	 */
-	public static Index getInstance(String ssid) {
+	public static synchronized Index getInstance(String ssid) {
 		Index index = indexTable.get(ssid);
 		if (index == null) {
 			MircConfig mc = MircConfig.getInstance();

@@ -63,7 +63,7 @@ public class DownloadDB {
 	 * Get the singleton instance of the preferences database.
 	 * This method is intended for normal classes.
 	 */
-	public static DownloadDB getInstance() {
+	public static synchronized DownloadDB getInstance() {
 		return downloadDB;
 	}
 

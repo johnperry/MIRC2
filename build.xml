@@ -1,6 +1,6 @@
 <project name="MIRC" default="all" basedir=".">
 
-	<property name="version" value="Z51"/>
+	<property name="version" value="Z52"/>
 
 	<property name="build" value="${basedir}/build"/>
 	<property name="source" value="${basedir}/source"/>
@@ -121,16 +121,6 @@
 	</target>
 
 	<target name="all" depends="clean, installer, javadocs">
-		<tstamp>
-			<format property="end" pattern="HH:mm:ss"/>
-		</tstamp>
-		<echo message="Time now ${end}"/>
-	</target>
-
-	<target name="deploy" depends="all">
-		<copy overwrite="true" todir="/JavaPrograms/CTP/libraries">
-			<fileset dir="${products}" includes="CTP.jar"/>
-		</copy>
 		<tstamp>
 			<format property="end" pattern="HH:mm:ss"/>
 		</tstamp>

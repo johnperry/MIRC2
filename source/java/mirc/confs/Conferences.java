@@ -60,7 +60,7 @@ public class Conferences {
 	 * Get the singleton instance of the conferences database.
 	 * This method is intended for normal classes.
 	 */
-	public static Conferences getInstance() {
+	public static synchronized Conferences getInstance() {
 		return conferences;
 	}
 

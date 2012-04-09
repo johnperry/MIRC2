@@ -24,8 +24,6 @@ var logTime = false;
 var timing = "";
 
 function loaded() {
-/**/var t0 = (new Date()).getTime();
-/**/if (logTime) timing = "loaded() called at "+t0+"\n";
 
 	//listCookies();
 	user = new User();
@@ -41,11 +39,9 @@ function loaded() {
 		hide("myAccount");
 		replaceContent("loginoutAnchor", "Login");
 	}
-/**/if (logTime) timing += "user info obtained ("+((new Date()).getTime() - t0)+"ms)\n";
 
 	//leftDiv, sliderDiv, rightDiv, fillHeight, sliderPosition, forceTopForIE, leftMin, rightMin, changeHandler
 	split = new HorizontalSplit("left", "center", "right", true, 185, false, 1, 120, resizeScrollableTable);
-/**/if (logTime) timing += "split created ("+((new Date()).getTime() - t0)+"ms)\n";
 
 	setVisibility("MyDocuments", user.hasRole("author"));
 	setVisibility("DraftDocuments", user.hasRole("author"));
@@ -54,46 +50,34 @@ function loaded() {
 	setVisibility("ApprovalQueue", user.hasRole("publisher"));
 	setVisibility("Admin", user.hasRole("admin"));
 	setVisibility("CaseOfTheDay", (codURL != ""));
-/**/if (logTime) timing += "visibility set ("+((new Date()).getTime() - t0)+"ms)\n";
 
 	confMenuBar = new SingleMenuBar("confMenuBar", confMenu);
 	confMenuBar.display();
 	setConfEnables();
-/**/if (logTime) timing += "conf enables set ("+((new Date()).getTime() - t0)+"ms)\n";
 
 	if (user.isLoggedIn) {
 		fileMenuBar = new SingleMenuBar("fileMenuBar", fileMenu);
 		fileMenuBar.display();
 		setFileEnables();
 	}
-/**/if (logTime) timing += "file enables set ("+((new Date()).getTime() - t0)+"ms)\n";
 
 	var freetext = document.getElementById("freetext");
 	freetext.focus();
 	freetext.onclick = freetextClick;
 	window.onresize = resize;
 	createServersPopup();
-/**/if (logTime) timing += "servers popup created ("+((new Date()).getTime() - t0)+"ms)\n";
 
 	setState();
-/**/if (logTime) timing += "state set ("+((new Date()).getTime() - t0)+"ms)\n";
 
 	setModifierValues();
-/**/if (logTime) timing += "modifier values set ("+((new Date()).getTime() - t0)+"ms)\n";
 
 	loadConferences();
-/**/if (logTime) timing += "conferences loaded ("+((new Date()).getTime() - t0)+"ms)\n";
 
 	if (user.isLoggedIn) loadFileCabinets();
-/**/if (logTime) timing += "file cabinets loaded ("+((new Date()).getTime() - t0)+"ms)\n";
 
 	loadAdvancedQueryPopup();
-/**/if (logTime) timing += "advanced query popup loaded ("+((new Date()).getTime() - t0)+"ms)\n";
 
 	queryAllNew();
-/**/if (logTime) timing += "returned from queryAllNew ("+((new Date()).getTime() - t0)+"ms)\n";
-/**/if (logTime) timing += "loaded() complete at "+((new Date()).getTime())+"\n";
-///**/if (logTime) alert(timing);
 }
 window.onload = loaded;
 
@@ -509,7 +493,6 @@ function sortOnLMDate() {
 //Main query
 //************************************************
 function doQuery(query) {
-/**/if (logTime) timing += "query started at "+((new Date()).getTime())+"\n";
 	setCookies();
 	deselectAll();
 	query += getModifiers();
@@ -555,8 +538,6 @@ function processQueryResults(req) {
 		resizeScrollableTable();
 		setStatusLine("");
 		showSessionPopup();
-/**/	if (logTime) timing += "query completed at "+((new Date()).getTime())+"\n";
-/**/	if (logTime) alert(timing);
 	}
 }
 

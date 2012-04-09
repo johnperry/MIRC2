@@ -34,7 +34,7 @@ public class StorageServiceRebuilder extends Thread {
 	/**
 	 * Get the singleton instance of the StorageServiceRebuilder.
 	 */
-	public static StorageServiceRebuilder getInstance() {
+	public static synchronized StorageServiceRebuilder getInstance() {
 		if ((rebuilder == null) || !rebuilder.isBusy()) {
 			rebuilder = new StorageServiceRebuilder();
 			return rebuilder;

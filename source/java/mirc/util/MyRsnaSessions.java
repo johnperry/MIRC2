@@ -34,7 +34,7 @@ public class MyRsnaSessions {
 	 * Get the singleton instance of the MyRsnaUsers database.
 	 * This method is intended for normal classes.
 	 */
-	public static MyRsnaSessions getInstance() {
+	public static synchronized MyRsnaSessions getInstance() {
 		if (myRsnaSessions == null) myRsnaSessions = new MyRsnaSessions();
 		return myRsnaSessions;
 	}
