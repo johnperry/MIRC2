@@ -35,8 +35,7 @@
 		</xsl:if>
 
 		<center>
-			<h1>Author Summary Request - <xsl:value-of select="$ssid"/></h1>
-			<h2><xsl:value-of select="Libraries/Library[@id=$ssid]/title"/></h2>
+			<h1>Author Summary Request</h1>
 
 			<form id="formID" method="post" action="" accept-charset="UTF-8">
 			<input type="hidden" name="ui" value="{$ui}"/>
@@ -46,18 +45,34 @@
 				<xsl:if test="$userIsAdmin='yes'">
 					<tr>
 						<td>Username (* to select all users):</td>
-						<td><input type="text" name="user" value="*"/></td>
+						<td><input class="text" type="text" name="user" value="*"/></td>
 					</tr>
 				</xsl:if>
 
 				<tr>
+					<td>Library:</td>
+					<td>
+						<select id="libSelect" name="libSelect">
+							<xsl:for-each select="Libraries/Library[@local='yes']">
+								<option value="{@id}">
+									<xsl:if test="@id=$ssid">
+										<xsl:attribute name="selected">true</xsl:attribute>
+									</xsl:if>
+									<xsl:value-of select="title"/>
+								</option>
+							</xsl:for-each>
+						</select>
+					</td>
+				</tr>
+
+				<tr>
 					<td>Start date (inclusive, YYYYMMDD):</td>
-					<td><input type="text" name="start"/></td>
+					<td><input class="text" type="text" name="start"/></td>
 				</tr>
 
 				<tr>
 					<td>End date (inclusive, YYYYMMDD):</td>
-					<td><input type="text" name="end" value="{$today}"/></td>
+					<td><input class="text" type="text" name="end" value="{$today}"/></td>
 				</tr>
 
 				<tr>

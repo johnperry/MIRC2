@@ -37,8 +37,8 @@
 			</xsl:if>
 			<center>
 				<br/>
-				<h1>Author Summary Report - <xsl:value-of select="$ssid"/></h1>
-				<h2><xsl:value-of select="StorageService"/></h2>
+				<h1>Author Summary Report</h1>
+				<h2><xsl:value-of select="StorageService"/> - <xsl:value-of select="$ssid"/></h2>
 				<table border="0">
 					<tr>
 						<td>Starting date (inclusive):</td>

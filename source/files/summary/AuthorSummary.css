@@ -104,3 +104,11 @@ input.button {
 	font-weight: bold;
 }
 
+select {
+	width: 100%;
+}
+
+input.text {
+	width: 100%;
+}
+

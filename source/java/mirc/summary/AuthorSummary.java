@@ -118,11 +118,12 @@ public class AuthorSummary extends Servlet {
 
 		//Get the ssid of the selected library
 		Path path = req.getParsedPath();
-		String ssid = path.element(1);
 
 		//Get the sitename from the Storage Service
 		MircConfig mc = MircConfig.getInstance();
-		Element lib = mc.getLocalLibrary(ssid);
+		String ssid = req.getParameter("libSelect", "ss1");
+		Element lib = mc.getEnabledLocalLibrary(ssid, "enabled");
+		ssid = lib.getAttribute("id");
 		String libname = XmlUtil.getFirstNamedChild(lib, "title").getTextContent();
 
 		//Get the parameters from the request
