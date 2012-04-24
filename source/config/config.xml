@@ -7,7 +7,6 @@
     <Pipeline name="File Service Pipeline">
         <ImportService
             calledAETTag="00120010"
-            callingAETTag="00120020"
             class="org.rsna.ctp.stdstages.DicomImportService"
             logConnections="rejected"
             name="File Service DicomImportService"
@@ -21,7 +20,7 @@
             name="File Service DicomAnonymizer"
             quarantine="quarantines/FileService/DicomAnonymizer"
             root="roots/FileService/DicomAnonymizer"
-            script="scripts/FileService/MircFileServiceAnonymizer.script"/>
+            script="scripts/MircFileServiceAnonymizer.script"/>
         <StorageService
             class="mirc.stages.MircFileStorageService"
             fsNameTag="00120010"
@@ -52,7 +51,7 @@
             root="roots/DicomService/MircDocumentStorageService"
             ssid="ss1"
             ssidTag="00120010"
-            caseTag="PatientID"/>
+            caseTag="StudyInstanceUID"/>
     </Pipeline>
     <Pipeline name="TCE Service Pipeline">
         <ImportService
@@ -71,11 +70,11 @@
             quarantine="quarantines/TCEService/HttpImportService"
             root="roots/TCEService/HttpImportService"/>
         <StorageService
-            anonymize="yes"
             class="mirc.stages.TCEStorageService"
             name="TCEStorageService"
             quarantine="quarantines/TCEService/TCEStorageService"
             root="roots/TCEService/TCEStorageService"
+            anonymize="yes"
             script="scripts/TCEServiceAnonymizer.script"
             ssid="ss1"
             ssidTag="00120010"/>

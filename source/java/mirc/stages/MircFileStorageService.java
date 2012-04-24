@@ -42,7 +42,7 @@ public class MircFileStorageService extends AbstractPipelineStage implements Sto
 	public MircFileStorageService(Element element) {
 		super(element);
 		lastFileIn = null;
-		fsNameTag = StringUtil.getHexInt(element.getAttribute("fsNameTag"));
+		fsNameTag = DicomObject.getElementTag(element.getAttribute("fsNameTag"));
 	}
 
 	/**

@@ -63,7 +63,7 @@ public class TCEStorageService extends AbstractPipelineStage implements StorageS
 		super(element);
 		ssid = element.getAttribute("ssid");
 		String ssidTagString = element.getAttribute("ssidTag").trim();
-		ssidTag = StringUtil.getHexInt(ssidTagString);
+		ssidTag = DicomObject.getElementTag(ssidTagString);
 
 		//Get the attribute that enables creation of new accounts.
 		//Automatically created accounts are created with the password

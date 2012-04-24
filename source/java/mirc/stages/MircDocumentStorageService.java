@@ -37,7 +37,7 @@ public class MircDocumentStorageService extends AbstractPipelineStage implements
     int ssidTag = 0;
     int caseTag = 0;
     String templateName = "";
-    String defaultTemplateName = "DicomServiceTemplate.xml";
+    static final String defaultTemplateName = "DicomServiceTemplate.xml";
 
 	/**
 	 * Construct a MircDocumentStorageService.
