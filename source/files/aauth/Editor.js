@@ -1228,12 +1228,14 @@ function orderby(img) {
 	var series = img.getAttribute("orderby-series");
 	var acquisition = img.getAttribute("orderby-acquisition");
 	var instance = img.getAttribute("orderby-instance");
+	var date = img.getAttribute("orderby-date");
 	if ((study!=null) && (series!=null) && (acquisition!=null) && (instance!=null)) {
 		var x = "<order-by";
 		x += " study=\"" + study + "\"";
 		x += " series=\"" + series + "\"";
 		x += " acquisition=\"" + acquisition + "\"";
 		x += " instance=\"" + instance + "\"";
+		x += " date=\"" + date + "\"";
 		x += "/>";
 		return x;
 	}

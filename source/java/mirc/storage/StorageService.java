@@ -200,7 +200,7 @@ public class StorageService extends Servlet {
 					String extParameter = req.getParameter("ext", "").trim();
 					if (!extParameter.equals("")) ext = "." + extParameter;
 					File parent = file.getParentFile();
-					String name = parent.getName() + ext;
+					String name = makeNameFromParent(file) + ext;
 					File zipFile = new File(parent, name);
 
 					//Insert the path attribute (if necessary) for third party author tools.
@@ -293,6 +293,16 @@ public class StorageService extends Servlet {
 			res.send();
 			AccessLog.logAccess(req, doc);
 		}
+	}
+
+	private String makeNameFromParent(File file) {
+		file = new File(file.getAbsolutePath());
+		File parent = file.getParentFile();
+		String name = parent.getName();
+		while ((name.length() < 10) && ( (parent=parent.getParentFile()) != null )) {
+			name = parent.getName() + "_" + name;
+		}
+		return name;
 	}
 
 	/**

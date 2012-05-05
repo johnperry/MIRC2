@@ -1786,6 +1786,9 @@
 			<xsl:attribute name="orderby-instance">
 				<xsl:value-of select="order-by/@instance"/>
 			</xsl:attribute>
+			<xsl:attribute name="orderby-date">
+				<xsl:value-of select="order-by/@date"/>
+			</xsl:attribute>
 		</xsl:if>
 	</img>
 </xsl:template>

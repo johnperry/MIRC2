@@ -118,6 +118,13 @@ public class MircServlet extends Servlet {
 			res.setContentType("xml");
 			res.send();
 		}
+		else if (function.equals("sortedlibraries")) {
+			Element libs = mc.getSortedLibraries();
+			if (libs != null) res.write( XmlUtil.toPrettyString(libs) );
+			else res.setResponseCode(res.notfound);
+			res.setContentType("xml");
+			res.send();
+		}
 		else if (function.equals("find")) {
 			String id = req.getParameter("id");
 			Element libs = mc.getSortedLibraries();

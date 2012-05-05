@@ -81,7 +81,6 @@ public class QueryService extends Servlet {
 	 */
 	public void doGet(HttpRequest req, HttpResponse res) throws Exception {
 
-
 		MircConfig mc = MircConfig.getInstance();
 		Path path = req.getParsedPath();
 		int length = path.length();
