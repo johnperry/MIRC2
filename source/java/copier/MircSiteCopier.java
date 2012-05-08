@@ -275,7 +275,7 @@ public class MircSiteCopier extends JFrame {
 						User ctpUser = users.getUser(username);
 						if (ctpUser == null) {
 							cp.println("   adding user: \""+username+"\"");
-							ctpUser = new User(username, tcUser.getAttribute("password"));
+							ctpUser = new User(username, users.convertPassword(tcUser.getAttribute("password")));
 							String[] roles = tcUser.getAttribute("roles").replaceAll("\\s","").split(",");
 
 							for (String role : roles) {

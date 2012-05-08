@@ -539,14 +539,9 @@
 			Enter the title of the document as you want it displayed for normal viewing.
 		</p>
 		<textarea class="title">
-			<xsl:choose>
-				<xsl:when test="($draft='yes') and ($norm-alttitle!='')">
-					<xsl:value-of select="$norm-alttitle"/>
-				</xsl:when>
-				<xsl:otherwise>
-					<xsl:value-of select="$norm-title"/>
-				</xsl:otherwise>
-			</xsl:choose>
+			<xsl:if test="not($draft='yes')">
+				<xsl:value-of select="$norm-title"/>
+			</xsl:if>
 		</textarea>
 		<br/><br/><br/>
 		<p class="p1" hideable="true">

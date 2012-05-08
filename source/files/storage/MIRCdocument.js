@@ -46,6 +46,7 @@ document.onkeyup = keyUp;
 
 var horizontalSplit = null;
 var verticalSplit = null;
+var lastSliderPosition = 0;
 
 function mirc_onload() {
 	setBackground();
@@ -756,14 +757,26 @@ function keyDown(event) {
 		return;
 	}
 	else if (kc == 33) { //PAGE UP
-		if (horizontalSplit) horizontalSplit.moveSliderTo(1, displayImage);
-		setCookie("maxrightpane", "yes");
+		if (horizontalSplit) {
+			var slider = horizontalSplit.leftWidth;
+			if (slider > 1) lastSliderPosition = slider;
+			horizontalSplit.moveSliderTo(1, displayImage);
+			setCookie("maxrightpane", "yes");
+		}
 		return;
 	}
 	else if (kc == 34) { //PAGE DOWN
 		var pos = findObject(document.body);
-		if (horizontalSplit) horizontalSplit.moveSliderTo(pos.w - imagePaneWidth - 7, displayImage);
-		setCookie("maxrightpane", "no");
+		if (horizontalSplit) {
+			var slider = horizontalSplit.leftWidth;
+			if ((lastSliderPosition > 0) && (slider != lastSliderPosition)) {
+				horizontalSplit.moveSliderTo(lastSliderPosition, displayImage);
+			}
+			else {
+				horizontalSplit.moveSliderTo(pos.w - imagePaneWidth - 7, displayImage);
+			}
+			setCookie("maxrightpane", "no");
+		}
 		return;
 	}
 

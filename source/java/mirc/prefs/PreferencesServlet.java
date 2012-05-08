@@ -171,7 +171,7 @@ public class PreferencesServlet extends Servlet {
 			Users users = Users.getInstance();
 			if (users instanceof UsersXmlFileImpl) {
 				User user = req.getUser();
-				user.setPassword(pw1);
+				user.setPassword( users.convertPassword(pw1) );
 				((UsersXmlFileImpl)users).addUser(user);
 			}
 		}

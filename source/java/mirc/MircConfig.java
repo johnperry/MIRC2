@@ -394,6 +394,7 @@ public class MircConfig {
 			role = role.trim();
 			if (!role.equals("")) users.addRole(role);
 		}
+		users. addRole("department"); //always include the department role
 	}
 
 	/**

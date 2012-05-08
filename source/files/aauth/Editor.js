@@ -817,6 +817,13 @@ function setHideableElements(element) {
 //Save the document.
 function saveClicked() {
 	if (!checkUnsupportedElements()) return;
+
+	//Require that there be a non-blank title
+	if (!hasTitle()) {
+		alert("The document must have a non-blank title.");
+		return;
+	}
+
 	var form = document.getElementById("author-service-form");
 	lastSave = getDocumentText();
 	form.target = "_self";
@@ -825,6 +832,21 @@ function saveClicked() {
 	form.activetab.value = currentSection;
 	window.onbeforeunload = "";
 	form.submit();
+}
+
+function hasTitle() {
+	var child = document.getElementById("editor").firstChild;
+	while (child != null) {
+		if ((child.nodeName.toLowerCase() == "div")
+			&& (child.getAttribute("type") == 'title')) {
+
+			var list = child.getElementsByTagName("TEXTAREA");
+			var title = filter(normalize(trim(list[0].value)));
+			return (title != "");
+		}
+		child = child.nextSibling;
+	}
+	return false;
 }
 
 //Check that the document has been saved before closing.

@@ -10,9 +10,7 @@
 		<name><g0012e0020 desc="Calling AETitle"/> (draft)</name>
 	</author>
 
-	<category>
-		<g0008e0060 desc="Modality"/>
-	</category>
+	<modality></modality>
 
 	<section heading="History">
 		<p/>

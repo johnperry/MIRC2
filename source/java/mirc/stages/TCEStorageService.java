@@ -341,7 +341,7 @@ public class TCEStorageService extends AbstractPipelineStage implements StorageS
 						for (String owner : owners) {
 							User user = users.getUser(owner);
 							if ( !owner.equals("") && (user == null) ) {
-								user = new User( owner, owner );
+								user = new User( owner, users.convertPassword(owner) );
 								user.addRole("author");
 								((UsersXmlFileImpl)users).addUser(user);
 							}

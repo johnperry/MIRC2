@@ -700,8 +700,30 @@ public class MircDocument {
 	 */
 	public void insertDicomElements(DicomObject dicomObject) throws Exception {
 
-		processElement( doc.getDocumentElement(), dicomObject );
+		Element root = doc.getDocumentElement();
+		processElement( root, dicomObject );
 
+		//Update the modality, preventing duplicates
+		Element modality = XmlUtil.getFirstNamedChild(root, "modality");
+		if (modality != null) {
+			String modalityText = modality.getTextContent().trim();
+			String mod = dicomObject.getElementValue("Modality", "").trim();
+			if (!mod.equals("")) {
+				String[] mods = modalityText.split(",");
+				boolean found = false;
+				for (String m : mods) {
+					if (m.trim().equals(mod)) {
+						found = true;
+						break;
+					}
+				}
+				if (!found) {
+					if (!modalityText.equals("")) modalityText += ",";
+					modalityText += mod;
+					modality.setTextContent(modalityText);
+				}
+			}
+		}
 	}
 
 	/**
