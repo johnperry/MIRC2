@@ -31,6 +31,7 @@ import mirc.storage.*;
 import mirc.submit.*;
 import mirc.summary.*;
 import mirc.util.*;
+import mirc.users.*;
 import mirc.zip.*;
 import org.apache.log4j.Logger;
 import org.rsna.ctp.Configuration;
@@ -86,6 +87,7 @@ public class MIRC extends AbstractPlugin {
 		//Install the servlets
 		Configuration config = Configuration.getInstance();
 		ServletSelector selector = config.getServer().getServletSelector();
+		selector.addServlet("users", MircUserManagerServlet.class);
 		selector.addServlet("mirc", MircServlet.class);
 		selector.addServlet("query", QueryService.class);
 		selector.addServlet("qsadmin", QueryServiceAdmin.class);
