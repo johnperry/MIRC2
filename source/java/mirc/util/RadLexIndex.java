@@ -185,7 +185,7 @@ public class RadLexIndex {
 			logger.info("RadLex index rebuild complete ("+index.size()+" index entries)");
 		}
 		catch (Exception quit) {
-			logger.info("RadLex index rebuild failed.");
+			logger.warn("RadLex index rebuild failed.", quit);
 		}
 		finally {
 			try {

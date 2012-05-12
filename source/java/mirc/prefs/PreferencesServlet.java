@@ -75,6 +75,7 @@ public class PreferencesServlet extends Servlet {
 		MircConfig mc = MircConfig.getInstance();
 		String username = req.getUser().getUsername();
 		Preferences prefs = Preferences.getInstance();
+		boolean userIsAdmin = req.userHasRole("admin");
 
 		Element pref = null;
 
@@ -98,18 +99,24 @@ public class PreferencesServlet extends Servlet {
 		}
 
 		else if (path.element(1).equals("xml")) {
+			String path2 = path.element(2);
+			String path3 = path.element(3);
 
 			//This is a request for an XML element
 			//If the user is an admin, allow a request for the full preferences
-			if (path.element(2).equals("allusers")) {
-				pref = prefs.get("*", !req.userHasRole("admin") || !path.element(3).equals("full"));
+			if (path2.equals("allusers") && userIsAdmin) {
+				pref = prefs.get("*", !userIsAdmin || !path3.equals("full"));
+			}
+			else if (path2.equals("user") && userIsAdmin && !path3.equals("")) {
+				pref = prefs.get(path3, true);
 			}
 			else {
 				pref = prefs.get(username, true);
 			}
 			res.setContentType("xml");
+			if (pref != null) res.write( XmlUtil.toString( pref ) );
+			else res.write( "<User/>" );
 			res.disableCaching();
-			res.write( XmlUtil.toString( pref ) );
 			res.send();
 		}
 
@@ -125,59 +132,90 @@ public class PreferencesServlet extends Servlet {
 		if (!req.isFromAuthenticatedUser()) { res.redirect("/query"); return; }
 
 		Path path = req.getParsedPath();
-
 		MircConfig mc = MircConfig.getInstance();
-		String username = req.getUser().getUsername();
 		Preferences prefs = Preferences.getInstance();
 
-		//Set the UI preference
-		String ui = req.getParameter("UI", "classic");
-		prefs.setUI(username, ui);
+		if (path.length() == 1) {
+			//This is an update from the user
 
-		//Set the author preferences
-		String name = req.getParameter("name", "");
-		String affiliation = req.getParameter("affiliation", "");
-		String contact = req.getParameter("contact", "");
-		prefs.setAuthorInfo(username, name, affiliation, contact);
+			String username = req.getUser().getUsername();
 
-		//Set the myRSNA preferences
-		String myrsnaEnabled = req.getParameter("myrsna", "no");
-		String myrsnaUsername = req.getParameter("myrsnaUsername", "");
-		String myrsnaPassword = req.getParameter("myrsnaPassword", "");
-		prefs.setMyRsnaInfo(username, myrsnaEnabled, myrsnaUsername, myrsnaPassword);
+			//Set the UI preference
+			String ui = req.getParameter("UI", "classic");
+			prefs.setUI(username, ui);
 
-		//Set the export site preferences
-		LinkedList<ExportSite> list = new LinkedList<ExportSite>();
-		int n = 0;
-		String exportName;
-		while ( (exportName=req.getParameter("export-name["+n+"]")) != null ) {
-			String exportURL = req.getParameter("export-url["+n+"]", "").trim();
-			String exportUN = req.getParameter("export-un["+n+"]", "").trim();
-			String exportPW = req.getParameter("export-pw["+n+"]", "").trim();
-			exportName = exportName.trim();
-			if (!exportName.equals("") && !exportURL.equals("")) {
-				list.add( new ExportSite(exportName, exportURL, exportUN, exportPW) );
+			//Set the author preferences
+			String name = req.getParameter("name", "");
+			String affiliation = req.getParameter("affiliation", "");
+			String contact = req.getParameter("contact", "");
+			prefs.setAuthorInfo(username, name, affiliation, contact);
+
+			//Set the myRSNA preferences
+			String myrsnaEnabled = req.getParameter("myrsna", "no");
+			String myrsnaUsername = req.getParameter("myrsnaUsername", "");
+			String myrsnaPassword = req.getParameter("myrsnaPassword", "");
+			prefs.setMyRsnaInfo(username, myrsnaEnabled, myrsnaUsername, myrsnaPassword);
+
+			//Set the export site preferences
+			LinkedList<ExportSite> list = new LinkedList<ExportSite>();
+			int n = 0;
+			String exportName;
+			while ( (exportName=req.getParameter("export-name["+n+"]")) != null ) {
+				String exportURL = req.getParameter("export-url["+n+"]", "").trim();
+				String exportUN = req.getParameter("export-un["+n+"]", "").trim();
+				String exportPW = req.getParameter("export-pw["+n+"]", "").trim();
+				exportName = exportName.trim();
+				if (!exportName.equals("") && !exportURL.equals("")) {
+					list.add( new ExportSite(exportName, exportURL, exportUN, exportPW) );
+				}
+				n++;
 			}
-			n++;
-		}
-		ExportSite[] sites = list.toArray( new ExportSite[list.size()] );
-		Arrays.sort(sites);
-		prefs.setExportInfo(username, sites);
+			ExportSite[] sites = list.toArray( new ExportSite[list.size()] );
+			Arrays.sort(sites);
+			prefs.setExportInfo(username, sites);
 
-		//Handle password changes
-		String pw1 = req.getParameter("password1", "").trim();
-		String pw2 = req.getParameter("password2", "").trim();
-		if ( pw1.equals(pw2) && !pw1.equals("")) {
-			Users users = Users.getInstance();
-			if (users instanceof UsersXmlFileImpl) {
-				User user = req.getUser();
-				user.setPassword( users.convertPassword(pw1) );
-				((UsersXmlFileImpl)users).addUser(user);
+			//Handle password changes
+			String pw1 = req.getParameter("password1", "").trim();
+			String pw2 = req.getParameter("password2", "").trim();
+			if ( pw1.equals(pw2) && !pw1.equals("")) {
+				Users users = Users.getInstance();
+				if (users instanceof UsersXmlFileImpl) {
+					User user = req.getUser();
+					user.setPassword( users.convertPassword(pw1) );
+					((UsersXmlFileImpl)users).addUser(user);
+				}
 			}
+
+			//Now return the page again
+			doGet( req, res );
 		}
 
-		//Now return the page again
-		doGet( req, res );
+		else if (path.element(1).equals("admin")) {
+			//This is an update of an individual user by the User Manager.
+			//All we handle are the name, affiliation, and contact.
+			String username = req.getParameter("username","").trim();
+
+			String name = req.getParameter("namePref","").trim();
+			String affiliation = req.getParameter("affiliationPref","").trim();
+			String contact = req.getParameter("contactPref","").trim();
+
+			if (!username.equals("")) {
+				Element userPref = prefs.get(username, true);
+				if (userPref != null) {
+					//If the user already exists in the preferences
+					//and a new one is not specified in this submission,
+					//then keep the old value.
+					if (name.equals("")) name = userPref.getAttribute("name");
+					if (affiliation.equals("")) affiliation = userPref.getAttribute("affiliation");
+					if (contact.equals("")) contact = userPref.getAttribute("contact");
+				}
+				prefs.setAuthorInfo(username, name, affiliation, contact);
+				res.write("<ok/>");
+			}
+			else res.write("<notok/>");
+			res.setContentType("xml");
+			res.send();
+		}
 	}
 
 }

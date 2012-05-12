@@ -67,7 +67,7 @@ public class MircUserManagerServlet extends Servlet {
 
 		if (req.getParsedPath().length() == 1) {
 			//Make the page and return it.
-			res.write( getPage( (UsersXmlFileImpl)users, home ) );
+			res.write( getPage( (UsersXmlFileImpl)users, home, req.isFromUserAgent("msie") ) );
 			res.setContentType("html");
 			res.disableCaching();
 			res.send();
@@ -168,7 +168,7 @@ public class MircUserManagerServlet extends Servlet {
 		usersXmlFileImpl.resetUsers(newUserTable);
 
 		//Make a new page from the new data and return it.
-		res.write(getPage(usersXmlFileImpl, home));
+		res.write(getPage(usersXmlFileImpl, home, req.isFromUserAgent("msie")));
 		res.setContentType("html");
 		res.disableCaching();
 		res.send();
@@ -224,27 +224,37 @@ public class MircUserManagerServlet extends Servlet {
 
 	//Create an HTML page containing the form for managing
 	//the users and roles.
-	private String getPage(UsersXmlFileImpl users, String home) {
+	private String getPage(UsersXmlFileImpl users, String home, boolean isFromIE) {
 		String[] usernames = users.getUsernames();
 		String[] rolenames = users.getRoleNames();
 
 		StringBuffer sb = new StringBuffer();
 		responseHead(sb, home);
-		makeTableHeader(sb, rolenames);
+		makeTableHeader(sb, rolenames, isFromIE);
 		makeTableRows(sb, users, usernames, rolenames);
 		responseTail(sb);
 
 		return sb.toString();
 	}
 
-	private void makeTableHeader(StringBuffer sb, String[] rolenames) {
+	private void makeTableHeader(StringBuffer sb, String[] rolenames, boolean isFromIE) {
 		sb.append( "<thead>\n"
 					+ " <tr>\n"
 					+ "  <th/>\n"
 					+ "  <th/>\n" );
 		for (int i=0; i<rolenames.length; i++) {
-			sb.append( "  <th class=\"thv\"><nobr>"+"<input type=\"checkbox\" onclick=\"toggleRoles("+i+",event)\"/>&nbsp;"+rolenames[i]+"</nobr>"
-				  	+  "<input name=\"r"+i+"\" type=\"hidden\" value=\""+rolenames[i]+"\"/></th>\n" );
+			if (isFromIE) {
+				sb.append("  <th class=\"thv\"><nobr>"+"<input type=\"checkbox\" onclick=\"toggleRoles("+i+",event)\"/>&nbsp;"+rolenames[i]+"</nobr>");
+			}
+			else {
+				sb.append("  <th class=\"thv\" title=\""+rolenames[i]+"\">");
+				sb.append("<input type=\"checkbox\" onclick=\"toggleRoles("+i+",event)\"/>");
+				sb.append("<br/>");
+				String r = rolenames[i];
+				r = r.substring(0, Math.min(3, r.length()));
+				sb.append(r);
+			}
+			sb.append("<input name=\"r"+i+"\" type=\"hidden\" value=\""+rolenames[i]+"\"/></th>\n" );
 		}
 		sb.append( " </tr>\n" );
 		sb.append( "</thead>\n" );
@@ -270,23 +280,27 @@ public class MircUserManagerServlet extends Servlet {
 					 	+  "<input name=\"u"+i+"\" value=\""+usernames[i]+"\"/>"
 					 	+  "</td>\n" );
 			for (int j=0; j<rolenames.length; j++) {
-				sb.append( "<td><input name=\"cbu"+i+"r"+j+"\" type=\"checkbox\"" );
+				sb.append( "<td title=\""+rolenames[j]+"\"><input name=\"cbu"+i+"r"+j+"\" type=\"checkbox\"" );
 				if ((users.getUser(usernames[i]).hasRole(rolenames[j]))) sb.append( " checked=\"true\"" );
 				sb.append( "/></td>\n" );
 			}
 			sb.append( " <td class=\"tdl\">"
 					 +  "<input name=\"p"+i+"\" type=\"password\" value=\"\"/>"
 					 +  "</td>\n" );
-			sb.append( " <td><input type=\"button\" value=\" + \" onclick=\"setPrefs();\" title=\"Set user info\"/>\n" );
+			sb.append( " <td><input type=\"button\" value=\" + \" onclick=\"setPrefs(event);\" title=\"Set user info\"/>\n" );
 			sb.append( " </tr>\n" );
 		}
+		//Put in the row for a nw user
 		sb.append( "<tr>\n" );
 		sb.append( "<td/>\n" );
 		sb.append( "<td class=\"tdl\"><input name=\"u"+usernames.length+"\"/></td>\n" );
 		for (int j=0; j<rolenames.length; j++) {
-			sb.append( "<td><input name=\"cbu"+usernames.length+"r"+j+"\" type=\"checkbox\"/></td>\n" );
+			sb.append( "<td title=\""+rolenames[j]+"\">");
+			sb.append( "<input name=\"cbu"+usernames.length+"r"+j+"\" type=\"checkbox\" title=\""+rolenames[j]+"\"/>");
+			sb.append( "</td>\n" );
 		}
 		sb.append( " <td class=\"tdl\"><input name=\"p"+usernames.length+"\"/></td>\n" );
+		sb.append( " <td><input type=\"button\" value=\" + \" onclick=\"setPrefs(event);\" title=\"Set user info\"/>\n" );
 		sb.append( " </tr>\n" );
 	}
 
@@ -300,6 +314,7 @@ public class MircUserManagerServlet extends Servlet {
 			+	"  <link rel=\"Stylesheet\" type=\"text/css\" media=\"all\" href=\"/users/MircUserManagerServlet.css\"></link>\n"
 			+	"  <script> var home = \""+home+"\";</script>\n"
 			+	"  <script language=\"JavaScript\" type=\"text/javascript\" src=\"/JSUtil.js\">;</script>\n"
+			+	"  <script language=\"JavaScript\" type=\"text/javascript\" src=\"/JSAJAX.js\">;</script>\n"
 			+	"  <script language=\"JavaScript\" type=\"text/javascript\" src=\"/JSPopup.js\">;</script>\n"
 			+	"  <script language=\"JavaScript\" type=\"text/javascript\" src=\"/UserManagerServlet.js\">;</script>\n"
 			+	"  <script language=\"JavaScript\" type=\"text/javascript\" src=\"/users/MircUserManagerServlet.js\">;</script>\n"
@@ -320,7 +335,7 @@ public class MircUserManagerServlet extends Servlet {
 
 			+	"  <center>\n"
 			+	"   <h1>User Manager</h1>\n"
-			+	"   <input type=\"button\" onclick=\"showHideColumns()\" id=\"shRoles\" value=\"Hide Unused Roles\"/>\n"
+			+	"   <p><input type=\"button\" onclick=\"showHideColumns()\" id=\"shRoles\" value=\"Hide Unused Roles\"/></p>\n"
 			+	"   <form id=\"formID\" action=\"/users\" method=\"post\" accept-charset=\"UTF-8\" action=\"\">\n"
 			+	"    <input type=\"hidden\" name=\"home\" value=\""+home+"\">\n"
 			+	"    <table id=\"userTable\" border=\"1\">\n"

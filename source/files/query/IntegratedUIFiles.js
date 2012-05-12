@@ -196,7 +196,7 @@ function cabinetFileClicked(theEvent) {
 }
 
 function cabinetFileDblClicked(theEvent) {
-	var theEvent = getEvent(theEvent)
+	var theEvent = getEvent(theEvent);
 	stopEvent(theEvent);
 	var source = getSource(theEvent);
 	var currentFileClicked = getClickedFile(source);
