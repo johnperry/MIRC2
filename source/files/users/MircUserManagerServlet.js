@@ -120,3 +120,77 @@ function makeRow(label, text, id, username) {
 	return row;
 }
 
+function downloadCSV() {
+	window.open("/users?format=csv", "_self");
+}
+
+function uploadCSV() {
+	var id = "uploadCSVID";
+	var pop = document.getElementById(id);
+	if (pop) pop.parentNode.removeChild(pop);
+
+	var w = 400;
+	var h = 220;
+	var closebox = "/icons/closebox.gif";
+
+	var div = getUploadCSVDiv();
+
+	//popupDivId, w, h, title, closeboxFile, heading, div, okHandler, cancelHandler, hide
+	showDialog(id, w, h, "Upload CSV Users File", closebox, null, div, submitCSV, hidePopups);
+}
+
+function getUploadCSVDiv() {
+	var div = document.createElement("DIV");
+	div.className = "content";
+	var h1 = document.createElement("H1");
+	h1.appendChild(document.createTextNode("Select CSV File"));
+	h1.style.fontSize = "18pt";
+	div.appendChild(h1);
+	div.appendChild(document.createElement("BR"));
+	var center = document.createElement("CENTER");
+	var p = document.createElement("P");
+
+	var form = document.createElement("FORM");
+	form.id = "CSVFormID";
+	form.method = "post";
+	form.target = "_self";
+	form.encoding = "multipart/form-data";
+	form.acceptCharset = "UTF-8";
+	form.action = "/users";
+
+	var input = document.createElement("INPUT");
+	input.name = "filecontent";
+	input.id = "selectedFile";
+	input.type = "file";
+	input.style.width = 320;
+
+	form.appendChild(input);
+
+	p.appendChild(form);
+
+	center.appendChild(p)
+	div.appendChild(center);
+	return div
+}
+
+function submitCSV() {
+	var form = document.getElementById("CSVFormID");
+	form.submit();
+}
+
+function clearUser(theEvent) {
+	var source = getSource(getEvent(theEvent));
+	var row = findRowFor(source);
+	var tds = row.getElementsByTagName("TD");
+	for (var i=0; i<tds.length; i++) {
+		var td = tds[i];
+		var inputs = td.getElementsByTagName("INPUT");
+		for (var k=0; k<inputs.length; k++) {
+			var input = inputs[k];
+			if (input.type == "text") input.value = "";
+			else if (input.type == "checkbox") input.checked = false;
+		}
+	}
+	var pn = tds[0];
+	while (pn.firstChild) pn.removeChild(pn.firstChild);
+}

@@ -39,6 +39,7 @@ import org.rsna.ctp.plugin.AbstractPlugin;
 import org.rsna.server.ServletSelector;
 import org.rsna.server.User;
 import org.rsna.server.Users;
+import org.rsna.server.UsersXmlFileImpl;
 import org.rsna.util.*;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -121,6 +122,11 @@ public class MIRC extends AbstractPlugin {
 		if (admin != null) {
 			admin.addRole("author");
 			admin.addRole("publisher");
+		}
+
+		//Remove the king user if it exists
+		if (users instanceof UsersXmlFileImpl) {
+			((UsersXmlFileImpl)users).removeUser("king");
 		}
 
 		//Install the defined roles

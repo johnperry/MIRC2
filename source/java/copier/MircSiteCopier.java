@@ -291,10 +291,7 @@ public class MircSiteCopier extends JFrame {
 									}
 								}
 							}
-							if (!users.addUser(ctpUser)) {
-								cp.println("   ***UNABLE TO ADD USER: \""+username+"\"");
-								System.out.println("UNABLE TO ADD USER: \""+username+"\"");
-							}
+							users.addUser(ctpUser);
 						}
 						else cp.println("   skipping pre-existing user: \""+username+"\"");
 					}

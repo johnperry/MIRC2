@@ -168,6 +168,8 @@ public class RadLexIndex {
 
 			//Parse the XML file
 			File xmlFile = new File(dir, xmlName);
+			logger.info("...RadLex index file: "+xmlFile);
+			logger.info("...RadLex index resource: "+xmlResource);
 			Document radlex = XmlUtil.getDocument( FileUtil.getStream( xmlFile, xmlResource ) );
 
 			//Put the terms in the index

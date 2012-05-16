@@ -4,3 +4,12 @@
 	padding 5;
 	font-size: 10pt;
 }
+
+.thleft {
+	padding:5; 
+	text-align:left; 
+	font-family: Arial, Helvetica, Verdana, sans-serif;
+	vertical-align: bottom;
+}
+	
+	
