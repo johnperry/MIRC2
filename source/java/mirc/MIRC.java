@@ -80,7 +80,7 @@ public class MIRC extends AbstractPlugin {
 		MircConfig mc = MircConfig.load(configFile);
 
 		//Load the Preferences
-		Preferences.load( root );
+		Preferences prefs = Preferences.load( root );
 
 		//Load the DownloadDB
 		DownloadDB.load( root );
@@ -122,11 +122,23 @@ public class MIRC extends AbstractPlugin {
 		if (admin != null) {
 			admin.addRole("author");
 			admin.addRole("publisher");
-		}
 
-		//Remove the king user if it exists
-		if (users instanceof UsersXmlFileImpl) {
-			((UsersXmlFileImpl)users).removeUser("king");
+			//Set a person name for the admin user
+			//if it doesn't already have one.
+			Element pref = prefs.get("admin", true);
+			logger.warn("about to set user admin's name preference");
+			if (pref == null) {
+				prefs.setAuthorInfo("admin", "Administrator", "", "");
+			}
+			else {
+				String name = pref.getAttribute("name");
+				if (name.equals("")) {
+					prefs.setAuthorInfo("admin",
+										"Administrator",
+										pref.getAttribute("affiliation"),
+										pref.getAttribute("contact"));
+				}
+			}
 		}
 
 		//Install the defined roles

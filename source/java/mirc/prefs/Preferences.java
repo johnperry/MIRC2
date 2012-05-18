@@ -80,7 +80,7 @@ public class Preferences {
 
 
 	/**
-	 * Get the preferences Document for a specific user or for all users.
+	 * Get the preferences Element for a specific user or for all users.
 	 * @param username the username of the user, or "*" to obtain an
 	 * XML Document containing the preferences for all users.
 	 * @param suppress true if only name, affiliation, and contact is

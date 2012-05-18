@@ -188,7 +188,6 @@ public class MircUserManagerServlet extends Servlet {
 				//Reset the users database from the hashtable.
 				usersXmlFileImpl.resetUsers(newUserTable);
 				}
-
 			}
 			catch (Exception redisplayPage) { }
 			FileUtil.deleteAll(dir);
