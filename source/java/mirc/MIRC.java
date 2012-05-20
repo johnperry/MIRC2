@@ -126,7 +126,6 @@ public class MIRC extends AbstractPlugin {
 			//Set a person name for the admin user
 			//if it doesn't already have one.
 			Element pref = prefs.get("admin", true);
-			logger.warn("about to set user admin's name preference");
 			if (pref == null) {
 				prefs.setAuthorInfo("admin", "Administrator", "", "");
 			}
