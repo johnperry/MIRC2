@@ -9,6 +9,7 @@
 <xsl:param name="user-has-myrsna-acct"/>
 <xsl:param name="user-is-owner"/>
 <xsl:param name="user-is-admin"/>
+<xsl:param name="user-can-post"/>
 
 <xsl:param name="edit-url"/>
 <xsl:param name="add-url"/>
@@ -17,6 +18,7 @@
 <xsl:param name="delete-url"/>
 <xsl:param name="export-url"/>
 <xsl:param name="filecabinet-url"/>
+<xsl:param name="post-url"/>
 
 <xsl:param name="preview">no</xsl:param>
 <xsl:param name="bgcolor"/>
@@ -846,6 +848,51 @@
 			</table>
 		</p>
 	</xsl:if>
+</xsl:template>
+
+<xsl:template match="threadblock">
+	<div class="threadblock">
+		<xsl:apply-templates select="thread"/>
+		<xsl:if test="$user-can-post='yes'">
+			<p class="centerbutton">
+				<input class="threadblockbutton" type="button" value="Add a thread to this block" onclick="newThread(event,'{@id}');"/>
+			</p>
+		</xsl:if>
+	</div>
+</xsl:template>
+
+<xsl:template match="thread">
+	<div class="thread">
+		<xsl:if test="@title">
+			<h2 class="thread"><xsl:value-of select="@title"/></h2>
+		</xsl:if>
+		<h3 class="thread">
+			<xsl:value-of select="@name"/>
+			<xsl:text> (</xsl:text>
+			<xsl:value-of select="@username"/>
+			<xsl:text>) created this thread on </xsl:text>
+			<xsl:value-of select="@date"/>
+		</h3>
+		<xsl:apply-templates select="post"/>
+		<xsl:if test="$user-can-post='yes'">
+			<p class="centerbutton">
+				<input class="threadbutton" type="button" value="Add a post to this thread" onclick="newPost(event,'{@id}');"/>
+			</p>
+		</xsl:if>
+	</div>
+</xsl:template>
+
+<xsl:template match="post">
+	<div class="post">
+		<h4 class="post">
+			<xsl:value-of select="@name"/>
+			<xsl:text> (</xsl:text>
+			<xsl:value-of select="@username"/>
+			<xsl:text>) posted this comment on </xsl:text>
+			<xsl:value-of select="@date"/>
+		</h4>
+		<xsl:apply-templates/>
+	</div>
 </xsl:template>
 
 <xsl:template match="patient">

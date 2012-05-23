@@ -377,3 +377,50 @@ div.add {
 	overflow:auto;
 }
 /*-------End of Destination select popup -------*/
+
+/*--------- Thread styles ----------*/
+div.threadblock {
+	margin: 5 5 5 5;
+	padding: 5 5 5 5;
+}
+div.thread {
+	border: thin solid gray;
+	margin: 5 5 5 5;
+	padding: 5 5 5 5;
+}
+div.post {
+	border: thin solid gray;
+	margin: 5 5 5 5;
+	padding: 5 5 5 5;
+}
+h2.thread {
+	margin: 0 0 0 0;
+	font-weight:bold;
+	font-family:sans-serif;
+	font-size:10pt;
+}
+h3.thread {
+	margin: 5 0 10 0;
+	font-weight:normal;
+	font-family:sans-serif;
+	font-size:10pt;
+}
+	
+h4.post {
+	margin: 0 0 10 0;
+	font-weight:normal;
+	font-family:sans-serif;
+	font-size:10pt;
+}
+p.centerbutton {
+	text-align: center;
+}
+input.threadtitletext {
+	width: 300;
+}
+textarea.posttext {
+	width: 350;
+	height: 280;
+}
+/*--------- End of thread styles ----------*/
+

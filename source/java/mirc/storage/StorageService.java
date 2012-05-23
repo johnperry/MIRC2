@@ -701,6 +701,9 @@ public class StorageService extends Servlet {
 		//Set the parameter indicating whether the user is an admin
 		String userisadmin = (req.userHasRole("admin") ? "yes" : "no");
 
+		//Set the parameter indicating whether the user is an admin
+		String userisauthor = (req.userHasRole("author") ? "yes" : "no");
+
 		//Set up the links for:
 		//	editing
 		//	adding images
@@ -765,6 +768,7 @@ public class StorageService extends Servlet {
 			"user-has-myrsna-acct",	userhasmyrsnaacct,
 			"user-is-owner",		userisowner,
 			"user-is-admin",		userisadmin,
+			"user-can-post",		userisauthor,
 
 			"edit-url",				editurl,
 			"add-url",				addurl,

@@ -990,3 +990,122 @@ function addHandler() {
 	form.submit();
 	hidePopups();
 }
+
+function newThread(theEvent, threadblockID) {
+	var div = document.getElementById("threaddiv");
+	if (div != null) div.parentNode.removeChild(div);
+
+	div = document.createElement("DIV");
+	div.id = "thread";
+	div.className = "content";
+	div.appendChild(document.createElement("DIV"));
+
+	var tbid = document.createElement("INPUT");
+	tbid.type = "hidden";
+	tbid.id = "tbid";
+	tbid.value = threadblockID;
+	div.appendChild(tbid);
+
+	var p = document.createElement("P");
+	p.className = "center";
+	p.style.color = "black";
+	div.appendChild(p);
+
+	p.appendChild(document.createTextNode("Enter a short title for this thread"));
+	p.appendChild( document.createElement("BR") );
+	p.appendChild( document.createElement("BR") );
+
+	var text = document.createElement("INPUT");
+	text.type = "text";
+	text.className = "threadtitletext";
+	text.name = "threadtitletext";
+	text.id = "threadtitletext";
+	p.appendChild(text);
+
+	showDialog("threaddiv", 400, 250, "Thread title", "/icons/closebox.gif", "Thread Title", div, newThreadHandler, hidePopups);
+}
+
+function newThreadHandler() {
+	var tbid = document.getElementById("tbid").value;
+	var title = document.getElementById("threadtitletext").value;
+
+	var form = document.createElement("FORM");
+	form.id = "threadFormID";
+	form.action = "/thread/newthread"+docIndexEntry;
+	form.method = "POST";
+	form.acceptCharset = "UTF-8";
+
+	var threadblockID = document.createElement("INPUT");
+	threadblockID.type = "hidden";
+	threadblockID.id = "threadblockID";
+	threadblockID.name = "threadblockID";
+	threadblockID.value = tbid;
+	form.appendChild(threadblockID);
+
+	var threadtitle = document.createElement("INPUT");
+	threadtitle.type = "hidden";
+	threadtitle.id = "threadtitle";
+	threadtitle.name = "threadtitle";
+	threadtitle.value = title;
+	form.appendChild(threadtitle);
+
+	alert("newThreadHandler:\n\ndocIndexEntry: "+docIndexEntry+"\n\nthreadblockID: "+tbid+"\n\nthreadtitle: "+title);
+
+	hidePopups();
+}
+
+function newPost(theEvent, threadID) {
+	var div = document.getElementById("threaddiv");
+	if (div != null) div.parentNode.removeChild(div);
+
+	div = document.createElement("DIV");
+	div.id = "thread";
+	div.className = "content";
+	div.appendChild(document.createElement("DIV"));
+
+	var tid = document.createElement("INPUT");
+	tid.type = "hidden";
+	tid.id = "tid";
+	tid.value = threadID;
+	div.appendChild(tid);
+
+	var p = document.createElement("P");
+	p.className = "center";
+	p.style.color = "black";
+	div.appendChild(p);
+
+	p.appendChild(document.createTextNode("Enter the text of your comment"));
+	p.appendChild( document.createElement("BR") );
+	p.appendChild( document.createElement("BR") );
+
+	var text = document.createElement("TEXTAREA");
+	text.className = "posttext";
+	text.name = "posttext";
+	text.id = "posttext";
+	p.appendChild(text);
+
+	showDialog("threaddiv", 400, 500, "Comment", "/icons/closebox.gif", "Comment Text", div, newPostHandler, hidePopups);
+}
+
+function newPostHandler() {
+	var tid = document.getElementById("tid").value;
+
+	var form = document.createElement("FORM");
+	form.id = "postFormID";
+	form.action = "/thread/newpost"+docIndexEntry;
+	form.method = "POST";
+	form.acceptCharset = "UTF-8";
+
+	var threadID = document.createElement("INPUT");
+	threadID.type = "hidden";
+	threadID.id = "threadblockID";
+	threadID.name = "threadblockID";
+	threadID.value = tid;
+	form.appendChild(threadID);
+
+	alert("newPostHandler:\n\ndocIndexEntry: "+docIndexEntry+"\n\nthreadID: "+tid);
+
+	hidePopups();
+}
+
+
