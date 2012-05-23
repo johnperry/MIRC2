@@ -1031,8 +1031,9 @@ function newThreadHandler() {
 
 	var form = document.createElement("FORM");
 	form.id = "threadFormID";
-	form.action = "/thread/newthread"+docIndexEntry;
+	form.action = "/comment/newthread"+docIndexEntry;
 	form.method = "POST";
+	form.encoding = "multipart/form-data";
 	form.acceptCharset = "UTF-8";
 
 	var threadblockID = document.createElement("INPUT");
@@ -1049,9 +1050,10 @@ function newThreadHandler() {
 	threadtitle.value = title;
 	form.appendChild(threadtitle);
 
-	alert("newThreadHandler:\n\ndocIndexEntry: "+docIndexEntry+"\n\nthreadblockID: "+tbid+"\n\nthreadtitle: "+title);
-
-	hidePopups();
+	var div = document.getElementById("threaddiv");
+	div.appendChild(form);
+	form.submit();
+	//hidePopups();
 }
 
 function newPost(theEvent, threadID) {
@@ -1078,34 +1080,44 @@ function newPost(theEvent, threadID) {
 	p.appendChild( document.createElement("BR") );
 	p.appendChild( document.createElement("BR") );
 
-	var text = document.createElement("TEXTAREA");
-	text.className = "posttext";
-	text.name = "posttext";
-	text.id = "posttext";
-	p.appendChild(text);
+	var posttext = document.createElement("TEXTAREA");
+	posttext.className = "posttext";
+	posttext.name = "posttext";
+	posttext.id = "posttext";
+	p.appendChild(posttext);
 
 	showDialog("threaddiv", 400, 500, "Comment", "/icons/closebox.gif", "Comment Text", div, newPostHandler, hidePopups);
 }
 
 function newPostHandler() {
 	var tid = document.getElementById("tid").value;
+	var posttext = document.getElementById("posttext").value;
 
 	var form = document.createElement("FORM");
 	form.id = "postFormID";
-	form.action = "/thread/newpost"+docIndexEntry;
+	form.action = "/comment/newpost"+docIndexEntry;
 	form.method = "POST";
+	form.encoding = "multipart/form-data";
 	form.acceptCharset = "UTF-8";
 
 	var threadID = document.createElement("INPUT");
 	threadID.type = "hidden";
-	threadID.id = "threadblockID";
-	threadID.name = "threadblockID";
+	threadID.id = "threadID";
+	threadID.name = "threadID";
 	threadID.value = tid;
 	form.appendChild(threadID);
 
-	alert("newPostHandler:\n\ndocIndexEntry: "+docIndexEntry+"\n\nthreadID: "+tid);
+	var post = document.createElement("INPUT");
+	post.type = "hidden";
+	post.id = "post";
+	post.name = "post";
+	post.value = posttext;
+	form.appendChild(post);
 
-	hidePopups();
+	var div = document.getElementById("threaddiv");
+	div.appendChild(form);
+	form.submit();
+	//hidePopups();
 }
 
 

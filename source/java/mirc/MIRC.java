@@ -15,6 +15,7 @@ import mirc.aauth.*;
 import mirc.addimg.*;
 import mirc.bauth.*;
 import mirc.casenav.*;
+import mirc.comment.*;
 import mirc.confs.*;
 import mirc.download.*;
 import mirc.files.*;
@@ -110,6 +111,7 @@ public class MIRC extends AbstractPlugin {
 		selector.addServlet("addimg", AddImageService.class);
 		selector.addServlet("publish", PublishService.class);
 		selector.addServlet("download", DownloadServlet.class);
+		selector.addServlet("comment", CommentService.class);
 
 		//Install the standard roles
 		Users users = Users.getInstance();
