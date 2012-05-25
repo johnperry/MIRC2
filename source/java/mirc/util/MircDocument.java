@@ -463,6 +463,35 @@ public class MircDocument {
 	}
 
 	/**
+	 * Replace threadblock elements in this MircDocument with ones from another
+	 * MircDocument. This method only replaces threadblock elements that have id
+	 * attributes that correspond with those in the other MircDocument.
+	 * @param md the source MircDocument used to obtain threadblock elements..
+	 */
+	public void updateThreadBlocks(MircDocument md) {
+		try {
+			Element srcRoot = md.getXML().getDocumentElement();
+			NodeList srcNL = srcRoot.getElementsByTagName("threadblock");
+			Element thisRoot = doc.getDocumentElement();
+			NodeList thisNL = thisRoot.getElementsByTagName("threadblock");
+			for (int i=0; i<thisNL.getLength(); i++) {
+				Element tb = (Element)thisNL.item(i);
+				String id = tb.getAttribute("id");
+				for (int k=0; k<srcNL.getLength(); k++) {
+					Element srcTB = (Element)srcNL.item(i);
+					String srcID = srcTB.getAttribute("id");
+					if (id.equals(srcID)) {
+						Node importedTB = doc.importNode(srcTB, true);
+						tb.getParentNode().replaceChild(importedTB, tb);
+						break;
+					}
+				}
+			}
+		}
+		catch (Exception ignore) { }
+	}
+
+	/**
 	 * Insert an object into the MircDocument.
 	 * @param object the object to be inserted.
 	 * @param unpackZipFiles true if a zip file is to be unpacked and its contents

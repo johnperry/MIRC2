@@ -195,7 +195,7 @@ function initTabs() {
 			if (b != null) {
 				if (n != firstTab) {
 					var d = document.getElementById("tab"+n);
-					if (!isImageSection(d) && !containsIFrame(d)) {
+					if (!isImageSection(d) && !containsIFrame(d) && !containsThreadBlock(d)) {
 						//get the text
 						var text = getText(d);
 						var trimmedText = trim(text);
@@ -230,6 +230,16 @@ function isImageSection(d) {
 function containsIFrame(d) {
 	var iframes = d.getElementsByTagName("IFRAME");
 	return (iframes.length > 0);
+}
+
+function containsThreadBlock(d) {
+	for (var q=0; q<d.childNodes.length; q++) {
+		var c = d.childNodes[q];
+		if (c.nodeType == 1) {
+			if (c.className == "threadblock") return true;
+		}
+	}
+	return false;
 }
 
 function getText(d) {

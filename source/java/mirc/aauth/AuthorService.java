@@ -419,6 +419,15 @@ public class AuthorService extends Servlet {
 							//authorization and the user's roles.
 							md.setPublicationRequest(canPublish);
 
+							//Copy the threadblocks from the old MircDocument.
+							//Note: comments made by users are never editable,
+							//so they are not displayed in the editor form, and
+							//they are always copied here. Only those threadblocks
+							//that are still in the new MircDocument are updated.
+							//This allows an author to delete a threadblock, but
+							//not to change its contents.
+							md.updateThreadBlocks(oldmd);
+
 							//Save and index the document
 							md.save();
 							String key = index.getKey( docFile );
