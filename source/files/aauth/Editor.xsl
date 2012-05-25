@@ -1561,6 +1561,16 @@
 	</p>
 </xsl:template>
 
+<xsl:template match="threadblock">
+	<p class="p5" item-type="commentblock">
+		<img
+			src="/aauth/buttons/insertcommentblock.png"
+			class="commentblockImg"
+			onclick="setCurrentObject();"
+			title="{@id}"/>
+	</p>
+</xsl:template>
+
 <xsl:template match="p | text">
 	<xsl:choose>
 		<xsl:when test=".//patient">

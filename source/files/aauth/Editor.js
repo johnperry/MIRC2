@@ -1075,6 +1075,8 @@ function getDocumentSectionText(section) {
 	return text;
 }
 
+var cbDisambiguator = 0;
+
 function getItemText(item) {
 	var text = "";
 
@@ -1146,6 +1148,9 @@ function getItemText(item) {
 
 	case "commentblock":
 		var title = imgList[0].title;
+		if (title == "New Comment Block") {
+			title = "CB-" + (new Date()).getTime() + "-" + (cbDisambiguator++);
+		}
 		return "<threadblock id=\""+title+"\"/>";
 	}
 
