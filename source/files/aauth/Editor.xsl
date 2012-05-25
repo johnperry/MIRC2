@@ -201,6 +201,12 @@
 				<xsl:with-param name="id">insertquiz-button</xsl:with-param>
 			</xsl:call-template>
 			<xsl:call-template name="tool">
+				<xsl:with-param name="title">Insert a comment block</xsl:with-param>
+				<xsl:with-param name="onclick">objectInsertCommentBlockClicked();</xsl:with-param>
+				<xsl:with-param name="src">/aauth/buttons/insertcommentblock.png</xsl:with-param>
+				<xsl:with-param name="id">insertcommentblock-button</xsl:with-param>
+			</xsl:call-template>
+			<xsl:call-template name="tool">
 				<xsl:with-param name="title">Remove the selected items</xsl:with-param>
 				<xsl:with-param name="onclick">objectRemoveClicked();</xsl:with-param>
 				<xsl:with-param name="src">/aauth/buttons/cut.gif</xsl:with-param>

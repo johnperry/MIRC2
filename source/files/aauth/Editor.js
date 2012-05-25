@@ -320,6 +320,7 @@ function setToolEnables() {
 			setToolEnable("insertiframe-button",true);
 			setToolEnable("insertpatient-button",true);
 			setToolEnable("insertquiz-button",true);
+			setToolEnable("insertcommentblock-button",true);
 			setToolEnable("removeobject-button",itemIsSelected);
 			setToolEnable("promoteobject-button",itemIsSelected);
 			setToolEnable("demoteobject-button",itemIsSelected);
@@ -334,6 +335,7 @@ function setToolEnables() {
 			setToolEnable("insertimage-button",isPaletteImageSelected());
 			setToolEnable("insertpatient-button",false);
 			setToolEnable("insertquiz-button",false);
+			setToolEnable("insertcommentblock-button",false);
 			setToolEnable("removeobject-button",imageIsSelected);
 			setToolEnable("promoteobject-button",imageIsSelected);
 			setToolEnable("demoteobject-button",imageIsSelected);
@@ -387,6 +389,7 @@ function setAllItemTools(enable) {
 	setToolEnable("insertiframe-button",enable);
 	setToolEnable("insertpatient-button",enable);
 	setToolEnable("insertquiz-button",enable);
+	setToolEnable("insertcommentblock-button",enable);
 	setToolEnable("removeobject-button",enable);
 	setToolEnable("promoteobject-button",enable);
 	setToolEnable("demoteobject-button",enable);
@@ -397,14 +400,19 @@ function setToolEnable(id,enable) {
 	var tool = document.getElementById(id);
 	if (tool == null) return;
 	var src = tool.getAttribute("src");
-	var isDisabled = (src.indexOf("-x.gif") != -1);
+
+	//get the extension of the src attribute
+	var k = src.lastIndexOf(".");
+	var ext = src.substring(k+1);
+
+	var isDisabled = (src.indexOf("-x.") != -1);
 	if (!enable && isDisabled) return;
 	if (enable && !isDisabled) return;
 	var len = src.length;
 	if (enable)
-		src = src.substring(0,len-6) + ".gif";
+		src = src.substring(0, k-2) + "." + ext;
 	else
-		src = src.substring(0,len-4) + "-x.gif";
+		src = src.substring(0, k) + "-x." + ext;
 	tool.setAttribute("src",src);
 }
 
@@ -820,7 +828,7 @@ function saveClicked() {
 
 	//Require that there be a non-blank title
 	if (!hasTitle()) {
-		alert("The document must have a non-blank title.");
+		alert("The document must have a title.");
 		return;
 	}
 
@@ -1135,7 +1143,12 @@ function getItemText(item) {
 			i++;
 		}
 		return text + "</quiz>\n";
+
+	case "commentblock":
+		var title = imgList[0].title;
+		return "<threadblock id=\""+title+"\"/>";
 	}
+
 	return "";
 }
 
@@ -1827,6 +1840,15 @@ function objectInsertQuizClicked() {
 	if (typeValueLC == "document-section") quizObjectInsert(section);
 }
 
+function objectInsertCommentBlockClicked() {
+	var section = getCurrentSection();
+	if (section == null) return;
+	var type = section.getAttributeNode("type");
+	if (type == null) return;
+	var typeValueLC = type.value.toLowerCase();
+	if (typeValueLC == "document-section") commentBlockObjectInsert(section);
+}
+
 function objectInsertPatientClicked() {
 	var section = getCurrentSection();
 	if (section == null) return;
@@ -1920,9 +1942,11 @@ function setCurrentObject(myEvent) {
 	currentObject = getSource(getEvent(myEvent));
 	//handle objects in tables
 	var parent = currentObject.parentNode;
-	if (parent.tagName == "TD")
-		while (currentObject.tagName != "TABLE")
+	if (parent.tagName == "TD") {
+		while (currentObject.tagName != "TABLE") {
 			currentObject = currentObject.parentNode;
+		}
+	}
 	//get the paragraph that contains the current object
 	currentParagraph = currentObject.parentNode;
 	//get the div holding the paragraph
@@ -2002,6 +2026,22 @@ function patientObjectInsert(section) {
 	var pt = pList[0].cloneNode(true);
 	parent.appendChild(pt);
 	if (IE) pt.scrollIntoView(false);
+}
+
+function commentBlockObjectInsert(section) {
+	var divs = section.getElementsByTagName("DIV");
+	var parent = divs[0];
+	var newP = document.createElement("P");
+	newP.className = "p5";
+	newP.setAttribute("item-type","commentblock");
+	var img = document.createElement("IMG");
+	img.title = "New Comment Block";
+	img.className = "commentblockImg";
+	img.src = "/aauth/buttons/insertcommentblock.png";
+	img.onclick = setCurrentObject;
+	newP.appendChild(img);
+	parent.appendChild(newP);
+	newP.scrollIntoView(false);
 }
 
 function quizObjectInsert(section) {
@@ -2235,7 +2275,6 @@ function objectRemove(section) {
 	if (currentDiv == null) return;
 	if (currentParagraph == null) return;
 	if (currentObject == null) return;
-
 	//get the div element and see if it is current.
 	var divs = section.getElementsByTagName("DIV");
 	var parent = divs[0];

@@ -385,13 +385,14 @@ div.threadblock {
 }
 div.thread {
 	border: thin solid gray;
-	margin: 5 5 5 5;
+	margin: 5 5 15 5;
 	padding: 5 5 5 5;
 }
 div.post {
 	border: thin solid gray;
-	margin: 5 5 5 5;
+	margin: 5 5 10 5;
 	padding: 5 5 5 5;
+	background: #808080;
 }
 h2.thread {
 	margin: 0 0 0 0;
@@ -415,7 +416,7 @@ h4.post {
 p.centerbutton {
 	text-align: center;
 }
-input.threadtitletext {
+input.threadtitle {
 	width: 300;
 }
 textarea.posttext {

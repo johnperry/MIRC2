@@ -142,6 +142,12 @@ div.hide {visibility:hidden; display:none;}
 	border:			thin solid #88bbff;
 }
 
+.commentblockImg {
+	border:			thin solid #88bbff;
+	width:			48;
+	height:			48;
+}
+
 .editor {
 	background-color:	#77aaff; 
 	margin:			0; 

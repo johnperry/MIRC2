@@ -187,7 +187,9 @@ public class AuthorService extends Servlet {
 
 					File aauth = new File(root, "query");
 					File xslFile = new File(aauth, "Editor.xsl");
-					Document xsl = XmlUtil.getDocument( FileUtil.getStream( xslFile, "/aauth/Editor.xsl" ) );
+					InputStream is = FileUtil.getStream( xslFile, "/aauth/Editor.xsl" );
+					if (is == null) logger.warn("InputStream is null");
+					Document xsl = XmlUtil.getDocument( is );
 
 					Object[] params =
 						new Object[] {
