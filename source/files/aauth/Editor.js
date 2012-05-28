@@ -2042,7 +2042,7 @@ function commentBlockObjectInsert(section) {
 	var img = document.createElement("IMG");
 	img.title = "New Comment Block";
 	img.className = "commentblockImg";
-	img.src = "/aauth/buttons/insertcommentblock.png";
+	img.src = "/aauth/buttons/commentblock.png";
 	img.onclick = setCurrentObject;
 	newP.appendChild(img);
 	parent.appendChild(newP);

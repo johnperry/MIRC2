@@ -104,7 +104,7 @@ public class PreferencesServlet extends Servlet {
 
 			//This is a request for an XML element
 			//If the user is an admin, allow a request for the full preferences
-			if (path2.equals("allusers") && userIsAdmin) {
+			if (path2.equals("allusers")) {
 				pref = prefs.get("*", !userIsAdmin || !path3.equals("full"));
 			}
 			else if (path2.equals("user") && userIsAdmin && !path3.equals("")) {

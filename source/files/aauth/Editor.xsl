@@ -1564,7 +1564,7 @@
 <xsl:template match="threadblock">
 	<p class="p5" item-type="commentblock">
 		<img
-			src="/aauth/buttons/insertcommentblock.png"
+			src="/aauth/buttons/commentblock.png"
 			class="commentblockImg"
 			onclick="setCurrentObject();"
 			title="{@id}"/>

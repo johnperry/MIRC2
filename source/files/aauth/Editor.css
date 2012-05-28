@@ -77,6 +77,11 @@ hr {
 	border:			thin solid #88bbff;
 	padding:		2;
 }
+
+.group img {
+	width:			24;
+	height:			24;
+}
 /*---------- End of the toolbar -----------*/
 
 /*------------------- The tabs --------------------*/
@@ -144,8 +149,6 @@ div.hide {visibility:hidden; display:none;}
 
 .commentblockImg {
 	border:			thin solid #88bbff;
-	width:			48;
-	height:			48;
 }
 
 .editor {

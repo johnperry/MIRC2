@@ -855,7 +855,7 @@
 		<xsl:apply-templates select="thread"/>
 		<xsl:if test="$user-can-post='yes'">
 			<p class="centerbutton">
-				<input class="threadblockbutton" type="button" value="Add a thread to this block" onclick="newThread(event,'{@id}');"/>
+				<input class="threadblockbutton" type="button" value="Add a topic to this block" onclick="newThread(event,'{@id}');"/>
 			</p>
 		</xsl:if>
 	</div>
@@ -870,13 +870,13 @@
 			<xsl:value-of select="@name"/>
 			<xsl:text> (</xsl:text>
 			<xsl:value-of select="@username"/>
-			<xsl:text>) created this thread on </xsl:text>
+			<xsl:text>) posted this topic on </xsl:text>
 			<xsl:value-of select="@date"/>
 		</h3>
 		<xsl:apply-templates select="post"/>
 		<xsl:if test="$user-can-post='yes'">
 			<p class="centerbutton">
-				<input class="threadbutton" type="button" value="Add a post to this thread" onclick="newPost(event,'{@id}');"/>
+				<input class="threadbutton" type="button" value="Add a comment on this topic" onclick="newPost(event,'{@id}');"/>
 			</p>
 		</xsl:if>
 	</div>
