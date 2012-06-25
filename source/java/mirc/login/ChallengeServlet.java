@@ -86,14 +86,12 @@ public class ChallengeServlet extends Servlet {
 	private boolean login(
 						HttpRequest req, HttpResponse res,
 						String username, String password) {
-
 		Authenticator authenticator = Authenticator.getInstance();
 
 		boolean passed = false;
 		if ((username != null) && (password != null)) {
-			User user = Users.getInstance().getUser(username);
-
-			if ((user != null) && user.getPassword().equals(password)) {
+			User user = Users.getInstance().authenticate(username, password);
+			if (user != null) {
 				passed = authenticator.createSession(user, req, res);
 			}
 		}

@@ -75,7 +75,7 @@ public class AuthorSummary extends Servlet {
 			if ((req.getParameter("start") == null) || (req.getParameter("end") == null)) {
 				//No parameters, just return the page;
 				MircConfig mc = MircConfig.getInstance();
-				Element lib = mc.getLocalLibrary(ssid);
+				Element lib = mc.getEnabledLocalLibrary(ssid, "enabled");
 				String sitename = XmlUtil.getFirstNamedChild(lib, "title").getTextContent();
 				String today = StringUtil.getDate("");
 				String userIsAdmin = (req.userHasRole("admin") ? "yes" : "no");

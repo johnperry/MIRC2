@@ -28,6 +28,10 @@
 		<insert-megasave/>
 	</image-section>
 
+	<section heading="Comments">
+		<threadblock id="CB-0-0" />
+	</section>
+
 	<document-type>Radiologic Teaching File</document-type>
 
 	<publication-date/>

@@ -1890,6 +1890,10 @@ function objectInsertPHIStudyClicked() {
 	}
 }
 
+//This function sets the suggest values for an author.
+var authorXML = null;
+//todo: author suggest function
+
 //This function is for pages that insert objects at the paragraph level,
 //like the author, references, and patient pages. The section page has its
 //own add... functions.
@@ -1908,10 +1912,12 @@ function cloneParagraph(myEvent) {
 		if ((type != null) && (type.toLowerCase() == "text"))
 			list[i].value = "";
 	}
+	return clone;
 }
 
 // function never actually used??
 //Deselect all patient table child nodes.
+/*
 function deselectChildTables(myEvent) {
 	var source = getSource(getEvent(myEvent));
 	var parent = source.parentNode.parentNode;
@@ -1921,6 +1927,7 @@ function deselectChildTables(myEvent) {
 		if (child.tagName == "TABLE") deselect(child);
 	}
 }
+*/
 
 function objectInsertCaptionClicked() {
 	var section = getCurrentSection();

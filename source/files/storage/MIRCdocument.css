@@ -399,12 +399,14 @@ h2.thread {
 	font-weight:bold;
 	font-family:sans-serif;
 	font-size:10pt;
+	cursor: pointer;
 }
 h3.thread {
 	margin: 5 0 10 0;
 	font-weight:normal;
 	font-family:sans-serif;
 	font-size:10pt;
+	cursor: pointer;
 }
 	
 h4.post {
@@ -412,6 +414,7 @@ h4.post {
 	font-weight:normal;
 	font-family:sans-serif;
 	font-size:10pt;
+	cursor: pointer;
 }
 p.centerbutton {
 	text-align: center;

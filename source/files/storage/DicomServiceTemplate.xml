@@ -2,7 +2,7 @@
 
 <MIRCdocument display="mstf" first-tab="2" temp="yes">
 
-	<title><g0010e0020 desc="PatientID"/> <g0010e0010 desc="PatientName"/></title>
+	<title><g0010e0020 desc="PatientID"/>: <g0010e0010 desc="PatientName"/></title>
 
 	<alternative-title><g0008e0020 desc="StudyDate"/> <g0008e0060 desc="Modality"/> Study</alternative-title>
 
@@ -35,6 +35,10 @@
 	<image-section heading="Images">
 		<insert-megasave width="700"/>
 	</image-section>
+
+	<section heading="Comments">
+		<threadblock id="CB-0-0" />
+	</section>
 
 	<authorization>
 		<owner></owner>

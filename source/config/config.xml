@@ -29,43 +29,60 @@
             root="roots/FileService/MircFileStorageService"/>
     </Pipeline>
     <Pipeline name="DICOM Service Pipeline">
-        <ImportService
+        <DicomImportService
             calledAETTag="00120010"
+            callingAETTag="00120020"
             class="org.rsna.ctp.stdstages.DicomImportService"
             logConnections="rejected"
             name="DICOM Service DicomImportService"
             port="1082"
             quarantine="quarantines/DicomService/DicomImportService"
             root="roots/DicomService/DicomImportService"/>
-        <Anonymizer
+        <DicomAnonymizer
             class="org.rsna.ctp.stdstages.DicomAnonymizer"
-            lookupTable="scripts/lookup-table.properties"
-            name="DICOM Service DicomAnonymizer"
-            quarantine="quarantines/DicomService/DicomAnonymizer"
-            root="roots/DicomService/DicomAnonymizer"
-            script="scripts/DicomServiceAnonymizer.script"/>
-        <StorageService
+            name="DicomAnonymizer - ForcePatientID"
+            root="roots/DicomService/ForcePatientID"
+            script="scripts/ForcePatientID.script"/>
+        <DicomDecompressor
+            name="DicomDecompressor"
+            class="org.rsna.ctp.stdstages.DicomDecompressor"
+            root="roots/DicomService/DicomDecompressor"
+            quarantine="quarantines/DicomService/DicomDecompressor"/>
+        <DicomPixelAnonymizer
+            name="DicomPixelAnonymizer"
+            class="org.rsna.ctp.stdstages.DicomPixelAnonymizer"
+            root="roots/DicomService/DicomPixelAnonymizer"
+            script="scripts/DicomPixelAnonymizer.script"
+            quarantine="quarantines/DicomService/DicomPixelAnonymizer"/>
+        <MircDocumentStorageService
             class="mirc.stages.MircDocumentStorageService"
             name="MircDocumentStorageService"
             quarantine="quarantines/DicomService/MircDocumentStorageService"
             root="roots/DicomService/MircDocumentStorageService"
             ssid="ss1"
             ssidTag="00120010"
-            caseTag="StudyInstanceUID"/>
+            caseTag="PatientID"/>
+        <DicomAnonymizer
+            class="org.rsna.ctp.stdstages.DicomAnonymizer"
+            lookupTable="scripts/lookup-table.properties"
+            name="DicomAnonymizer"
+            quarantine="quarantines/DicomService/DicomAnonymizer"
+            root="roots/DicomService/DicomAnonymizer"
+            script="scripts/DicomServiceAnonymizer.script"/>
     </Pipeline>
     <Pipeline name="TCE Service Pipeline">
         <ImportService
             calledAETTag="00120010"
             class="org.rsna.ctp.stdstages.DicomImportService"
             logConnections="rejected"
-            name="TCE Service DicomImportService"
+            name="DicomImportService"
             port="1083"
             quarantine="quarantines/TCEService/DicomImportService"
             root="roots/TCEService/DicomImportService"/>
         <ImportService
             class="org.rsna.ctp.stdstages.HttpImportService"
             logConnections="rejected"
-            name="TCE Service HttpImportService"
+            name="HttpImportService"
             port="1084"
             quarantine="quarantines/TCEService/HttpImportService"
             root="roots/TCEService/HttpImportService"/>

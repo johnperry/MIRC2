@@ -855,7 +855,7 @@
 		<xsl:apply-templates select="thread"/>
 		<xsl:if test="$user-can-post='yes'">
 			<p class="centerbutton">
-				<input class="threadblockbutton" type="button" value="Add a topic to this block" onclick="newThread(event,'{@id}');"/>
+				<input class="threadblockbutton" type="button" value="Add a topic" onclick="newThread(event,'{@id}');"/>
 			</p>
 		</xsl:if>
 	</div>
@@ -866,17 +866,16 @@
 		<xsl:if test="@title">
 			<h2 class="thread"><xsl:value-of select="@title"/></h2>
 		</xsl:if>
-		<h3 class="thread">
+		<h3 class="thread" title="posted on {@date}">
 			<xsl:value-of select="@name"/>
 			<xsl:text> (</xsl:text>
 			<xsl:value-of select="@username"/>
-			<xsl:text>) posted this topic on </xsl:text>
-			<xsl:value-of select="@date"/>
+			<xsl:text>):</xsl:text>
 		</h3>
 		<xsl:apply-templates select="post"/>
 		<xsl:if test="$user-can-post='yes'">
 			<p class="centerbutton">
-				<input class="threadbutton" type="button" value="Add a comment on this topic" onclick="newPost(event,'{@id}');"/>
+				<input class="threadbutton" type="button" value="Add a comment" onclick="newPost(event,'{@id}');"/>
 			</p>
 		</xsl:if>
 	</div>
@@ -884,12 +883,11 @@
 
 <xsl:template match="post">
 	<div class="post">
-		<h4 class="post">
+		<h4 class="post" title="posted on {@date}">
 			<xsl:value-of select="@name"/>
 			<xsl:text> (</xsl:text>
 			<xsl:value-of select="@username"/>
-			<xsl:text>) posted this comment on </xsl:text>
-			<xsl:value-of select="@date"/>
+			<xsl:text>):</xsl:text>
 		</h4>
 		<xsl:apply-templates/>
 	</div>
