@@ -22,6 +22,7 @@ public class ResultComparator implements Comparator {
 		"library",
 		"author",
 		"specialty",
+		"pubdate",
 		"lmdate"
 	};
 
@@ -65,7 +66,7 @@ public class ResultComparator implements Comparator {
 					if (primary1 == null) return -1;
 					c = primary1.getTextContent().compareToIgnoreCase(primary2.getTextContent());
 					if (c != 0) return c;
-					return compareDates(eo1, eo2);
+					return compareDates("lmdate", eo1, eo2);
 
 				case 1:
 					//primary: library; secondary: lmdate
@@ -75,7 +76,7 @@ public class ResultComparator implements Comparator {
 					if (primary1 == null) return -1;
 					c = primary1.getTextContent().compareToIgnoreCase(primary2.getTextContent());
 					if (c != 0) return c;
-					return compareDates(eo1, eo2);
+					return compareDates("lmdate", eo1, eo2);
 
 				case 2:
 					//primary: library; secondary: lmdate
@@ -90,7 +91,7 @@ public class ResultComparator implements Comparator {
 					if (primary1 == null) return 1;
 					c = primary1.getTextContent().compareToIgnoreCase(primary2.getTextContent());
 					if (c != 0) return c;
-					return compareDates(eo1, eo2);
+					return compareDates("lmdate", eo1, eo2);
 
 				case 3:
 					//primary: specialty; secondary: lmdate
@@ -100,20 +101,24 @@ public class ResultComparator implements Comparator {
 					if (primary1 == null) return -1;
 					c = primary1.getTextContent().compareToIgnoreCase(primary2.getTextContent());
 					if (c != 0) return c;
-					return compareDates(eo1, eo2);
+					return compareDates("lmdate", eo1, eo2);
+
+				case 4:
+					//primary: pubdate
+					return compareDates("pubdate", eo1, eo2);
 
 				default:
 					//primary: lmdate
-					return compareDates(eo1, eo2);
+					return compareDates("lmdate", eo1, eo2);
 			}
 		}
 		else return 0;
 	}
 
-	private int compareDates(Element eo1, Element eo2) {
-		Element date2 = XmlUtil.getFirstNamedChild(eo2, "lmdate");
+	private int compareDates(String datename, Element eo1, Element eo2) {
+		Element date2 = XmlUtil.getFirstNamedChild(eo2, datename);
 		if (date2 == null) return -1;
-		Element date1 = XmlUtil.getFirstNamedChild(eo1, "lmdate");
+		Element date1 = XmlUtil.getFirstNamedChild(eo1, datename);
 		if (date1 == null) return 1;
 		return -date1.getTextContent().compareTo(date2.getTextContent());
 	}

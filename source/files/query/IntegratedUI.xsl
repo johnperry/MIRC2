@@ -402,7 +402,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td>Category:</td>
+			<td>Specialty:</td>
 			<td>
 				<select style="width:100%" name="category">
 					<xsl:copy-of select="$options/enumerated-values/category/option"/>

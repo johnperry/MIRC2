@@ -489,6 +489,11 @@ function sortOnLMDate() {
 	search();
 }
 
+function sortOnPubDate() {
+	sortOrder = "pubdate";
+	search();
+}
+
 //************************************************
 //Main query
 //************************************************
@@ -564,6 +569,7 @@ function appendDocument(tbody, doc) {
 	appendTDAuthor(tr, doc);
 	appendTD(tr, doc, "category")
 	appendTD(tr, doc, "lmdate", "center")
+	appendTD(tr, doc, "pubdate", "center")
 	appendTD(tr, doc, "access");
 	tbody.appendChild(tr);
 }
@@ -690,6 +696,7 @@ function resultsTableHeadings(tr) {
 	appendTH(tr, "Author", "sortOnAuthor", "author");
 	appendTH(tr, "Specialty", "sortOnSpecialty", "specialty");
 	appendTH(tr, "Date Modified", "sortOnLMDate", "lmdate");
+	appendTH(tr, "Date Created", "sortOnPubDate", "pubdate");
 	//appendTH(tr, "Rating");
 	appendTH(tr, "Access");
 }

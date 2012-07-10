@@ -5,6 +5,8 @@
 <xsl:param name="lmstring"></xsl:param>
 
 <xsl:template match="/MIRCdocument">
+	<xsl:variable name="pubdate" select="translate(//publication-date,'/.-','')"/>
+	<xsl:variable name="fmtpubdate" select="concat(substring($pubdate,1,4),'.',substring($pubdate,5,2),'.',substring($pubdate,7))"/>
 	<doc>
 		<MIRCdocument>
 			<xsl:copy-of select="@path"/>
@@ -20,11 +22,12 @@
 			<xsl:call-template name="images"/>
 			<xsl:call-template name="access"/>
 			<lmdate><xsl:value-of select="$lmstring"/></lmdate>
+			<pubdate><xsl:value-of select="$fmtpubdate"/></pubdate>
 		</MIRCdocument>
 		<sm>
 			<img n="{count(//image)}"/>
 			<ann n="{count(//image[alternative-image[@role='annotation']])}"/>
-			<pubdate><xsl:value-of select="translate(//publication-date,'/.-','')"/></pubdate>
+			<pubdate><xsl:value-of select="$pubdate"/></pubdate>
 			<lmdate><xsl:value-of select="$lmdate"/></lmdate>
 			<xsl:call-template name="access"/>
 			<xsl:call-template name="owners"/>

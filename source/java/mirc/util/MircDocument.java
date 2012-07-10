@@ -1479,10 +1479,9 @@ public class MircDocument {
 	private Element getOrderByElement(DicomObject dicomObject, Element image) throws Exception {
 		Element orderBy = image.getOwnerDocument().createElement("order-by");
 
-		long days = 0;
 		try {
 			GregorianCalendar gc = DateUtil.getCalendar( dicomObject.getStudyDate() );
-			days = gc.getTimeInMillis() / oneDayInMillis;
+			long days = gc.getTimeInMillis() / oneDayInMillis;
 			orderBy.setAttribute("date", Long.toString(days));
 			long time = DateUtil.getTime( dicomObject.getStudyTime() );
 			orderBy.setAttribute("time", Long.toString(time));
