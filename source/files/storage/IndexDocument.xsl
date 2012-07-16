@@ -12,7 +12,7 @@
 			<xsl:copy-of select="@path"/>
 			<xsl:copy-of select="@temp"/>
 			<xsl:call-template name="title"/>
-			<xsl:copy-of select="alternative-title"/>
+			<xsl:call-template name="alt-title"/>
 			<xsl:copy-of select="author"/>
 			<xsl:copy-of select="abstract"/>
 			<xsl:copy-of select="alternative-abstract"/>
@@ -45,6 +45,38 @@
 			<title>Untitled</title>
 		</xsl:otherwise>
 	</xsl:choose>
+</xsl:template>
+
+<xsl:template name="alt-title">
+	<xsl:variable name="alt" select="normalize-space(/MIRCdocument/alternative-title)"/>
+	<xsl:variable name="cat" select="normalize-space(/MIRCdocument/category)"/>
+	<xsl:variable name="hst" select="normalize-space(/MIRCdocument/section[@heading='History']/p)"/>
+	<xsl:variable name="alt-present" select="string-length($alt) &gt; 0"/>
+	<xsl:variable name="cat-present" select="string-length($cat) &gt; 0"/>
+	<xsl:variable name="hst-present" select="string-length($hst) &gt; 0"/>
+
+	<xsl:variable name="processed-unknown-title">
+		<xsl:choose>
+			<xsl:when test="$alt-present">
+				<xsl:value-of select="$alt"/>
+			</xsl:when>
+			<xsl:when test="$hst-present">
+				<xsl:value-of select="$hst"/>
+			</xsl:when>
+			<xsl:when test="$cat-present">
+				<xsl:text>Unknown - </xsl:text>
+				<xsl:value-of select="$cat"/>
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:text>Unknown</xsl:text>
+				<xsl:value-of select="$hst"/>
+			</xsl:otherwise>
+		</xsl:choose>
+	</xsl:variable>
+
+	<alternative-title>
+		<xsl:value-of select="$processed-unknown-title"/>
+	</alternative-title>
 </xsl:template>
 
 <xsl:template name="images">

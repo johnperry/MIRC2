@@ -556,7 +556,9 @@
 			want this feature, you can leave this field blank.
 		</p>
 		<textarea class="title" hideable="true">
-			<xsl:value-of select="$norm-alttitle"/>
+			<xsl:if test="not($draft='yes')">
+				<xsl:value-of select="$norm-alttitle"/>
+			</xsl:if>
 		</textarea>
 	</div>
 </xsl:template>

@@ -482,12 +482,13 @@ public class Index {
 		//Insert the RadLex terms, set the image sizes, and
 		//save the file, preserving the last modified date.
 		//Note: the last modified date must be reset before creating the
-		//IndexEntry object; otherwise, or the current date would be used
+		//IndexEntry object; otherwise, the current date would be used
 		//as the last modified date. This would be incorrect in the case
 		//where the index is being rebuilt.
 		long lastModified = file.lastModified();
 		Element root = doc.getDocumentElement();
 		MircDocument.insertRadLexTerms(root);
+		MircDocument.setPublicationDate(root, lastModified);
 		setImageSizes(file, doc);
 		FileUtil.setText(file, XmlUtil.toString(root));
 		file.setLastModified(lastModified);

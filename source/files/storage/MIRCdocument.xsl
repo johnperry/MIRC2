@@ -35,41 +35,55 @@
 
 <xsl:param name="base-date"/>
 
-<xsl:variable name="processed-title">
-	<xsl:variable name="ttl" select="normalize-space(/MIRCdocument/title)"/>
-	<xsl:variable name="alt" select="normalize-space(/MIRCdocument/alternative-title)"/>
-	<xsl:variable name="cat" select="normalize-space(/MIRCdocument/category)"/>
-	<xsl:variable name="ttl-present" select="string-length($ttl) &gt; 0"/>
-	<xsl:variable name="alt-present" select="string-length($alt) &gt; 0"/>
-	<xsl:variable name="cat-present" select="string-length($cat) &gt; 0"/>
+<xsl:variable name="ttl" select="normalize-space(/MIRCdocument/title)"/>
+<xsl:variable name="alt" select="normalize-space(/MIRCdocument/alternative-title)"/>
+<xsl:variable name="cat" select="normalize-space(/MIRCdocument/category)"/>
+<xsl:variable name="hst" select="normalize-space(/MIRCdocument/section[@heading='History']/p)"/>
+<xsl:variable name="ttl-present" select="string-length($ttl) &gt; 0"/>
+<xsl:variable name="alt-present" select="string-length($alt) &gt; 0"/>
+<xsl:variable name="cat-present" select="string-length($cat) &gt; 0"/>
+<xsl:variable name="hst-present" select="string-length($hst) &gt; 0"/>
+
+<xsl:variable name="processed-unknown-title">
 	<xsl:choose>
-		<xsl:when test="$unknown='yes'">
-			<xsl:choose>
-				<xsl:when test="$alt-present">
-					<xsl:value-of select="$alt"/>
-				</xsl:when>
-				<xsl:otherwise>
-					<xsl:choose>
-						<xsl:when test="$cat-present">
-							<xsl:text>Unknown - </xsl:text>
-							<xsl:value-of select="$cat"/>
-						</xsl:when>
-						<xsl:otherwise>
-							<xsl:text>Unknown</xsl:text>
-						</xsl:otherwise>
-					</xsl:choose>
-				</xsl:otherwise>
-			</xsl:choose>
+		<xsl:when test="$alt-present">
+			<xsl:value-of select="$alt"/>
+		</xsl:when>
+		<xsl:when test="$hst-present">
+			<xsl:value-of select="$hst"/>
+		</xsl:when>
+		<xsl:when test="$cat-present">
+			<xsl:text>Unknown - </xsl:text>
+			<xsl:value-of select="$cat"/>
 		</xsl:when>
 		<xsl:otherwise>
-			<xsl:choose>
-				<xsl:when test="$ttl-present">
-					<xsl:value-of select="$ttl"/>
-				</xsl:when>
-				<xsl:otherwise>
-					<xsl:text>TFS Case</xsl:text>
-				</xsl:otherwise>
-			</xsl:choose>
+			<xsl:text>Unknown</xsl:text>
+			<xsl:value-of select="$hst"/>
+		</xsl:otherwise>
+	</xsl:choose>
+</xsl:variable>
+
+<xsl:variable name="processed-known-title">
+	<xsl:choose>
+		<xsl:when test="$ttl-present">
+			<xsl:value-of select="$ttl"/>
+		</xsl:when>
+		<xsl:when test="$hst-present">
+			<xsl:value-of select="$hst"/>
+		</xsl:when>
+		<xsl:otherwise>
+			<xsl:text>TFS Case</xsl:text>
+		</xsl:otherwise>
+	</xsl:choose>
+</xsl:variable>
+
+<xsl:variable name="processed-title">
+	<xsl:choose>
+		<xsl:when test="$unknown='yes'">
+			<xsl:value-of select="$processed-unknown-title"/>
+		</xsl:when>
+		<xsl:otherwise>
+			<xsl:value-of select="$processed-known-title"/>
 		</xsl:otherwise>
 	</xsl:choose>
 </xsl:variable>
@@ -1045,9 +1059,9 @@
 <xsl:template name="script-init">
 	<script>
 		<xsl:variable name="remove">"'</xsl:variable>
-		<xsl:variable name="title"><xsl:value-of select="normalize-space(/MIRCdocument/title)"/></xsl:variable>
-		<xsl:variable name="alttitle"><xsl:value-of select="normalize-space(/MIRCdocument/alternative-title)"/></xsl:variable>
-		<xsl:variable name="category"><xsl:value-of select="normalize-space(/MIRCdocument/category)"/></xsl:variable>
+		<xsl:variable name="title"><xsl:value-of select="$processed-known-title"/></xsl:variable>
+		<xsl:variable name="alttitle"><xsl:value-of select="$processed-unknown-title"/></xsl:variable>
+		<xsl:variable name="category"><xsl:value-of select="$cat"/></xsl:variable>
 		<xsl:variable name="author"><xsl:value-of select="normalize-space(/MIRCdocument/author/name)"/></xsl:variable>
 
 		var dirPath = '<xsl:value-of select="$dir-path"/>';

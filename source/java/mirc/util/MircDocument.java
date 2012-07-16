@@ -170,6 +170,36 @@ public class MircDocument {
 	}
 
 	/**
+	 * Set the publication-date element to the current time, creating
+	 * the element if it is missing from the document. This method does
+	 * not modify the element if it already exists and contains non-whitespace
+	 * characters.
+	 * @param root the root element of the document
+	 */
+	public static void setPublicationDate(Element root) {
+		setPublicationDate(root, System.currentTimeMillis());
+	}
+
+	/**
+	 * Set the publication-date element to the specified time, creating
+	 * the element if it is missing from the document. This method does
+	 * not modify the element if it already exists and contains non-whitespace
+	 * characters.
+	 * @param root the root element of the document
+	 * @param time the time to set in the publication-date element if a time is
+	 * not lready available in the element.
+	 */
+	public static void setPublicationDate(Element root, long time) {
+		Element pd = XmlUtil.getFirstNamedChild(root, "publication-date");
+		if (pd == null) {
+			pd = root.getOwnerDocument().createElement("publication-date");
+			root.appendChild(pd);
+		}
+		String text = pd.getTextContent().trim();
+		if (text.equals("")) pd.setTextContent( StringUtil.getDate(time, "-") );
+	}
+
+	/**
 	 * Set the publication request attribute and adjust the authorization/read
 	 * element if the document is public and publication is not authorized.
 	 * @param canPublish true if the document is allowed to be public.
@@ -631,11 +661,7 @@ public class MircDocument {
 			replaceElementValue(root, "authorization/export", export);
 		}
 		//Set the publication date
-		Element pd = XmlUtil.getFirstNamedChild(root, "publication-date");
-		if (pd != null) {
-			String text = pd.getTextContent().trim();
-			if (text.equals("")) pd.setTextContent( StringUtil.getDate("-") );
-		}
+		setPublicationDate(root);
 	}
 
 	/**
@@ -1761,9 +1787,9 @@ public class MircDocument {
 		}
 
 		else if (element.getTagName().equals("publication-date")) {
-			Node child;
-			while ( (child=element.getFirstChild()) != null ) element.removeChild(child);
-			element.setTextContent(StringUtil.getDate("-"));
+			if (element.getTextContent().trim().equals("")) {
+				element.setTextContent(StringUtil.getDate("-"));
+			}
 		}
 
 		else {
