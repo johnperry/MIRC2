@@ -16,6 +16,7 @@ import jdbm.RecordManager;
 import mirc.MircConfig;
 import mirc.util.MyRsnaUser;
 import org.apache.log4j.Logger;
+import org.rsna.server.Users;
 import org.rsna.util.JdbmUtil;
 import org.rsna.util.XmlUtil;
 import org.w3c.dom.Document;
@@ -78,6 +79,22 @@ public class Preferences {
 		catch (Exception ex) { return false; }
 	}
 
+	/**
+	 * Remove preferences for users who do not exist.
+	 */
+	public synchronized void syncToUsers() {
+		try {
+			Users users = Users.getInstance();
+			String username;
+			FastIterator fit = prefs.keys();
+			while ((username = (String)fit.next()) != null) {
+				if (users.getUser(username) == null) {
+					prefs.remove(username);
+				}
+			}
+		}
+		catch (Exception skip) { }
+	}
 
 	/**
 	 * Get the preferences Element for a specific user or for all users.

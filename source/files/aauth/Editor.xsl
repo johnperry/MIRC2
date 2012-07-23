@@ -42,6 +42,7 @@
 			<link rel="Stylesheet" type="text/css" media="all" href="/JSPopup.css"> </link>
 			<link rel="Stylesheet" type="text/css" media="all" href="/JSTree.css"> </link>
 			<link rel="Stylesheet" type="text/css" media="all" href="/aauth/Editor.css"> </link>
+			<link rel="Stylesheet" type="text/css" media="all" href="/aauth/JSAuthorSuggest.css"> </link>
 			<xsl:if test="$mode='vet'">
 				<xsl:call-template name="vet-breed-list"/>
 			</xsl:if>
@@ -52,6 +53,7 @@
 			<script src="/JSTree.js"> </script>
 			<script src="/aauth/Editor.js"> </script>
 			<script src="/aauth/svg-editor.js"> </script>
+			<script src="/aauth/JSAuthorSuggest.js"> </script>
 		</head>
 		<body>
 			<div id="mainEditorDiv" class="mainEditorDiv">
@@ -600,7 +602,7 @@
 	<p class="p2">
 		Author's name:
 		<br/>
-		<input type="text" class="author">
+		<input type="text" class="author" onfocus="startAuthorSuggest()">
 			<xsl:attribute name="value">
 				<xsl:value-of select="normalize-space($author-name)"/>
 			</xsl:attribute>
@@ -911,7 +913,7 @@
 				<tr>
 					<td class="pmlabel">Owner:</td>
 					<td>
-						<input type="text" style="width:340">
+						<input id="DocumentOwner" type="text" style="width:340">
 							<xsl:attribute name="value">
 								<xsl:choose>
 									<xsl:when test="string-length($owner-field) = 0">

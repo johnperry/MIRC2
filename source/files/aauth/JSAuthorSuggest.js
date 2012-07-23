@@ -10,15 +10,14 @@ PrefsDB.prototype.load = function() {
 		var xml = req.responseXML();
 		var root = xml.firstChild;
 		var users = root.getElementsByTagName("User");
-			for (var i=0; i<users.length; i++) {
-				this.prefs.push(new Pref(users[i]));
-			}
+		for (var i=0; i<users.length; i++) {
+			this.prefs.push(new Pref(users[i]));
 		}
-
 	}
 }
 
 PrefsDB.prototype.getMatches = function(s, maxMatches) {
+	s = s.toLowerCase();
 	var count = 0;
 	var matches = new Array();
 	for (var i=0; i<this.prefs.length; i++) {
@@ -26,21 +25,47 @@ PrefsDB.prototype.getMatches = function(s, maxMatches) {
 			matches.push(this.prefs[i]);
 			count++;
 		}
-		if(count >= maxSize) break;
+		if(count >= maxMatches) break;
 	}
 	return matches;
 }
 
 function Pref(user) {
 	this.username = user.getAttribute("username");
-	this.personname = user.getAttribute("personname");
+	this.personname = user.getAttribute("name");
 	this.personnameLC = this.personname.toLowerCase();
 	this.affiliation = user.getAttribute("affiliation");
 	this.contact = user.getAttribute("contact");
 }
 
 Pref.prototype.matches = function(s) {
-	return this.personnameLC.indexOf(s);
+	return (this.personnameLC.indexOf(s) != -1);
+}
+
+var prefsDB = null;
+var lastAuthorTextField = null;
+
+function startAuthorSuggest(event) {
+	var evt = getEvent(event);
+	var src = getSource(evt);
+
+	if (src === lastAuthorTextField) return;
+	lastAuthorTextField = src;
+
+	var div = document.getElementById("suggest");
+	if (div == null) {
+		div = document.createElement("DIV");
+		div.className = "AuthorSuggest";
+		div.style.visibility = "hidden";
+		document.body.appendChild(div);
+	}
+
+	if (prefsDB == null) {
+		prefsDB = new PrefsDB();
+		prefsDB.load();
+	}
+
+	new AuthorSuggest(prefsDB, src, div, 10);
 }
 
 function AuthorSuggest(db, oText, oDiv, maxSize) {
@@ -52,27 +77,51 @@ function AuthorSuggest(db, oText, oDiv, maxSize) {
 
 	oText.onkeyup = this.keyUp;
 	oText.onkeydown = this.keyDown;
-	oText.autoComplete = this;
+	oText.suggest = this;
 	oText.onblur = this.hideSuggest;
 }
 
+AuthorSuggest.prototype.setSelection = function(pref) {
+	var parentDiv = this.oText.parentNode;
+	var texts = parentDiv.getElementsByTagName("INPUT");
+	if (texts.length >= 3) {
+		texts[0].value = pref.personname;
+		texts[1].value = pref.affiliation;
+		texts[2].value = pref.contact;
+
+		//set the username as the owner
+		var ownerField = document.getElementById("DocumentOwner");
+		var owners = trim(ownerField.value);
+		if (owners == "") owners = pref.username;
+		else if (owners.indexOf(pref.username) == -1) {
+			owners += ","+pref.username;
+		}
+		ownerField.value = owners;
+		texts[1].focus(); //focus workaround for Chrome
+	}
+}
+
 AuthorSuggest.prototype.hideSuggest = function() {
-	this.AuthorSuggest.oDiv.style.visibility="hidden";
+	this.suggest.oDiv.style.visibility = "hidden";
 }
 
 AuthorSuggest.prototype.keyDown = function(oEvent) {
 	oEvent = window.event || oEvent;
 	var keyCode = oEvent.keyCode;
-	switch(keyCode) {
+	switch (keyCode) {
 		case 38: //up arrow
-			this.AuthorSuggest.moveUp();
+			this.suggest.moveUp();
 			break;
 		case 40: //down arrow
-			this.AuthorSuggest.moveDown();
+			this.suggest.moveDown();
 			break;
 		case 13: //return key
-			window.focus();
-			break;
+			var cur = this.suggest.cur;
+			var div = this.suggest.oDiv;
+			var kids = div.childNodes;
+			if ( (cur >= 0) && (kids.length > 0) && (cur < kids.length) ) {
+				this.suggest.setSelection(kids[cur].pref);
+			}
 	}
 }
 
@@ -81,7 +130,7 @@ AuthorSuggest.prototype.moveDown = function() {
 		this.cur++;
 		for (var i=0;i<this.oDiv.childNodes.length;i++) {
 			if (i == this.cur) {
-				this.oDiv.childNodes[i].className="over";
+				this.oDiv.childNodes[i].className="AuthorSuggestMouseOver";
 				this.oText.value=this.oDiv.childNodes[i].innerHTML;
 			}
 			else {
@@ -96,7 +145,7 @@ AuthorSuggest.prototype.moveUp = function() {
 		this.cur--;
 		for(var i=0; i<this.oDiv.childNodes.length; i++) {
 			if (i == this.cur) {
-				this.oDiv.childNodes[i].className="over";
+				this.oDiv.childNodes[i].className="AuthorSuggestMouseOver";
 				this.oText.value = this.oDiv.childNodes[i].innerHTML;
 			}
 			else {
@@ -108,34 +157,23 @@ AuthorSuggest.prototype.moveUp = function() {
 
 AuthorSuggest.prototype.keyUp = function(oEvent) {
 	oEvent = oEvent || window.event;
-	var keyCode=oEvent.keyCode;
+	var keyCode = oEvent.keyCode;
 	if ((keyCode == 8) || (keyCode == 46)) {
-		this.autoComplete.onTextChange(false);
+		this.suggest.onTextChange(false);
 	}
 	else if (keyCode < 32 || (keyCode >= 33 && keyCode <= 46) || (keyCode >= 112 && keyCode <= 123)) {
         //ignore
     }
 	else {
-		this.autoComplete.onTextChange(true);
+		this.suggest.onTextChange(true);
 	}
 }
 
 AuthorSuggest.prototype.positionSuggest = function() {
-	var oNode = this.oText;
-	var x = 0;
-	var y = oNode.offsetHeight;
-
-	while (oNode.offsetParent && oNode.offsetParent.tagName.toUpperCase() != 'BODY') {
-		x += oNode.offsetLeft;
-		y += oNode.offsetTop;
-		oNode = oNode.offsetParent;
-	}
-
-	x += oNode.offsetLeft;
-	y += oNode.offsetTop;
-
-	this.oDiv.style.top = y + "px";
-	this.oDiv.style.left = x + "px";
+	var pos = findObject(this.oText);
+	this.oDiv.style.top = (pos.y + pos.h) + "px";
+	this.oDiv.style.left = pos.x + "px";
+	this.oDiv.style.width = pos.w;
 }
 
 AuthorSuggest.prototype.onTextChange = function() {
@@ -143,11 +181,11 @@ AuthorSuggest.prototype.onTextChange = function() {
 	var oThis = this;
 	this.cur = -1;
 
-	if(txt.length>0) {
+	if (txt.length > 0) {
 		while(this.oDiv.hasChildNodes()) this.oDiv.removeChild(this.oDiv.firstChild);
 
 		var matches = this.db.getMatches(txt, this.maxSize);
-		if (!matches.length) { this.hideSuggest ;return }
+		if (!matches.length) { this.hideSuggest; return; }
 		this.positionSuggest();
 
 		for(i in matches) {
@@ -161,9 +199,11 @@ AuthorSuggest.prototype.onTextChange = function() {
 
 				if(oEvent.type == "mousedown") {
 					oThis.oText.value = this.innerHTML;
+					//handle this as a selection.
+					oThis.setSelection(this.pref);
 				}
 				else if(oEvent.type == "mouseover") {
-					this.className = "over";
+					this.className = "AuthorSuggestMouseOver";
 				}
 				else if(oEvent.type == "mouseout") {
 					this.className = "";
@@ -173,8 +213,8 @@ AuthorSuggest.prototype.onTextChange = function() {
 				}
 			};
 			oNew.innerHTML = matches[i].personname;
+			oNew.pref = matches[i];
 		}
-
 		this.oDiv.style.visibility = "visible";
 	}
 	else {

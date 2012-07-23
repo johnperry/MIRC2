@@ -102,6 +102,8 @@ public class PreferencesServlet extends Servlet {
 			String path2 = path.element(2);
 			String path3 = path.element(3);
 
+			prefs.syncToUsers();
+
 			//This is a request for an XML element
 			//If the user is an admin, allow a request for the full preferences
 			if (path2.equals("allusers")) {
