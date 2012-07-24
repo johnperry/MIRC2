@@ -31,11 +31,15 @@ PrefsDB.prototype.getMatches = function(s, maxMatches) {
 }
 
 function Pref(user) {
-	this.username = user.getAttribute("username");
-	this.personname = user.getAttribute("name");
+	this.username = unnull(user.getAttribute("username"));
+	this.personname = unnull(user.getAttribute("name"));
 	this.personnameLC = this.personname.toLowerCase();
-	this.affiliation = user.getAttribute("affiliation");
-	this.contact = user.getAttribute("contact");
+	this.affiliation = unnull(user.getAttribute("affiliation"));
+	this.contact = unnull(user.getAttribute("contact"));
+
+	function unnull(text) {
+		return (text ? text : "");
+	}
 }
 
 Pref.prototype.matches = function(s) {
