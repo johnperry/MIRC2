@@ -12,6 +12,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.*;
 import mirc.aauth.*;
+import mirc.activity.*;
 import mirc.addimg.*;
 import mirc.bauth.*;
 import mirc.casenav.*;
@@ -85,6 +86,9 @@ public class MIRC extends AbstractPlugin {
 
 		//Load the DownloadDB
 		DownloadDB.load( root );
+
+		//Load the ActivityDB
+		ActivityDB.load( root );
 
 		//Install the servlets
 		Configuration config = Configuration.getInstance();
@@ -175,6 +179,7 @@ public class MIRC extends AbstractPlugin {
 		RadLexIndex.close();
 		Preferences.close();
 		DownloadDB.close();
+		ActivityDB.close();
 		stop = true;
 		logger.info("MIRC Plugin stopped");
 	}

@@ -99,7 +99,13 @@ public class MircConfig {
 		try {
 			mircXML = XmlUtil.getDocument(mirc);
 			mircRoot = mircXML.getDocumentElement();
-			siteurl = getSiteURL();
+			siteurl = findSiteURL();
+
+			//Generate a siteid if one does not exist
+			String siteid = mircRoot.getAttribute("siteid").trim();
+			if (siteid.equals("")) {
+				mircRoot.setAttribute("siteid", Long.toString(System.currentTimeMillis()));
+			}
 
 			//Get the version information
 			File jar = new File("libraries");
@@ -138,7 +144,7 @@ public class MircConfig {
 	}
 
 	//Set the siteurl from the system IP address if dynamic addressing is enabled.
-	private static String getSiteURL() {
+	private static String findSiteURL() {
 		String siteurl = mircRoot.getAttribute("siteurl");
 		String oldurl = siteurl;
 		boolean dynamic = mircRoot.getAttribute("addresstype").equals("dynamic");
@@ -264,8 +270,15 @@ public class MircConfig {
 	}
 
 	/**
+	 * Get the site ID.
+	 */
+	public synchronized String getSiteID() {
+		return mircRoot.getAttribute("siteid");
+	}
+
+	/**
 	 * Get the local address.
-	 * @return the URL of Tomcat.
+	 * @return the URL of the site.
 	 */
 	public synchronized static String getLocalAddress() {
 		return siteurl;
