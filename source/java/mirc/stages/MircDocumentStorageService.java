@@ -8,6 +8,7 @@
 package mirc.stages;
 
 import java.io.*;
+import mirc.activity.ActivityDB;
 import mirc.MircConfig;
 import mirc.storage.Index;
 import mirc.util.MircDocument;
@@ -128,7 +129,8 @@ public class MircDocumentStorageService extends AbstractPipelineStage implements
 				File mdDir = new File(docs, caseName);
 				File mdFile = new File(mdDir, "MIRCdocument.xml");
 				MircDocument md;
-				if (!mdFile.exists()) {
+				boolean docExists = mdFile.exists();
+				if (!docExists) {
 					mdDir.mkdirs();
 					//Get the template
 					//The strategy is to use the one that is specfied in configuration,
@@ -159,6 +161,9 @@ public class MircDocumentStorageService extends AbstractPipelineStage implements
 				//Save the MircDocument and index it
 				md.save();
 				index.insertDocument( index.getKey(mdFile) );
+
+				//Record the activity
+				if (!docExists) ActivityDB.getInstance().increment(libID, "dcm");
 
 				lastFileStored = fileObject.getFile();
 				lastTime = System.currentTimeMillis();

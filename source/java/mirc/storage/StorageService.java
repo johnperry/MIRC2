@@ -14,6 +14,7 @@ import java.net.URLEncoder;
 import java.util.HashSet;
 import java.util.Set;
 
+import mirc.activity.ActivityDB;
 import mirc.MircConfig;
 import mirc.prefs.Preferences;
 import mirc.ssadmin.StorageServiceAdmin;
@@ -227,7 +228,12 @@ public class StorageService extends Servlet {
 						}
 						else if (myrsnaParameter != null) {
 							String myRsnaResult = "The zip file was stored successfully.";
-							if (!exportToMyRsna(req.getUser(), zipFile)) {
+							if (exportToMyRsna(req.getUser(), zipFile)) {
+								 //Record the activity
+								String ssid = path.element(1);
+								ActivityDB.getInstance().increment(ssid, "myrsna");
+							}
+							else {
 								myRsnaResult = "The zip file could not be stored.";
 							}
 							res.write( myRsnaResult );
@@ -291,6 +297,10 @@ public class StorageService extends Servlet {
 			res.write( XmlUtil.getTransformedText( doc, xsl, params ) );
 			res.setContentType("html");
 			res.send();
+
+			//Record the activity
+			String ssid = path.element(1).trim();
+			ActivityDB.getInstance().increment(ssid, "storage");
 			AccessLog.logAccess(req, doc);
 		}
 	}

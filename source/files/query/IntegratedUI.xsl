@@ -201,6 +201,7 @@
 		<div class="L2"><a href="/qsadmin">Query Service</a><br/></div>
 		<div class="L2"><a href="/fsadmin?home=/query">File Service</a><br/></div>
 		<div class="L2"><a href="/ssadmin">Storage Service</a><br/></div>
+		<div class="L2"><a href="/activity" target="shared">Activity Report</a><br/></div>
 		<hr/>
 		<div class="L2"><a href="/daconfig?home=/query">DICOM Anonymizer</a><br/></div>
 		<div class="L2"><a href="/script">Script Editor</a><br/></div>

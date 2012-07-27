@@ -108,6 +108,7 @@ public class MIRC extends AbstractPlugin {
 		selector.addServlet("ssadmin", StorageServiceAdmin.class);
 		selector.addServlet("submit", SubmitService.class);
 		selector.addServlet("summary", AuthorSummary.class);
+		selector.addServlet("activity", ActivityReport.class);
 		selector.addServlet("prefs", PreferencesServlet.class);
 		selector.addServlet("zip", ZipService.class);
 		selector.addServlet("bauth", BasicAuthorService.class);

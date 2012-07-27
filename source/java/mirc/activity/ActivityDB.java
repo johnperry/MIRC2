@@ -45,6 +45,19 @@ public class ActivityDB {
 		File databaseFile = new File(dir, databaseName);
 		recman = JdbmUtil.getRecordManager(databaseFile.getAbsolutePath());
 		libraries = JdbmUtil.getHTree(recman, hTreeName);
+
+		//Make sure all the local libraries are in the DB
+		MircConfig mc = MircConfig.getInstance();
+		for (String ssid : mc.getLocalLibraryIDs()) {
+			try {
+				LibraryActivity libact = (LibraryActivity)libraries.get(ssid);
+				if (libact == null) {
+					libact = new LibraryActivity(ssid);
+					libraries.put(ssid, libact);
+				}
+			}
+			catch (Exception ignore) { }
+		}
 	}
 
 	/**
@@ -74,7 +87,6 @@ public class ActivityDB {
 			LibraryActivity libact = (LibraryActivity)libraries.get(ssid);
 			if (libact == null) {
 				libact = new LibraryActivity(ssid);
-				libraries.put(ssid, libact);
 			}
 			libact.increment(type);
 			libraries.put(ssid, libact);
@@ -96,17 +108,23 @@ public class ActivityDB {
 			root.setAttribute("id", mc.getSiteID());
 			root.setAttribute("name", mc.getSiteName());
 			root.setAttribute("url", mc.getLocalAddress());
+			root.setAttribute("version", mc.getVersion());
 
 			Users users = Users.getInstance();
 			if (users instanceof UsersXmlFileImpl) {
 				root.setAttribute("users", Integer.toString(((UsersXmlFileImpl)users).getNumberOfUsers()));
 			}
 
-			FastIterator fit = libraries.values();
-			LibraryActivity libact;
-			while ( (libact=(LibraryActivity)fit.next()) != null) {
-				Element el = libact.getXML(doc, timeDepth);
-				if (el != null) root.appendChild(el);
+			//Add in the local libraries from the configuration
+			for (String ssid : mc.getLocalLibraryIDs()) {
+				try {
+					LibraryActivity libact = (LibraryActivity)libraries.get(ssid);
+					if (libact != null) {
+						Element el = libact.getXML(doc, timeDepth);
+						if (el != null) root.appendChild(el);
+					}
+				}
+				catch (Exception ignore) { }
 			}
 		}
 		catch (Exception ignore) { }

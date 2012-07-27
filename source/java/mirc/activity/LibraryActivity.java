@@ -7,6 +7,7 @@
 
 package mirc.activity;
 
+import java.io.Serializable;
 import java.util.*;
 import org.apache.log4j.Logger;
 import mirc.MircConfig;
@@ -17,8 +18,9 @@ import org.w3c.dom.*;
 /**
  * Encapsulates all the data relating to activities on a specific library.
  */
-public class LibraryActivity {
+public class LibraryActivity implements Serializable {
 
+	public static final long serialVersionUID = 1;
 	static final Logger logger = Logger.getLogger(LibraryActivity.class);
 
 	static final long oneDay = 24 * 60 * 60 * 1000;
@@ -52,20 +54,20 @@ public class LibraryActivity {
 		Tracker tracker = trackers.get(type);
 		if (tracker == null) {
 			tracker = new Tracker(type);
-			trackers.put(type, tracker);
 		}
 		tracker.increment();
+		trackers.put(type, tracker);
 	}
 
 	/**
 	 * Get an XML element containing the tracking information for this library.
 	 */
-	public Element getXML(Document doc, int timeDepth) {
+	public synchronized Element getXML(Document doc, int timeDepth) {
 		MircConfig mc = MircConfig.getInstance();
 		Element lib = mc.getLocalLibrary(ssid);
-		Element el = doc.createElement("Library");
-		el.setAttribute("ssid", ssid);
 		if (lib != null) {
+			Element el = doc.createElement("Library");
+			el.setAttribute("ssid", ssid);
 			Element titleEl = XmlUtil.getFirstNamedChild(lib, "title");
 			String title = "";
 			if (titleEl != null) title = titleEl.getTextContent();
@@ -77,7 +79,8 @@ public class LibraryActivity {
 			for (String type : trackers.keySet()) {
 				el.setAttribute(type, Integer.toString(trackers.get(type).getTotal(timeDepth)));
 			}
+			return el;
 		}
-		return el;
+		return null;
 	}
 }

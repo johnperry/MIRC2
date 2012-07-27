@@ -16,6 +16,7 @@ import java.util.LinkedList;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import mirc.activity.ActivityDB;
 import mirc.MircConfig;
 import mirc.storage.Index;
 import mirc.storage.StorageService;
@@ -276,7 +277,9 @@ public class SubmitService extends Servlet {
 						}
 						else logger.debug("...document update failed");
 					}
-					else logger.debug("...document update is not authorized - processing as a new submission");
+					else {
+						logger.debug("...document update is not authorized - processing as a new submission");
+					}
 
 				}
 				catch (Exception processAsANewSubmission) {
@@ -303,6 +306,9 @@ public class SubmitService extends Servlet {
 				result.append("The attempt to update the site index failed.|");
 				logger.debug("...unable to update the site index");
 			}
+			//Record the activity
+			if (!isDocumentUpdate) ActivityDB.getInstance().increment(ssid, "sub");
+
 		}
 		finish(res, ui, ssid, result, suppress);
 	}

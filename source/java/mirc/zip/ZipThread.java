@@ -24,6 +24,7 @@ import org.apache.log4j.Logger;
 import org.rsna.ctp.objects.DicomObject;
 import org.rsna.ctp.objects.FileObject;
 import org.rsna.util.FileUtil;
+import mirc.activity.ActivityDB;
 import mirc.storage.Index;
 import mirc.util.MircDocument;
 import mirc.util.MircImage;
@@ -265,6 +266,9 @@ public class ZipThread extends Thread {
 		//Save and index the document
 		md.save();
 		index.insertDocument(indexEntry);
+
+		//Record the activity
+		ActivityDB.getInstance().increment(ssid, "zip");
 
 		logger.debug("...MIRCdocument created: "+indexEntry);
 	}

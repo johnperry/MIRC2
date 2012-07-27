@@ -9,6 +9,7 @@ package mirc.stages;
 
 import java.io.*;
 import java.util.Properties;
+import mirc.activity.ActivityDB;
 import mirc.MircConfig;
 import mirc.storage.Index;
 import mirc.util.MircDocument;
@@ -230,7 +231,7 @@ public class TCEStorageService extends AbstractPipelineStage implements StorageS
 					}
 				}
 
-				//Get the index of the selected library
+				//Get the ID of the selected library
 				String libID = lib.getAttribute("id");
 
 				logger.debug("Selected library: "+libID);
@@ -324,6 +325,10 @@ public class TCEStorageService extends AbstractPipelineStage implements StorageS
 
 				//Index the document
 				index.insertDocument( index.getKey(mdFile) );
+
+				//Record the activity
+				ActivityDB.getInstance().increment(libID, "tce");
+
 				logger.debug("MIRCdocument indexed");
 
 				//Now we can delete the temp directory.

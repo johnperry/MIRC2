@@ -7,14 +7,16 @@
 
 package mirc.activity;
 
+import java.io.Serializable;
 import java.util.*;
 import org.apache.log4j.Logger;
 
 /**
  * Encapsulates an index to track activities of a specific type.
  */
-public class Tracker {
+public class Tracker implements Serializable {
 
+	public static final long serialVersionUID = 1;
 	static final Logger logger = Logger.getLogger(Tracker.class);
 
 	String type;
@@ -34,12 +36,10 @@ public class Tracker {
 	public synchronized void increment() {
 		removeOldEntries();
 		long today = System.currentTimeMillis() / oneDay;
-		Counter last = counts.getLast();
-		if ((last == null) || !last.isSince(today)) {
-			last = new Counter(today);
-			counts.add(last);
+		if ( (counts.size() == 0) || !counts.getLast().isSince(today) ) {
+			counts.add(new Counter(today));
 		}
-		last.increment();
+		counts.getLast().increment();
 	}
 
 	//Remove the entries in the counts list that are older than the timeDepth
@@ -47,7 +47,7 @@ public class Tracker {
 		long today = System.currentTimeMillis() / oneDay;
 		long earliest = today - timeDepth;
 		Counter c;
-		while ( ((c=counts.getFirst()) != null) && c.isSince(earliest) ) {
+		while ( (counts.size() > 0) && !counts.getFirst().isSince(earliest) ) {
 			counts.removeFirst();
 		}
 	}
@@ -81,22 +81,4 @@ public class Tracker {
 		return total;
 	}
 
-	//A class to encapsulate a count of activities on a specified day.
-	class Counter {
-		int count;
-		long day;
-		public Counter(long day) {
-			this.day = day;
-			this.count = 0;
-		}
-		public synchronized int increment() {
-			return (++count);
-		}
-		public synchronized boolean isSince(long day) {
-			return (this.day >= day);
-		}
-		public synchronized int getCount() {
-			return count;
-		}
-	}
 }

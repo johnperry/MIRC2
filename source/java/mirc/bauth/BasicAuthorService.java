@@ -14,6 +14,7 @@ import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.zip.ZipEntry;
 
+import mirc.activity.ActivityDB;
 import mirc.MircConfig;
 import mirc.prefs.Preferences;
 import mirc.storage.Index;
@@ -293,6 +294,9 @@ public class BasicAuthorService extends Servlet {
 				String key = index.getKey(new File(storageDir, "MIRCdocument.xml"));
 				logger.debug("...about to index the document: "+key);
 				index.insertDocument(key);
+
+				//Record the activity
+				ActivityDB.getInstance().increment(ssid, "bauth");
 
 				//Success, save the author information in the preferences
 				logger.debug("...about to set the preferences for "+username+" ("+name+")");

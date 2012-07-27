@@ -16,6 +16,7 @@ import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.zip.ZipEntry;
 
+import mirc.activity.ActivityDB;
 import mirc.MircConfig;
 import mirc.files.FileService;
 import mirc.prefs.Preferences;
@@ -360,6 +361,9 @@ public class AuthorService extends Servlet {
 						md.save();
 						String key = index.getKey( docFile );
 						index.insertDocument( key );
+
+						//Record the activity
+						ActivityDB.getInstance().increment(ssid, "aauth");
 
 						//Return the editor form
 						Document prefs = Preferences.getInstance().get( username, true ).getOwnerDocument();
