@@ -26,7 +26,10 @@ h2 {
 }
 	
 th {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 10pt;
 	padding:5;
+	background:#8cb0f2;
 }
 
 td {
@@ -43,6 +46,13 @@ td.n {
 td.t {
 	text-align:center;
 	font-weight: bold;
+	background:#8cb0f2;
+}
+
+td.tl {
+	text-align:left;
+	font-weight: bold;
+	background:#8cb0f2;
 }
 
 p {

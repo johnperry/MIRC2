@@ -73,23 +73,51 @@
 	<tr>
 		<td><xsl:value-of select="@title"/></td>
 		<td class="n"><xsl:value-of select="@ssid"/></td>
-		<td class="n"><xsl:value-of select="@docs"/></td>
-		<td class="n"><xsl:value-of select="@aauth"/></td>
-		<td class="n"><xsl:value-of select="@bauth"/></td>
-		<td class="n"><xsl:value-of select="@sub"/></td>
-		<td class="n"><xsl:value-of select="@zip"/></td>
-		<td class="n"><xsl:value-of select="@dcm"/></td>
-		<td class="n"><xsl:value-of select="@tce"/></td>
-		<td class="n"><xsl:value-of select="@myrsna"/></td>
-		<td class="n"><xsl:value-of select="@storage"/></td>
+
+		<xsl:call-template name="suppress-zero">
+			<xsl:with-param name="n" select="@docs"/>
+		</xsl:call-template>
+
+		<xsl:call-template name="suppress-zero">
+			<xsl:with-param name="n" select="@aauth"/>
+		</xsl:call-template>
+
+		<xsl:call-template name="suppress-zero">
+			<xsl:with-param name="n" select="@bauth"/>
+		</xsl:call-template>
+
+		<xsl:call-template name="suppress-zero">
+			<xsl:with-param name="n" select="@sub"/>
+		</xsl:call-template>
+
+		<xsl:call-template name="suppress-zero">
+			<xsl:with-param name="n" select="@zip"/>
+		</xsl:call-template>
+
+		<xsl:call-template name="suppress-zero">
+			<xsl:with-param name="n" select="@dcm"/>
+		</xsl:call-template>
+
+		<xsl:call-template name="suppress-zero">
+			<xsl:with-param name="n" select="@tce"/>
+		</xsl:call-template>
+
+		<xsl:call-template name="suppress-zero">
+			<xsl:with-param name="n" select="@myrsna"/>
+		</xsl:call-template>
+
+		<xsl:call-template name="suppress-zero">
+			<xsl:with-param name="n" select="@storage"/>
+		</xsl:call-template>
+
 	</tr>
 </xsl:template>
 
 <xsl:template name="totals">
 	<xsl:variable name="libs" select="Library"/>
 	<tr>
-		<td><b>Totals:</b></td>
-		<td/>
+		<td class="tl">Totals:</td>
+		<td class="tl"/>
 		<td class="t"><xsl:value-of select="sum($libs/@docs)"/></td>
 		<td class="t"><xsl:value-of select="sum($libs/@aauth)"/></td>
 		<td class="t"><xsl:value-of select="sum($libs/@bauth)"/></td>
@@ -100,6 +128,16 @@
 		<td class="t"><xsl:value-of select="sum($libs/@myrsna)"/></td>
 		<td class="t"><xsl:value-of select="sum($libs/@storage)"/></td>
 	</tr>
+</xsl:template>
+
+<xsl:template name="suppress-zero">
+	<xsl:param name="n"/>
+	<xsl:if test="$n=0">
+		<td class="n"><xsl:text>&#160;</xsl:text></td>
+	</xsl:if>
+	<xsl:if test="not($n=0)">
+		<td class="n"><xsl:value-of select="$n"/></td>
+	</xsl:if>
 </xsl:template>
 
 </xsl:stylesheet>
