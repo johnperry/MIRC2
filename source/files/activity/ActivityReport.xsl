@@ -41,17 +41,25 @@
 				<br/>
 				<table border="1">
 					<tr>
-						<th><br/><br/>Library</th>
-						<th><br/><br/>ID</th>
-						<th><br/>Number of<br/>Documents</th>
+						<th rowspan="3">Library</th>
+						<th rowspan="3">ID</th>
+						<th rowspan="3">Documents<br/>Stored</th>
+						<th colspan="8">
+							Activity in the Last 30 Days
+						</th>
+					</tr>
+					<tr>
+						<th colspan="6">New Documents Created</th>
+						<th rowspan="2">MyRSNA<br/>Uploads</th>
+						<th rowspan="2">Document<br/>Display<br/>Requests</th>
+					</tr>
+					<tr>
 						<th>Advanced<br/>Author<br/>Service</th>
 						<th>Basic<br/>Author<br/>Service</th>
 						<th><br/>Submit<br/>Service</th>
 						<th><br/>Zip<br/>Service</th>
 						<th><br/>DICOM<br/>Service</th>
 						<th><br/>TCE<br/>Service</th>
-						<th><br/>MyRSNA<br/>Uploads</th>
-						<th><br/>Documents<br/>Displayed</th>
 					</tr>
 					<xsl:apply-templates select="Library">
 						<xsl:sort select="@title"/>
