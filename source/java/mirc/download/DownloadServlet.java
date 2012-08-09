@@ -101,29 +101,9 @@ public class DownloadServlet extends Servlet {
 			if (file.exists() && !file.isDirectory()) {
 				String name = file.getName();
 				String nameLC = name.toLowerCase();
-
-				String build = "";
-				if (nameLC.endsWith(".jar")) {
-					Hashtable<String,String> manifest = JarUtil.getManifestAttributes(file);
-					if (manifest != null) {
-						String date = manifest.get("Date");
-						if (date != null) build = date;
-						String version = manifest.get("Version");
-						if (version != null) {
-							if (!build.equals("")) build += " ";
-							build += "["+version+"]";
-						}
-					}
-				}
-
-				String email = req.getParameter("email", "").trim();
-				String pname = req.getParameter("pname", "").trim();
-				String iname = req.getParameter("iname", "").trim();
-				String cname = req.getParameter("cname", "").trim();
-				String interest = req.getParameter("interest", "").trim();
-				String sitetype = req.getParameter("sitetype", "").trim();
+				String build = getBuild(file);
 				String ip = req.getRemoteAddress();
-				DownloadDB.getInstance().insert(file, build, ip, email, pname, iname, cname, interest, sitetype);
+				DownloadDB.getInstance().insert(file, build, ip, "", "", "", "", "", "");
 
 				res.write(file);
 				long fileLMDate = file.lastModified();
@@ -179,6 +159,53 @@ public class DownloadServlet extends Servlet {
 		res.redirect("/download?ui="+ui);
 	}
 
+	private String getBuild(File file) {
+		String build = "";
+		String nameLC = file.getName().toLowerCase();
+		if (nameLC.endsWith(".jar")) {
+			Hashtable<String,String> manifest = JarUtil.getManifestAttributes(file);
+			build = getJarBuild(manifest);
+		}
+		else if (nameLC.endsWith(".zip")) {
+			try {
+				ZipObject zobj = new ZipObject(file);
+				Document manifest = zobj.getManifestDocument();
+				build = getZipBuild(manifest);
+			}
+			catch (Exception nobuild) { }
+		}
+		return build;
+	}
+
+	private String getJarBuild(Hashtable<String,String> manifest) {
+		String build = "";
+		if (manifest != null) {
+			String date = manifest.get("Date");
+			if (date != null) build = date;
+			String version = manifest.get("Version");
+			if (version != null) {
+				if (!build.equals("")) build += " ";
+				build += "["+version+"]";
+			}
+		}
+		return build;
+	}
+
+	private String getZipBuild(Document manifest) {
+		String build = "";
+		if (manifest != null) {
+			Element root = manifest.getDocumentElement();
+			String date = root.getAttribute("date").trim();
+			if (!date.equals("")) build = date;
+			String version = root.getAttribute("version").trim();
+			if (!version.equals("")) {
+				if (!build.equals("")) build += " ";
+				build += "["+version+"]";
+			}
+		}
+		return build;
+	}
+
 	private String getPage(boolean admin, boolean upload, String ui) {
 		try {
 			Document doc = XmlUtil.getDocument();
@@ -200,14 +227,7 @@ public class DownloadServlet extends Servlet {
 				if (nameLC.endsWith(".jar")) {
 					Hashtable<String,String> manifest = JarUtil.getManifestAttributes(file);
 					if (manifest != null) {
-						String build = "";
-						String date = manifest.get("Date");
-						if (date != null) build = date;
-						String version = manifest.get("Version");
-						if (version != null) {
-							if (!build.equals("")) build += " ";
-							build += "["+version+"]";
-						}
+						String build = getJarBuild(manifest);
 						fileElement.setAttribute("build", build);
 						String desc = manifest.get("Description");
 						if (desc != null) fileElement.setAttribute("desc", desc);
@@ -218,16 +238,9 @@ public class DownloadServlet extends Servlet {
 						ZipObject zobj = new ZipObject(file);
 						Document manifest = zobj.getManifestDocument();
 						if (manifest != null) {
-							Element root = manifest.getDocumentElement();
-							String build = "";
-							String date = root.getAttribute("date").trim();
-							if (!date.equals("")) build = date;
-							String version = root.getAttribute("version").trim();
-							if (!version.equals("")) {
-								if (!build.equals("")) build += " ";
-								build += "["+version+"]";
-							}
+							String build = getZipBuild(manifest);
 							fileElement.setAttribute("build", build);
+							Element root = manifest.getDocumentElement();
 							String desc = root.getAttribute("description").trim();
 							if (!desc.equals("")) fileElement.setAttribute("desc", desc);
 						}

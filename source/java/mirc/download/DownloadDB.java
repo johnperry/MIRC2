@@ -125,12 +125,12 @@ public class DownloadDB {
 				dl.setAttribute("name", entry.name);
 				dl.setAttribute("build", entry.build);
 				dl.setAttribute("ip", entry.ip);
-				dl.setAttribute("email", entry.email);
-				dl.setAttribute("pname", entry.pname);
-				dl.setAttribute("iname", entry.iname);
-				dl.setAttribute("cname", entry.cname);
-				dl.setAttribute("interest", entry.interest);
-				dl.setAttribute("sitetype", entry.sitetype);
+				//dl.setAttribute("email", entry.email);
+				//dl.setAttribute("pname", entry.pname);
+				//dl.setAttribute("iname", entry.iname);
+				//dl.setAttribute("cname", entry.cname);
+				//dl.setAttribute("interest", entry.interest);
+				//dl.setAttribute("sitetype", entry.sitetype);
 
 				downloadsElement.appendChild(dl);
 				counter.add(entry.name);
