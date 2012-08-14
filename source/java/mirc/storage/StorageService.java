@@ -134,9 +134,32 @@ public class StorageService extends Servlet {
 					res.setContentType("html");
 				}
 				catch (Exception ex) { res.setResponseCode( res.notfound ); }
+				res.send();
+			}
+			else if (req.getParameter("jpeg") != null) {
+				//This is a request for a JPEG image with window leveling.
+				try {
+					int frame = StringUtil.getInt( req.getParameter("frame"), 0);
+					int q = StringUtil.getInt( req.getParameter("q"), -1 );
+					int ww = StringUtil.getInt( req.getParameter("ww") );
+					int wl = StringUtil.getInt( req.getParameter("wl") );
+					DicomObject dob = new DicomObject(file);
+					String name = file.getName();
+					name = name.substring(0, name.lastIndexOf(".")) + "["+wl+","+ww+"].jpeg";
+					File windowedFile = new File(file.getParentFile(), name);
+					dob.saveAsWindowLeveledJPEG(windowedFile, frame, q, wl, ww);
+					res.setContentType(windowedFile);
+					res.write(windowedFile);
+					res.send();
+					windowedFile.delete();
+				}
+				catch (Exception ex) { res.setResponseCode( res.notfound ); res.send(); }
 			}
 			else if (req.getParameter("bi") != null) {
 				//This is a request for a java.awt.image.BufferedImage
+				//It doesn't work because BufferedImage is not serializable.
+				//The code is left in here as a place holder for the day
+				//when I figure out how to do this.
 				try {
 					int frame = StringUtil.getInt( req.getParameter("frame"), 0);
 					int max = StringUtil.getInt( req.getParameter("maxWidth"), Integer.MAX_VALUE);
@@ -152,14 +175,15 @@ public class StorageService extends Servlet {
 					res.setHeader("Content-Type", "application/java.awt.image.BufferedImage");
 				}
 				catch (Exception ex) { res.setResponseCode( res.notfound ); }
+				res.send();
 			}
 			else {
 				//This is a request to download the DICOM file.
 				res.write(file);
 				res.setContentType("dcm");
 				res.setContentDisposition(file);
+				res.send();
 			}
-			res.send();
 			return;
 		}
 
