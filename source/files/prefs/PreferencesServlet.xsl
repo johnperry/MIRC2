@@ -108,7 +108,7 @@
 			<center>
 				<table border="1">
 					<tr>
-						<td>Include myRSNA files in the file cabinet</td>
+						<td>Enable export to myRSNA</td>
 						<td>
 							<input type="checkbox" name="myrsna" value="yes">
 								<xsl:if test="myrsna/@enabled='yes'">

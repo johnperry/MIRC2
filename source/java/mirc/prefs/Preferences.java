@@ -130,6 +130,17 @@ public class Preferences {
 				Element user = (Element)prefs.get(username);
 				if (user != null) {
 					user = (Element)doc.appendChild( doc.importNode( user, true ) );
+
+					//Indicate whether the user has enabled myrsna export
+					//and the account has non-blank myRSNA credentials.
+					Element myrsna = XmlUtil.getFirstNamedChild(user, "myrsna");
+					if ((myrsna != null)
+							&& myrsna.getAttribute("enabled").equals("yes")
+								&& !myrsna.getAttribute("username").equals("")
+									&& !myrsna.getAttribute("password").equals("")) {
+						user.setAttribute("myrsna", "true");
+					}
+					else user.setAttribute("myrsna", "false");
 					if (suppress) {
 						while ( (node=user.getFirstChild()) != null ) user.removeChild(node);
 					}

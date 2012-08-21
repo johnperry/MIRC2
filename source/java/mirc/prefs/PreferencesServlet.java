@@ -68,61 +68,62 @@ public class PreferencesServlet extends Servlet {
 	public void doGet(HttpRequest req, HttpResponse res) throws Exception {
 
 		//Require authentication
-		if (!req.isFromAuthenticatedUser()) { res.redirect("/query"); return; }
+		if (req.isFromAuthenticatedUser()) {
 
-		Path path = req.getParsedPath();
+			Path path = req.getParsedPath();
 
-		MircConfig mc = MircConfig.getInstance();
-		String username = req.getUser().getUsername();
-		Preferences prefs = Preferences.getInstance();
-		boolean userIsAdmin = req.userHasRole("admin");
+			MircConfig mc = MircConfig.getInstance();
+			String username = req.getUser().getUsername();
+			Preferences prefs = Preferences.getInstance();
+			boolean userIsAdmin = req.userHasRole("admin");
 
-		Element pref = null;
+			Element pref = null;
 
-		if (path.length() == 1) {
+			if (path.length() == 1) {
 
-			//This is a request for the user's preferences page.
-			//Get the UI to determine whether to include the home icon.
-			String pageUI = req.getParameter("pageui", "classic");
+				//This is a request for the user's preferences page.
+				//Get the UI to determine whether to include the home icon.
+				String pageUI = req.getParameter("pageui", "classic");
 
-			//Get the default UI for the site
-			String defUI = mc.getUI();
-			String[] params = new String[] { "pageUI", pageUI, "defUI", defUI };
+				//Get the default UI for the site
+				String defUI = mc.getUI();
+				String[] params = new String[] { "pageUI", pageUI, "defUI", defUI };
 
-			pref = prefs.get(username, false);
-			Document xsl = XmlUtil.getDocument( FileUtil.getStream( "/prefs/PreferencesServlet.xsl" ) );
-			res.setContentType("html");
-			res.disableCaching();
-			res.write( XmlUtil.getTransformedText( pref.getOwnerDocument(), xsl, params ) );
-			res.send();
-			return;
+				pref = prefs.get(username, false);
+				Document xsl = XmlUtil.getDocument( FileUtil.getStream( "/prefs/PreferencesServlet.xsl" ) );
+				res.setContentType("html");
+				res.disableCaching();
+				res.write( XmlUtil.getTransformedText( pref.getOwnerDocument(), xsl, params ) );
+				res.send();
+				return;
+			}
+
+			else if (path.element(1).equals("xml")) {
+				String path2 = path.element(2);
+				String path3 = path.element(3);
+
+				prefs.syncToUsers();
+
+				//This is a request for an XML element
+				//If the user is an admin, allow a request for the full preferences
+				if (path2.equals("allusers")) {
+					pref = prefs.get("*", !userIsAdmin || !path3.equals("full"));
+				}
+				else if (path2.equals("user") && userIsAdmin && !path3.equals("")) {
+					pref = prefs.get(path3, true);
+				}
+				else {
+					pref = prefs.get(username, true);
+				}
+				res.setContentType("xml");
+				if (pref != null) res.write( XmlUtil.toString( pref ) );
+				else res.write( "<User/>" );
+				res.disableCaching();
+				res.send();
+				return;
+			}
 		}
-
-		else if (path.element(1).equals("xml")) {
-			String path2 = path.element(2);
-			String path3 = path.element(3);
-
-			prefs.syncToUsers();
-
-			//This is a request for an XML element
-			//If the user is an admin, allow a request for the full preferences
-			if (path2.equals("allusers")) {
-				pref = prefs.get("*", !userIsAdmin || !path3.equals("full"));
-			}
-			else if (path2.equals("user") && userIsAdmin && !path3.equals("")) {
-				pref = prefs.get(path3, true);
-			}
-			else {
-				pref = prefs.get(username, true);
-			}
-			res.setContentType("xml");
-			if (pref != null) res.write( XmlUtil.toString( pref ) );
-			else res.write( "<User/>" );
-			res.disableCaching();
-			res.send();
-		}
-
-		else super.doGet( req, res ); //handle other requests in the superclass
+		super.doGet( req, res ); //handle other requests in the superclass
 	}
 
 	/**

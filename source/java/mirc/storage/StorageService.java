@@ -221,12 +221,8 @@ public class StorageService extends Servlet {
 				if (userIsAuthorizedTo("export", doc, req)) {
 
 					//Export is authorized; make the file for the zip file
-					String ext = ".zip";
 					String extParameter = req.getParameter("ext", "").trim();
-					if (!extParameter.equals("")) ext = "." + extParameter;
-					File parent = file.getParentFile();
-					String name = makeNameFromParent(file) + ext;
-					File zipFile = new File(parent, name);
+					File zipFile = getFileForZip(doc, file, extParameter);
 
 					//Insert the path attribute (if necessary) for third party author tools.
 					//The path attribute starts with the ssid, as in: "ss1/docs/...".
@@ -329,7 +325,7 @@ public class StorageService extends Servlet {
 		}
 	}
 
-	private String makeNameFromParent(File file) {
+	private static String makeNameFromParent(File file) {
 		file = new File(file.getAbsolutePath());
 		File parent = file.getParentFile();
 		String name = parent.getName();
@@ -641,10 +637,10 @@ public class StorageService extends Servlet {
 	}
 
     /**
-      * Determine whether a remote user is the owner of a MIRCdocument.
-      * @param docXML the MIRCdocument DOM object.
-      * @param req the servlet request identifying the remote user.
-      */
+     * Determine whether a remote user is the owner of a MIRCdocument.
+     * @param docXML the MIRCdocument DOM object.
+     * @param req the servlet request identifying the remote user.
+     */
 	public static boolean userIsOwner(Node docXML, HttpRequest req) {
 		try {
 			if (req.isFromAuthenticatedUser()) {
@@ -669,8 +665,15 @@ public class StorageService extends Servlet {
 		return false;
 	}
 
-	//Get the local references for an XML document
-	private String[] getFilenames(Document mircDocument, File file) {
+    /**
+     * Get the local references for an XML document.
+     * @param mircDocument the MIRCdocument DOM object.
+     * @param file the file containing the MIRCdocument.
+     * @return the filenames of all files referenced in
+     * href or src attributes in the MIRCdocument,
+     * plus the file containing the MIRCdocument itself.
+     */
+	public static String[] getFilenames(Document mircDocument, File file) {
 		HashSet<String> names = new HashSet<String>();
 		names.add(file.getName());
 		Node root = mircDocument.getDocumentElement();
@@ -678,7 +681,7 @@ public class StorageService extends Servlet {
 		return names.toArray(new String[names.size()]);
 	}
 
-	private void getAttributeFilenames(Set<String> names, Node node) {
+	private static void getAttributeFilenames(Set<String> names, Node node) {
 		if (node.getNodeType() == Node.ELEMENT_NODE) {
 			NamedNodeMap attrMap = node.getAttributes();
 			int attrlen = attrMap.getLength();
@@ -852,7 +855,61 @@ public class StorageService extends Servlet {
 		return basedate;
 	}
 
-	private boolean exportToMyRsna(User user, File zipFile) {
+	/**
+	 * Get the ssid identifier in a File object.
+	 * @param file the file whose absolute path is to be searched for the ssid.
+	 * @return the ssid or an empty string if the ssid cannot be found.
+	 */
+	public static String getSSID(File file) {
+		String path = file.getAbsolutePath();
+		String[] names = path.split(File.separator);
+		for (int i=0; i<names.length; i++) {
+			if (names[i].trim().equals("storage")) {
+				int k = i + 1;
+				if (k < names.length) return names[k+1].trim();
+			}
+		}
+		return "";
+	}
+
+	/**
+	 * Construct a File to contain a MIRCdocument zip export. The filename
+	 * consists of the name of the parent directory, an underscore, and the
+	 * text content of the MIRCdocument's title element (modified to make an
+	 * acceptable filename, with whitespace, slashes, backslashes, and ampersands
+	 * replaced by underscores). The extension is ".zip" unless the extParameter
+	 * is supplied as non-null and non-empty, in which case the extension is
+	 * "." + extParameter.
+	 * @param doc the MIRCdocument XML Document object.
+	 * @param file the file containing the MIRCdocument.
+	 * @param extParameter the desired extension (with no leading period). If this parameter
+	 * is null or empty, the default extension ".zip" is supplied.
+	 * @return the file (note that this is only a File object; this method does not
+	 * insert the zip contents).
+	 */
+	public static File getFileForZip(Document doc, File file, String extParameter) {
+		String ext = ".zip";
+		if ((extParameter != null) && !extParameter.equals("")) ext = "." + extParameter;
+		File parent = file.getParentFile();
+		String name = makeNameFromParent(file);
+		Element titleEl = XmlUtil.getFirstNamedChild(doc, "title");
+		if (titleEl != null) {
+			String title = titleEl.getTextContent().trim();
+			title = title.replaceAll("\\s+", "_");
+			if (title.length() > 0) name = title + "_" + name;
+		}
+		name += ext;
+		return new File(parent, name);
+	}
+
+	/**
+	 * Transmit a file to the user's myRSNA account.
+	 * @param user the user's TFS username. (The user's myRSNA account information
+	 * is obtained from the user's TFS account preferences).
+	 * @param zipFile the file to export.
+	 * @return true if the export succeeded; false otherwise.
+	 */
+	public static boolean exportToMyRsna(User user, File zipFile) {
 		try {
 			if (user == null) return false;
 			MyRsnaSession mrs = MyRsnaSessions.getInstance().getMyRsnaSession(user.getUsername());

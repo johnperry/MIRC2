@@ -22,6 +22,7 @@ import mirc.download.*;
 import mirc.files.*;
 import mirc.fsadmin.*;
 import mirc.login.*;
+import mirc.myrsna.*;
 import mirc.prefs.*;
 import mirc.publish.*;
 import mirc.qsadmin.*;
@@ -117,6 +118,7 @@ public class MIRC extends AbstractPlugin {
 		selector.addServlet("publish", PublishService.class);
 		selector.addServlet("download", DownloadServlet.class);
 		selector.addServlet("comment", CommentService.class);
+		selector.addServlet("myrsna", MyRSNAServlet.class);
 
 		//Install the standard roles
 		Users users = Users.getInstance();

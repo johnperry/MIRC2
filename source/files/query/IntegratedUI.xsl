@@ -38,7 +38,7 @@
 	<script language="JavaScript" type="text/javascript" src="/JSAJAX.js">;</script>
 	<script language="JavaScript" type="text/javascript" src="/JSUser.js">;</script>
 	<script language="JavaScript" type="text/javascript" src="/JSCookies.js">;</script>
-	<script language="JavaScript" type="text/javascript" src="/JSPrefs.js">;</script>
+	<script language="JavaScript" type="text/javascript" src="/prefs/JSPrefs.js">;</script>
 	<script language="JavaScript" type="text/javascript" src="/JSPopup.js">;</script>
 	<script language="JavaScript" type="text/javascript" src="/JSTree.js">;</script>
 	<script language="JavaScript" type="text/javascript" src="/JSLoginPopup.js">;</script>
