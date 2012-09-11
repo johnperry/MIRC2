@@ -363,7 +363,7 @@ public class AuthorService extends Servlet {
 						index.insertDocument( key );
 
 						//Record the activity
-						ActivityDB.getInstance().increment(ssid, "aauth");
+						ActivityDB.getInstance().increment(ssid, "aauth", username);
 
 						//Return the editor form
 						Document prefs = Preferences.getInstance().get( username, true ).getOwnerDocument();

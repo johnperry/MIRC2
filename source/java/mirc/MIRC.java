@@ -171,6 +171,9 @@ public class MIRC extends AbstractPlugin {
 			}
 		}
 
+		//Start the Activity Summary Report Submitter
+		new SummarySubmitter().start();
+
 		logger.info("MIRC Plugin started");
 	}
 

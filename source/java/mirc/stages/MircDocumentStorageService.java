@@ -163,7 +163,7 @@ public class MircDocumentStorageService extends AbstractPipelineStage implements
 				index.insertDocument( index.getKey(mdFile) );
 
 				//Record the activity
-				if (!docExists) ActivityDB.getInstance().increment(libID, "dcm");
+				if (!docExists) ActivityDB.getInstance().increment(libID, "dcm", null);
 
 				lastFileStored = fileObject.getFile();
 				lastTime = System.currentTimeMillis();

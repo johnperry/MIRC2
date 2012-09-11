@@ -35,6 +35,10 @@ p.center {
 }
 
 table {
+	width:65%;
+}
+
+td.label {
 	width:60%;
 }
 

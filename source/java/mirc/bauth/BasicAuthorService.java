@@ -296,7 +296,7 @@ public class BasicAuthorService extends Servlet {
 				index.insertDocument(key);
 
 				//Record the activity
-				ActivityDB.getInstance().increment(ssid, "bauth");
+				ActivityDB.getInstance().increment(ssid, "bauth", username);
 
 				//Success, save the author information in the preferences
 				logger.debug("...about to set the preferences for "+username+" ("+name+")");

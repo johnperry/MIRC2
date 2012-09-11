@@ -70,8 +70,9 @@ public class MyRSNAServlet extends Servlet {
 		//Require authentication
 		if (req.isFromAuthenticatedUser()) {
 			User user = req.getUser();
+			String username = user.getUsername();
 			Preferences prefs = Preferences.getInstance();
-			Element acct = prefs.getMyRsnaAccount(user.getUsername());
+			Element acct = prefs.getMyRsnaAccount(username);
 			if (acct != null) {
 				String urlsParam = req.getParameter("urls");
 				if (urlsParam != null) {
@@ -90,7 +91,7 @@ public class MyRSNAServlet extends Servlet {
 						}
 					}
 					if (files.size() > 0) {
-						(new MyRSNAExporter(req, files)).start();
+						(new MyRSNAExporter(req, files, username)).start();
 						if (files.size() == 1) {
 							response = "One local document was submitted for export.\n\n";
 						}
@@ -125,10 +126,12 @@ public class MyRSNAServlet extends Servlet {
 
 		HttpRequest req;
 		LinkedList<File> files;
+		String username;
 
-		public MyRSNAExporter(HttpRequest req, LinkedList<File> files) {
+		public MyRSNAExporter(HttpRequest req, LinkedList<File> files, String username) {
 			this.req = req;
 			this.files = files;
+			this.username = username;
 		}
 
 		public void run() {
@@ -143,7 +146,7 @@ public class MyRSNAServlet extends Servlet {
 						if (ok) {
 							if (StorageService.exportToMyRsna(user, zipFile)) {
 								String ssid = StorageService.getSSID(file);;
-								ActivityDB.getInstance().increment(ssid, "myrsna");
+								ActivityDB.getInstance().increment(ssid, "myrsna", username);
 							}
 						}
 						zipFile.delete();

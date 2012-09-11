@@ -80,6 +80,9 @@ public class StorageService extends Servlet {
 		String reqpath = req.getPath();
 		String reqpathLC = reqpath.toLowerCase();
 
+		User user = req.getUser();
+		String username = (user != null) ? user.getUsername() : null;
+
 		//Handle function requests first
 		Path path = req.getParsedPath();
 		String function = path.element(1).toLowerCase();
@@ -116,7 +119,7 @@ public class StorageService extends Servlet {
 		}
 
 		//Get the file and bail out if it doesn't exist.
-		File file = new File(root, req.getPath());
+		File file = new File(root, reqpath);
 		if (!file.exists()) {
 			res.setResponseCode( res.notfound );
 			res.send();
@@ -251,7 +254,7 @@ public class StorageService extends Servlet {
 							if (exportToMyRsna(req.getUser(), zipFile)) {
 								 //Record the activity
 								String ssid = path.element(1);
-								ActivityDB.getInstance().increment(ssid, "myrsna");
+								ActivityDB.getInstance().increment(ssid, "myrsna", username);
 							}
 							else {
 								myRsnaResult = "The zip file could not be stored.";
@@ -320,7 +323,9 @@ public class StorageService extends Servlet {
 
 			//Record the activity
 			String ssid = path.element(1).trim();
-			ActivityDB.getInstance().increment(ssid, "storage");
+			ActivityDB db = ActivityDB.getInstance();
+			db.increment(ssid, "storage", username);
+			db.logDocument(ssid, reqpath);
 			AccessLog.logAccess(req, doc);
 		}
 	}

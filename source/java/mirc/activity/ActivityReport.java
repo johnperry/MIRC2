@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------
-*  Copyright 2005 by the Radiological Society of North America
+*  Copyright 2012 by the Radiological Society of North America
 *
 *  This source software is released under the terms of the
 *  RSNA Public License (http://mirc.rsna.org/rsnapubliclicense)
@@ -50,34 +50,87 @@ public class ActivityReport extends Servlet {
 	 */
 	public void doGet( HttpRequest req, HttpResponse res ) throws Exception {
 
-		//Require authentication
-		if (!req.userHasRole("admin")) { res.redirect("/query"); return; }
-
 		Path path = req.getParsedPath();
 		if (path.length() == 1) {
-			Document doc = ActivityDB.getInstance().getXML();
-			String format = req.getParameter("format", "html");
 
+			//Require authentication as an admin user
+			if (!req.userHasRole("admin")) { res.redirect("/query"); return; }
+
+			//Get the full report
+			Document doc = ActivityDB.getInstance().getXML();
+
+			//Now get the summary report
+			Document summaryXSL = XmlUtil.getDocument( FileUtil.getStream( "/activity/ActivitySummaryReport.xsl" ) );
+			String report = XmlUtil.getTransformedText( doc, summaryXSL, null );
+
+			String format = req.getParameter("format", "html");
 			if (format.equals("xml")) {
 				res.setContentType("xml");
-				res.write( XmlUtil.toString(doc) );
+				if (req.getParameter("type", "").equals("summary")) {
+					res.write( report );
+				}
+				else {
+					res.write( XmlUtil.toString(doc) );
+				}
 			}
 
 			else {
-				String report = XmlUtil.toString(doc.getDocumentElement());
+				res.setContentType("html");
+
 				try { report = URLEncoder.encode(report, "UTF-8"); }
 				catch (Exception ex) { report = ""; }
 
-				String[] params = new String[] {
-					"report",		report
-				};
+				String[] params = new String[] { "report", report };
 				Document xsl = XmlUtil.getDocument( FileUtil.getStream( "/activity/ActivityReport.xsl" ) );
 				res.write( XmlUtil.getTransformedText( doc, xsl, params) );
-				res.setContentType("html");
 			}
 			res.disableCaching();
 			res.send();
 		}
+
+		else if ((path.length() == 2) && path.element(1).equals("submit")) {
+
+			//Do not require authentication so we can receive reports from remote sites.
+			//The only protection is provided by a sanity check in the SummariesDBEntry
+			//constructor, which throws an exception if the report doesn't parse, or if
+			//its root element has the wrong tag name, or if the site ID is invalid.
+
+			String report = req.getParameter("report");
+			try {
+				SummariesDBEntry entry = new SummariesDBEntry(report);
+				ActivityDB.getInstance().put(entry);
+				res.write("Thank you for submitting the activity summary report.");
+			}
+			catch (Exception unable) {
+				res.write("Unable to accept the activity summary report.");
+			}
+			res.setContentType("txt");
+			res.send();
+		}
+
+		else if ((path.length() == 2) && path.element(1).equals("summary")) {
+
+			//This path is only intended for the admin user (at RSNA HQ).
+			if (!req.userHasRole("admin")) { res.redirect("/query"); return; }
+
+			Document doc = ActivityDB.getInstance().getSummariesXML();
+
+			String format = req.getParameter("format", "csv");
+			if (format.equals("csv")) {
+				res.setContentType("csv");
+				res.setContentDisposition( new File("ActivitySummary.csv") );
+				Document summaryXSL = XmlUtil.getDocument( FileUtil.getStream( "/activity/ActivitySummaryReportCSV.xsl" ) );
+				String report = XmlUtil.getTransformedText( doc, summaryXSL, null );
+				res.write( report );
+			}
+			else {
+				res.setContentType("xml");
+				res.write( XmlUtil.toString(doc) );
+			}
+			res.send();
+		}
+
+
 		else super.doGet(req, res);
 	}
 

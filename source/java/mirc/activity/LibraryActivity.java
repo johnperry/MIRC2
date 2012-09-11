@@ -1,9 +1,9 @@
 /*---------------------------------------------------------------
-*  Copyright 2012 by the Radiological Society of North America
-*
-*  This source software is released under the terms of the
-*  RSNA Public License (http://mirc.rsna.org/rsnapubliclicense)
-*----------------------------------------------------------------*/
+ *  Copyright 2012 by the Radiological Society of North America
+ *
+ *  This source software is released under the terms of the
+ *  RSNA Public License (http://mirc.rsna.org/rsnapubliclicense)
+ *----------------------------------------------------------------*/
 
 package mirc.activity;
 
@@ -20,12 +20,12 @@ import org.w3c.dom.*;
  */
 public class LibraryActivity implements Serializable {
 
-	public static final long serialVersionUID = 1;
+	public static final long serialVersionUID = 2;
 	static final Logger logger = Logger.getLogger(LibraryActivity.class);
 
-	static final long oneDay = 24 * 60 * 60 * 1000;
-
-	Hashtable<String,Tracker> trackers;
+	Hashtable<String,Integer> counters;
+	HashSet<String> docsDisplayed;
+	HashSet<String> activeUsers;
 	String ssid;
 
 	String[] services = {
@@ -41,28 +41,38 @@ public class LibraryActivity implements Serializable {
 
 	public LibraryActivity(String ssid) {
 		this.ssid = ssid;
-		trackers = new Hashtable<String,Tracker>();
+		counters = new Hashtable<String,Integer>();
+		docsDisplayed = new HashSet<String>();
+		activeUsers = new HashSet<String>();
 
 		//preload the standard trackers
-		for (String type : services) trackers.put( type, new Tracker(type) );
+		for (String type : services) counters.put( type, new Integer(0) );
 	}
 
 	/**
-	 * Add one to the specified counter for the current day.
+	 * Add one to the specified counter.
 	 */
-	public synchronized void increment(String type) {
-		Tracker tracker = trackers.get(type);
-		if (tracker == null) {
-			tracker = new Tracker(type);
+	public synchronized void increment(String type, String username) {
+		Integer counter = counters.get(type);
+		if (counter == null) {
+			counter = new Integer(0);
 		}
-		tracker.increment();
-		trackers.put(type, tracker);
+		counter = new Integer(counter.intValue() + 1);
+		counters.put(type, counter);
+		if (username != null) activeUsers.add(username);
+	}
+
+	/**
+	 * Log access to a document.
+	 */
+	public synchronized void logDocument(String docKey) {
+		docsDisplayed.add(docKey);
 	}
 
 	/**
 	 * Get an XML element containing the tracking information for this library.
 	 */
-	public synchronized Element getXML(Document doc, int timeDepth) {
+	public synchronized Element getXML(Document doc) {
 		MircConfig mc = MircConfig.getInstance();
 		Element lib = mc.getLocalLibrary(ssid);
 		if (lib != null) {
@@ -76,8 +86,10 @@ public class LibraryActivity implements Serializable {
 			if (index != null) {
 				el.setAttribute("docs", Integer.toString(index.getAllDocuments().length));
 			}
-			for (String type : trackers.keySet()) {
-				el.setAttribute(type, Integer.toString(trackers.get(type).getTotal(timeDepth)));
+			el.setAttribute("docsDisplayed", Integer.toString(docsDisplayed.size()));
+			el.setAttribute("activeUsers", Integer.toString(activeUsers.size()));
+			for (String type : counters.keySet()) {
+				el.setAttribute(type, Integer.toString(counters.get(type)));
 			}
 			return el;
 		}

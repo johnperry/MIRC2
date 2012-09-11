@@ -327,7 +327,7 @@ public class TCEStorageService extends AbstractPipelineStage implements StorageS
 				index.insertDocument( index.getKey(mdFile) );
 
 				//Record the activity
-				ActivityDB.getInstance().increment(libID, "tce");
+				ActivityDB.getInstance().increment(libID, "tce", null);
 
 				logger.debug("MIRCdocument indexed");
 

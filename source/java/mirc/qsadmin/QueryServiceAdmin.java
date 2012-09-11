@@ -130,7 +130,9 @@ public class QueryServiceAdmin extends Servlet {
 			req.getParameter("roles"),
 			req.getParameter("UI"),
 			req.getParameter("popup"),
-			req.getParameter("downloadenb")
+			req.getParameter("downloadenb"),
+			req.getParameter("email"),
+			req.getParameter("sharestats", "no")
 		);
 
 		//Install any newly defined roles

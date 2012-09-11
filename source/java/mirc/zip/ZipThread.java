@@ -268,7 +268,7 @@ public class ZipThread extends Thread {
 		index.insertDocument(indexEntry);
 
 		//Record the activity
-		ActivityDB.getInstance().increment(ssid, "zip");
+		ActivityDB.getInstance().increment(ssid, "zip", username);
 
 		logger.debug("...MIRCdocument created: "+indexEntry);
 	}

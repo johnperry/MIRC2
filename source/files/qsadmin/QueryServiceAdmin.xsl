@@ -35,7 +35,7 @@
 			<center>
 				<table border="1">
 					<tr>
-						<td>System mode:</td>
+						<td class="label">System mode:</td>
 						<td>
 							<input type="radio" name="mode" value="rad">
 								<xsl:if test="@mode='rad' or @mode=''">
@@ -208,8 +208,34 @@
 			</center>
 
 			<p class="note">
-				The table below controls the list of libraries. To enable a library,
-				check its checkbox in the list.
+				The RSNA would like to track the use of its teaching file software.
+				If you are willing to share the information in the Activity Report with
+				the RSNA, please check the box in the table below. If you wish to receive
+				an email when a major release of TFS is published, enter your email address.
+			</p>
+
+			<center>
+				<table border="1">
+					<tr>
+						<td class="label">Share Activity Report statistics with the RSNA:</td>
+						<td>
+							<input type="checkbox" name="sharestats" value="yes">
+								<xsl:if test="not(@sharestats='no')">
+									<xsl:attribute name="checked">yes</xsl:attribute>
+								</xsl:if>
+							</input>
+						</td>
+					</tr>
+					<tr>
+						<td>Admin email address for notification of new releases:</td>
+						<td><input class="text" type="text" name="email" value="{@email}"/></td>
+					</tr>
+				</table>
+			</center>
+
+			<p class="note">
+				The table below controls the list of libraries known to the system.
+				To enable a library, check its checkbox in the list.
 				To delete a library from the list, erase its name or its URL in the table.
 				To add a new library, fill in its parameters in the blank fields in the last row.
 				NOTE: You cannot create, delete. or change the URLs of local libraries; you can
