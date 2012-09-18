@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------
-*  Copyright 2011 by the Radiological Society of North America
+*  Copyright 2012 by the Radiological Society of North America
 *
 *  This source software is released under the terms of the
 *  RSNA Public License (http://mirc.rsna.org/rsnapubliclicense)
@@ -125,12 +125,6 @@ public class DownloadDB {
 				dl.setAttribute("name", entry.name);
 				dl.setAttribute("build", entry.build);
 				dl.setAttribute("ip", entry.ip);
-				//dl.setAttribute("email", entry.email);
-				//dl.setAttribute("pname", entry.pname);
-				//dl.setAttribute("iname", entry.iname);
-				//dl.setAttribute("cname", entry.cname);
-				//dl.setAttribute("interest", entry.interest);
-				//dl.setAttribute("sitetype", entry.sitetype);
 
 				downloadsElement.appendChild(dl);
 				counter.add(entry.name);
