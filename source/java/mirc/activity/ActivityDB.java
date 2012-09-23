@@ -35,9 +35,9 @@ public class ActivityDB {
 	private static final String databaseName = "activity";
 	private static final String activityName = "activity";
 	private static final String summariesName = "summaries";
-	private static final String lastReportTimeName = "lastReportTime";
+	private static final String dbinfoName = "dbinfo";
 	private static HTree activity = null;
-	private static HTree lastReportTime = null;
+	private static HTree dbinfo = null;
 	private static HTree summaries = null;
 
 	/**
@@ -46,23 +46,25 @@ public class ActivityDB {
 	 */
 	protected ActivityDB(File dir) {
 		this.dir = dir;
-		File databaseFile = new File(dir, databaseName);
-		recman = JdbmUtil.getRecordManager(databaseFile.getAbsolutePath());
-
-		//If the database is old, then it doesn't contain the lastReportTime
-		//HTree, in which case, we will delete the old activity table.
-		if (!JdbmUtil.containsNamedObject(recman, lastReportTimeName)) {
-			try { recman.commit(); }
-			catch (Exception ignore) { }
-			JdbmUtil.deleteNamedObject(recman, activityName);
-		}
-
-		//Now get or create the database tables
+		getDatabase(dir);
 		activity = JdbmUtil.getHTree(recman, activityName);
 		summaries = JdbmUtil.getHTree(recman, summariesName);
-		lastReportTime = JdbmUtil.getHTree(recman, lastReportTimeName);
+		dbinfo = JdbmUtil.getHTree(recman, dbinfoName);
 		try { recman.commit(); }
 		catch (Exception ignore) { }
+	}
+
+	private void getDatabase(File dir) {
+		File databaseFile = new File(dir, databaseName);
+		recman = JdbmUtil.getRecordManager(databaseFile.getAbsolutePath());
+		if (!JdbmUtil.containsNamedObject(recman, dbinfoName)) {
+			//If the database doesn't contain the dbinfo HTree, delete it.
+			JdbmUtil.close(recman);
+			(new File(dir, databaseName+".db")).delete();
+			(new File(dir, databaseName+".lg")).delete();
+			recman = JdbmUtil.getRecordManager(databaseFile.getAbsolutePath());
+			logger.info("Activity database upgraded");
+		}
 	}
 
 	/**
@@ -94,7 +96,7 @@ public class ActivityDB {
 	 */
 	public synchronized long getLastReportTime() {
 		try {
-			Long last = (Long)lastReportTime.get("lastReportTime");
+			Long last = (Long)dbinfo.get("lastReportTime");
 			if (last != null) return last.longValue();
 		}
 		catch (Exception ex) { }
@@ -108,7 +110,7 @@ public class ActivityDB {
 	 */
 	public synchronized void setLastReportTime(long time) {
 		try {
-			lastReportTime.put("lastReportTime", new Long(time));
+			dbinfo.put("lastReportTime", new Long(time));
 			recman.commit();
 		}
 		catch (Exception ignore) { }
@@ -129,6 +131,17 @@ public class ActivityDB {
 		}
 		catch (Exception ignore) { }
 		return entry;
+	}
+
+	/**
+	 * Get the database entry for a specified month
+	 * @param date the date (YYYYMM)
+	 * @return the entry or null if it doesn't exist
+	 */
+	public synchronized ActivityDBEntry get(String date) {
+		try { return (ActivityDBEntry)activity.get(date); }
+		catch (Exception ignore) { }
+		return null;
 	}
 
 	/**
@@ -171,12 +184,15 @@ public class ActivityDB {
 	/**
 	 * Log access to a document.
 	 * @param ssid the ID of the library
-	 * @param docpath the path to the document that was accessed.
+	 * @param username the username of the user who displayed the document,
+	 * or null if a non-authenticated user accessed the document.
+	 * @param docpath the path to the document that was displayed.
+	 * @param title the title of the document that was displayed.
 	 */
-	public synchronized void logDocument(String ssid, String docpath) {
+	public synchronized void logDocumentDisplay(String ssid, String username, String docpath, String title) {
 		try {
 			ActivityDBEntry entry = get();
-			entry.logDocument(ssid, docpath);
+			entry.logDocumentDisplay(ssid, username, docpath, title);
 			put(entry);
 		}
 		catch (Exception ignore) { }
@@ -265,7 +281,7 @@ public class ActivityDB {
 		recman = null;
 		activity = null;
 		summaries = null;
-		lastReportTime = null;
+		dbinfo = null;
 	}
 
 }

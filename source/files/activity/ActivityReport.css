@@ -15,11 +15,12 @@ h1 {
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: large;
 	margin-top: 12px;
-	margin-bottom: 5px;
+	margin-bottom: 8px;
 }
 
 h2 {
 	margin-top: 0;
+	margin-bottom: 5px;
 	text-align: center;
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: medium;
@@ -53,6 +54,10 @@ td.n {
 	text-align:center;
 }
 
+td.right {
+	text-align:right;
+}
+
 td.t {
 	text-align:center;
 	font-weight: bold;
@@ -68,5 +73,9 @@ td.tl {
 p {
 	text-align: center;
 	padding: 10;
+}
+
+table {
+	margin-top:15;
 }
 

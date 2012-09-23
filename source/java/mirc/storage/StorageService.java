@@ -322,10 +322,12 @@ public class StorageService extends Servlet {
 			res.send();
 
 			//Record the activity
+			Element e = XmlUtil.getFirstNamedChild(doc, "title");
+			String title = (e != null) ? e.getTextContent() : "";
 			String ssid = path.element(1).trim();
 			ActivityDB db = ActivityDB.getInstance();
 			db.increment(ssid, "storage", username);
-			db.logDocument(ssid, reqpath);
+			db.logDocumentDisplay(ssid, username, reqpath, title);
 			AccessLog.logAccess(req, doc);
 		}
 	}

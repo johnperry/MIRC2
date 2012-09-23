@@ -11,6 +11,7 @@ import java.io.File;
 import java.net.URLEncoder;
 
 import mirc.MircConfig;
+import mirc.prefs.Preferences;
 
 import org.rsna.servlets.Servlet;
 import org.rsna.server.HttpRequest;
@@ -108,6 +109,76 @@ public class ActivityReport extends Servlet {
 			res.send();
 		}
 
+		else if ((path.length() == 2) && path.element(1).equals("users")) {
+
+			//Require authentication as an admin user
+			if (!req.userHasRole("admin")) { res.redirect("/query"); return; }
+
+			String date = req.getParameter("date");
+			String ssid = req.getParameter("ssid");
+			try {
+				LibraryActivity libact = ActivityDB.getInstance().get(date).getLibraryActivity(ssid);
+				Document doc = libact.getUsersDocumentDisplayXML();
+				Element prefs = Preferences.getInstance().get("*", true);
+				prefs = (Element)doc.importNode(prefs, true);
+				doc.getDocumentElement().appendChild(prefs);
+				Document xsl = XmlUtil.getDocument( FileUtil.getStream( "/activity/UsersDocumentDisplayReport.xsl" ) );
+				res.write( XmlUtil.getTransformedText(doc, xsl, null) );
+				res.setContentType("html");
+			}
+			catch (Exception unable) {
+				res.write("Unable to list the users.");
+				res.setContentType("txt");
+			}
+			res.send();
+		}
+
+		else if ((path.length() == 2) && path.element(1).equals("user")) {
+
+			//Require authentication as an admin user
+			if (!req.userHasRole("admin")) { res.redirect("/query"); return; }
+
+			String date = req.getParameter("date");
+			String ssid = req.getParameter("ssid");
+			String username = req.getParameter("username");
+			try {
+				LibraryActivity libact = ActivityDB.getInstance().get(date).getLibraryActivity(ssid);
+				Document doc = libact.getUserDocumentDisplayXML(username);
+				Element prefs = Preferences.getInstance().get(username, true);
+				prefs = (Element)doc.importNode(prefs, true);
+				doc.getDocumentElement().appendChild(prefs);
+				Document xsl = XmlUtil.getDocument( FileUtil.getStream( "/activity/UserDocumentDisplayReport.xsl" ) );
+				res.write( XmlUtil.getTransformedText(doc, xsl, null) );
+				res.setContentType("html");
+			}
+			catch (Exception unable) {
+				res.write("Unable to list the documents.");
+				res.setContentType("txt");
+			}
+			res.send();
+		}
+
+		else if ((path.length() == 2) && path.element(1).equals("documents")) {
+
+			//Require authentication as an admin user
+			if (!req.userHasRole("admin")) { res.redirect("/query"); return; }
+
+			String date = req.getParameter("date");
+			String ssid = req.getParameter("ssid");
+			try {
+				LibraryActivity libact = ActivityDB.getInstance().get(date).getLibraryActivity(ssid);
+				Document doc = libact.getDocumentsXML();
+				Document xsl = XmlUtil.getDocument( FileUtil.getStream( "/activity/DocumentDisplayReport.xsl" ) );
+				res.write( XmlUtil.getTransformedText(doc, xsl, null) );
+				res.setContentType("html");
+			}
+			catch (Exception unable) {
+				res.write("Unable to list the documents report.");
+				res.setContentType("txt");
+			}
+			res.send();
+		}
+
 		else if ((path.length() == 2) && path.element(1).equals("summary")) {
 
 			//This path is only intended for the admin user (at RSNA HQ).
@@ -120,8 +191,7 @@ public class ActivityReport extends Servlet {
 				res.setContentType("csv");
 				res.setContentDisposition( new File("ActivitySummary.csv") );
 				Document summaryXSL = XmlUtil.getDocument( FileUtil.getStream( "/activity/ActivitySummaryReportCSV.xsl" ) );
-				String report = XmlUtil.getTransformedText( doc, summaryXSL, null );
-				res.write( report );
+				res.write( XmlUtil.getTransformedText(doc, summaryXSL, null) );
 			}
 			else {
 				res.setContentType("xml");
@@ -129,7 +199,6 @@ public class ActivityReport extends Servlet {
 			}
 			res.send();
 		}
-
 
 		else super.doGet(req, res);
 	}

@@ -213,4 +213,7 @@ function showSessionPopup() {
 			if (!user.isLoggedIn) loginLogout();
 		}
 	}
+	else if (user.isLoggedIn && user.hasRole("admin")) {
+
+	}
 }

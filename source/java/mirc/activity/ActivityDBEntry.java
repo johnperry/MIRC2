@@ -38,16 +38,27 @@ public class ActivityDBEntry implements Serializable {
 
 		//Make sure all the local libraries are in the table
 		MircConfig mc = MircConfig.getInstance();
-		for (String ssid : mc.getLocalLibraryIDs()) {
-			try {
-				LibraryActivity libact = (LibraryActivity)libraries.get(ssid);
-				if (libact == null) {
-					libact = new LibraryActivity(ssid);
-					libraries.put(ssid, libact);
-				}
-			}
-			catch (Exception ignore) { }
+		for (String ssid : mc.getLocalLibraryIDs()) getLibrary(ssid);
+	}
+
+	//Get the LibraryActivity object for an ssid, or create
+	//one with the current date if one does not exist.
+	private LibraryActivity getLibrary(String ssid) {
+		LibraryActivity libact = libraries.get(ssid);
+		if (libact == null) {
+			libact = new LibraryActivity(ssid, date);
+			libraries.put(ssid, libact);
 		}
+		return libact;
+	}
+
+	/**
+	 * Get the LibraryActivity for a specified library.
+	 * @param ssid the ID of the library
+	 * @return the indexed LibraryActivity object, or null if no object exists for the ssid
+	 */
+	public synchronized LibraryActivity getLibraryActivity(String ssid) {
+		return libraries.get(ssid);
 	}
 
 	/**
@@ -65,25 +76,21 @@ public class ActivityDBEntry implements Serializable {
 	 */
 	public synchronized void increment(String ssid, String type, String username) {
 		if ((username != null) && !username.trim().equals("")) activeUsers.add(username);
-		LibraryActivity libact = libraries.get(ssid);
-		if (libact == null) {
-			libact = new LibraryActivity(ssid);
-		}
+		LibraryActivity libact = getLibrary(ssid);
 		libact.increment(type, username);
 		libraries.put(ssid, libact);
 	}
 
 	/**
-	 * Log access to a document.
+	 * Log the display of a document.
 	 * @param ssid the ID of the library
-	 * @param docpath the path to the document that was accessed.
+	 * @param username the username of the user who displayed the document.
+	 * @param docpath the path to the document that was displayed.
+	 * @param title the title of the document that was displayed.
 	 */
-	public synchronized void logDocument(String ssid, String docpath) {
-		LibraryActivity libact = libraries.get(ssid);
-		if (libact == null) {
-			libact = new LibraryActivity(ssid);
-		}
-		libact.logDocument(docpath);
+	public synchronized void logDocumentDisplay(String ssid, String username, String docpath, String title) {
+		LibraryActivity libact = getLibrary(ssid);
+		libact.logDocumentDisplay(username, docpath, title);
 		libraries.put(ssid, libact);
 	}
 

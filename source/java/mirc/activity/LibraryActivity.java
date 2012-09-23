@@ -24,9 +24,11 @@ public class LibraryActivity implements Serializable {
 	static final Logger logger = Logger.getLogger(LibraryActivity.class);
 
 	Hashtable<String,Integer> counters;
-	HashSet<String> docsDisplayed;
 	HashSet<String> activeUsers;
+	Hashtable<DisplayedDocument,Integer> docsDisplayed;
+	Hashtable<String,HashSet<DisplayedDocument>> userDisplayActivity;
 	String ssid;
+	String date;
 
 	String[] services = {
 		"aauth",
@@ -39,11 +41,13 @@ public class LibraryActivity implements Serializable {
 		"storage"
 	};
 
-	public LibraryActivity(String ssid) {
+	public LibraryActivity(String ssid, String date) {
 		this.ssid = ssid;
+		this.date = date;
 		counters = new Hashtable<String,Integer>();
-		docsDisplayed = new HashSet<String>();
+		docsDisplayed = new Hashtable<DisplayedDocument,Integer>();
 		activeUsers = new HashSet<String>();
+		userDisplayActivity = new Hashtable<String,HashSet<DisplayedDocument>>();
 
 		//preload the standard trackers
 		for (String type : services) counters.put( type, new Integer(0) );
@@ -65,8 +69,40 @@ public class LibraryActivity implements Serializable {
 	/**
 	 * Log access to a document.
 	 */
-	public synchronized void logDocument(String docKey) {
-		docsDisplayed.add(docKey);
+	public synchronized void logDocumentDisplay(String username, String docKey, String title) {
+		//Count the document
+		DisplayedDocument dd = new DisplayedDocument(docKey, title);
+		Integer count = docsDisplayed.get(dd);
+		if (count == null) count = new Integer(1);
+		else count = new Integer(count.intValue() + 1);
+		docsDisplayed.put(dd, count);
+
+		//Update the user, if possible
+		if ( (username != null) && !username.equals("")) {
+			HashSet<DisplayedDocument> dds = userDisplayActivity.get(username);
+			if (dds == null) dds = new HashSet<DisplayedDocument>();
+			dds.add(new DisplayedDocument(docKey, title));
+			userDisplayActivity.put(username, dds);
+		}
+	}
+
+	class DisplayedDocument implements Serializable{
+		public static final long serialVersionUID = 1;
+		public String docKey;
+		public String title;
+		public DisplayedDocument(String docKey, String title) {
+			this.docKey = docKey;
+			this.title = title;
+		}
+		public boolean equals(Object object) {
+			if ((object  != null) && (object instanceof DisplayedDocument)) {
+				return this.docKey.equals( ((DisplayedDocument)object).docKey );
+			}
+			return false;
+		}
+		public int hashCode() {
+			return this.docKey.hashCode();
+		}
 	}
 
 	/**
@@ -94,5 +130,108 @@ public class LibraryActivity implements Serializable {
 			return el;
 		}
 		return null;
+	}
+
+	/**
+	 * Get an XML Document containing the list of users who displayed documents from this library.
+	 */
+	public synchronized Document getUsersDocumentDisplayXML() {
+		Document doc = null;
+		try {
+			doc = XmlUtil.getDocument();
+			Element root = doc.createElement("UsersDocumentDisplayList");
+			doc.appendChild(root);
+			MircConfig mc = MircConfig.getInstance();
+			Element libEl = mc.getLocalLibrary(ssid);
+			if (libEl != null) {
+				Element lib = doc.createElement("Library");
+				lib.setAttribute("ssid", ssid);
+				lib.setAttribute("date", date);
+				Element titleEl = XmlUtil.getFirstNamedChild(libEl, "title");
+				String title = "";
+				if (titleEl != null) title = titleEl.getTextContent();
+				lib.setAttribute("title", title);
+				root.appendChild(lib);
+				for (String username : userDisplayActivity.keySet()) {
+					Element user = doc.createElement("User");
+					user.setAttribute("username", username);
+					HashSet hs = userDisplayActivity.get(username);
+					int n = (hs != null) ? hs.size() : 0;
+					user.setAttribute("n", Integer.toString(n));
+					lib.appendChild(user);
+				}
+			}
+		}
+		catch (Exception unable) { logger.warn("unable to complete the UsersDocumentDisplayList", unable); }
+		return doc;
+	}
+
+	/**
+	 * Get an XML Document containing the list of documents displayed from this library by a specified user.
+	 */
+	public synchronized Document getUserDocumentDisplayXML(String username) {
+		Document doc = null;
+		try {
+			doc = XmlUtil.getDocument();
+			Element root = doc.createElement("UserDocumentDisplayList");
+			doc.appendChild(root);
+			MircConfig mc = MircConfig.getInstance();
+			Element libEl = mc.getLocalLibrary(ssid);
+			if (libEl != null) {
+				Element lib = doc.createElement("Library");
+				lib.setAttribute("ssid", ssid);
+				lib.setAttribute("date", date);
+				Element titleEl = XmlUtil.getFirstNamedChild(libEl, "title");
+				String title = "";
+				if (titleEl != null) title = titleEl.getTextContent();
+				lib.setAttribute("title", title);
+				root.appendChild(lib);
+				Element user = doc.createElement("User");
+				user.setAttribute("username", username);
+				HashSet<DisplayedDocument> hs = userDisplayActivity.get(username);
+				for (DisplayedDocument dd : hs) {
+					Element docEl = doc.createElement("Document");
+					docEl.setAttribute("docKey", dd.docKey);
+					docEl.setAttribute("title", dd.title);
+					user.appendChild(docEl);
+				}
+				lib.appendChild(user);
+			}
+		}
+		catch (Exception unable) { logger.warn("unable to complete the UserDocumentDisplayList", unable); }
+		return doc;
+	}
+
+	/**
+	 * Get an XML Document containing the list of all documents displayed documents from this library by all users.
+	 */
+	public synchronized Document getDocumentsXML() {
+		Document doc = null;
+		try {
+			doc = XmlUtil.getDocument();
+			Element root = doc.createElement("DocumentDisplayList");
+			doc.appendChild(root);
+			MircConfig mc = MircConfig.getInstance();
+			Element libEl = mc.getLocalLibrary(ssid);
+			if (libEl != null) {
+				Element lib = doc.createElement("Library");
+				lib.setAttribute("ssid", ssid);
+				lib.setAttribute("date", date);
+				Element titleEl = XmlUtil.getFirstNamedChild(libEl, "title");
+				String title = "";
+				if (titleEl != null) title = titleEl.getTextContent();
+				lib.setAttribute("title", title);
+				root.appendChild(lib);
+				for (DisplayedDocument dd : docsDisplayed.keySet()) {
+					Element docEl = doc.createElement("Document");
+					docEl.setAttribute("docKey", dd.docKey);
+					docEl.setAttribute("title", dd.title);
+					docEl.setAttribute("n", docsDisplayed.get(dd).toString());
+					lib.appendChild(docEl);
+				}
+			}
+		}
+		catch (Exception unable) { logger.warn("unable to complete the DocumentDisplayList", unable); }
+		return doc;
 	}
 }

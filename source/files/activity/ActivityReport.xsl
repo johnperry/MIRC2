@@ -4,10 +4,6 @@
 
 <xsl:param name="report"/>
 
-<xsl:param name="context">
-	<xsl:value-of select="/IndexSummary/Context"/>
-</xsl:param>
-
 <xsl:template match="/ActivityReport">
 	<html>
 		<head>
@@ -139,13 +135,9 @@
 			<xsl:with-param name="n" select="@storage"/>
 		</xsl:call-template>
 
-		<xsl:call-template name="suppress-zero">
-			<xsl:with-param name="n" select="@docsDisplayed"/>
-		</xsl:call-template>
+		<xsl:call-template name="docsDisplayed"/>
 
-		<xsl:call-template name="suppress-zero">
-			<xsl:with-param name="n" select="@activeUsers"/>
-		</xsl:call-template>
+		<xsl:call-template name="activeUsers"/>
 
 	</tr>
 </xsl:template>
@@ -176,6 +168,34 @@
 	</xsl:if>
 	<xsl:if test="not($n=0)">
 		<td class="n"><xsl:value-of select="$n"/></td>
+	</xsl:if>
+</xsl:template>
+
+<xsl:template name="docsDisplayed">
+	<xsl:variable name="n" select="@docsDisplayed"/>
+	<xsl:if test="$n=0">
+		<td class="n"><xsl:text>&#160;</xsl:text></td>
+	</xsl:if>
+	<xsl:if test="not($n=0)">
+		<td class="n">
+			<a href="/activity/documents?date={../@date}&amp;ssid={@ssid}" target="details">
+				<xsl:value-of select="$n"/>
+			</a>
+		</td>
+	</xsl:if>
+</xsl:template>
+
+<xsl:template name="activeUsers">
+	<xsl:variable name="n" select="@activeUsers"/>
+	<xsl:if test="$n=0">
+		<td class="n"><xsl:text>&#160;</xsl:text></td>
+	</xsl:if>
+	<xsl:if test="not($n=0)">
+		<td class="n">
+			<a href="/activity/users?date={../@date}&amp;ssid={@ssid}" target="details">
+				<xsl:value-of select="$n"/>
+			</a>
+		</td>
 	</xsl:if>
 </xsl:template>
 
