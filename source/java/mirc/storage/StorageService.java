@@ -327,7 +327,10 @@ public class StorageService extends Servlet {
 			String ssid = path.element(1).trim();
 			ActivityDB db = ActivityDB.getInstance();
 			db.increment(ssid, "storage", username);
-			db.logDocumentDisplay(ssid, username, reqpath, title);
+			if (!rootElement.getAttribute("temp").equals("yes")) {
+				//only log displays of non-draft documents
+				db.logDocumentDisplay(ssid, username, reqpath, title);
+			}
 			AccessLog.logAccess(req, doc);
 		}
 	}

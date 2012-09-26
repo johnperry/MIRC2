@@ -73,15 +73,27 @@ public class LibraryActivity implements Serializable {
 		//Count the document
 		DisplayedDocument dd = new DisplayedDocument(docKey, title);
 		Integer count = docsDisplayed.get(dd);
-		if (count == null) count = new Integer(1);
-		else count = new Integer(count.intValue() + 1);
+		if (count == null) {
+			count = new Integer(1);
+		}
+		else {
+			count = new Integer(count.intValue() + 1);
+			//remove the old entry so we can track renamed documents
+			docsDisplayed.remove(dd);
+		}
 		docsDisplayed.put(dd, count);
 
 		//Update the user, if possible
 		if ( (username != null) && !username.equals("")) {
 			HashSet<DisplayedDocument> dds = userDisplayActivity.get(username);
-			if (dds == null) dds = new HashSet<DisplayedDocument>();
-			dds.add(new DisplayedDocument(docKey, title));
+			if (dds == null) {
+				dds = new HashSet<DisplayedDocument>();
+			}
+			else {
+				//remove the old entry so we can track renamed documents
+				dds.remove(dd);
+			}
+			dds.add(dd);
 			userDisplayActivity.put(username, dds);
 		}
 	}
