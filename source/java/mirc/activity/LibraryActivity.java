@@ -20,13 +20,14 @@ import org.w3c.dom.*;
  */
 public class LibraryActivity implements Serializable {
 
-	public static final long serialVersionUID = 2;
+	public static final long serialVersionUID = 3;
 	static final Logger logger = Logger.getLogger(LibraryActivity.class);
 
 	Hashtable<String,Integer> counters;
-	HashSet<String> activeUsers;
-	Hashtable<DisplayedDocument,Integer> docsDisplayed;
-	Hashtable<String,HashSet<DisplayedDocument>> userDisplayActivity;
+	HashSet<String> activeUsers; //username
+	Hashtable<String,Integer> docsDisplayed; //docKey -> count
+	Hashtable<String,HashSet<String>> userDisplayActivity; //username -> docKey
+	Hashtable<String,String> titles; //docKey -> title
 	String ssid;
 	String date;
 
@@ -45,9 +46,10 @@ public class LibraryActivity implements Serializable {
 		this.ssid = ssid;
 		this.date = date;
 		counters = new Hashtable<String,Integer>();
-		docsDisplayed = new Hashtable<DisplayedDocument,Integer>();
+		docsDisplayed = new Hashtable<String,Integer>();
 		activeUsers = new HashSet<String>();
-		userDisplayActivity = new Hashtable<String,HashSet<DisplayedDocument>>();
+		userDisplayActivity = new Hashtable<String,HashSet<String>>();
+		titles = new Hashtable<String,String>();
 
 		//preload the standard trackers
 		for (String type : services) counters.put( type, new Integer(0) );
@@ -71,49 +73,20 @@ public class LibraryActivity implements Serializable {
 	 */
 	public synchronized void logDocumentDisplay(String username, String docKey, String title) {
 		//Count the document
-		DisplayedDocument dd = new DisplayedDocument(docKey, title);
-		Integer count = docsDisplayed.get(dd);
-		if (count == null) {
-			count = new Integer(1);
-		}
-		else {
-			count = new Integer(count.intValue() + 1);
-			//remove the old entry so we can track renamed documents
-			docsDisplayed.remove(dd);
-		}
-		docsDisplayed.put(dd, count);
+		Integer count = docsDisplayed.get(docKey);
+		if (count == null)  count = new Integer(1);
+		else count = new Integer(count.intValue() + 1);
+		docsDisplayed.put(docKey, count);
+
+		//Update the titles table in case somebody has edited the document
+		titles.put(docKey, title);
 
 		//Update the user, if possible
 		if ( (username != null) && !username.equals("")) {
-			HashSet<DisplayedDocument> dds = userDisplayActivity.get(username);
-			if (dds == null) {
-				dds = new HashSet<DisplayedDocument>();
-			}
-			else {
-				//remove the old entry so we can track renamed documents
-				dds.remove(dd);
-			}
-			dds.add(dd);
+			HashSet<String> dds = userDisplayActivity.get(username);
+			if (dds == null) dds = new HashSet<String>();
+			dds.add(docKey);
 			userDisplayActivity.put(username, dds);
-		}
-	}
-
-	class DisplayedDocument implements Serializable{
-		public static final long serialVersionUID = 1;
-		public String docKey;
-		public String title;
-		public DisplayedDocument(String docKey, String title) {
-			this.docKey = docKey;
-			this.title = title;
-		}
-		public boolean equals(Object object) {
-			if ((object  != null) && (object instanceof DisplayedDocument)) {
-				return this.docKey.equals( ((DisplayedDocument)object).docKey );
-			}
-			return false;
-		}
-		public int hashCode() {
-			return this.docKey.hashCode();
 		}
 	}
 
@@ -167,14 +140,14 @@ public class LibraryActivity implements Serializable {
 				for (String username : userDisplayActivity.keySet()) {
 					Element user = doc.createElement("User");
 					user.setAttribute("username", username);
-					HashSet hs = userDisplayActivity.get(username);
+					HashSet<String> hs = userDisplayActivity.get(username);
 					int n = (hs != null) ? hs.size() : 0;
 					user.setAttribute("n", Integer.toString(n));
 					lib.appendChild(user);
 				}
 			}
 		}
-		catch (Exception unable) { logger.warn("unable to complete the UsersDocumentDisplayList", unable); }
+		catch (Exception unable) { logger.warn("Unable to complete the UsersDocumentDisplayList", unable); }
 		return doc;
 	}
 
@@ -200,17 +173,19 @@ public class LibraryActivity implements Serializable {
 				root.appendChild(lib);
 				Element user = doc.createElement("User");
 				user.setAttribute("username", username);
-				HashSet<DisplayedDocument> hs = userDisplayActivity.get(username);
-				for (DisplayedDocument dd : hs) {
+				HashSet<String> hs = userDisplayActivity.get(username);
+				for (String docKey : hs) {
 					Element docEl = doc.createElement("Document");
-					docEl.setAttribute("docKey", dd.docKey);
-					docEl.setAttribute("title", dd.title);
+					docEl.setAttribute("docKey", docKey);
+					String docTitle = titles.get(docKey);
+					if (docTitle == null) title = "unknown";
+					docEl.setAttribute("title", docTitle);
 					user.appendChild(docEl);
 				}
 				lib.appendChild(user);
 			}
 		}
-		catch (Exception unable) { logger.warn("unable to complete the UserDocumentDisplayList", unable); }
+		catch (Exception unable) { logger.warn("Unable to complete the UserDocumentDisplayList", unable); }
 		return doc;
 	}
 
@@ -234,16 +209,18 @@ public class LibraryActivity implements Serializable {
 				if (titleEl != null) title = titleEl.getTextContent();
 				lib.setAttribute("title", title);
 				root.appendChild(lib);
-				for (DisplayedDocument dd : docsDisplayed.keySet()) {
+				for (String docKey : docsDisplayed.keySet()) {
 					Element docEl = doc.createElement("Document");
-					docEl.setAttribute("docKey", dd.docKey);
-					docEl.setAttribute("title", dd.title);
-					docEl.setAttribute("n", docsDisplayed.get(dd).toString());
+					docEl.setAttribute("docKey", docKey);
+					String docTitle = titles.get(docKey);
+					if (docTitle == null) title = "unknown";
+					docEl.setAttribute("title", docTitle);
+					docEl.setAttribute("n", docsDisplayed.get(docKey).toString());
 					lib.appendChild(docEl);
 				}
 			}
 		}
-		catch (Exception unable) { logger.warn("unable to complete the DocumentDisplayList", unable); }
+		catch (Exception unable) { logger.warn("Unable to complete the DocumentDisplayList", unable); }
 		return doc;
 	}
 }

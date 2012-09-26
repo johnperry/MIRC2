@@ -50,21 +50,38 @@ public class ActivityDB {
 		activity = JdbmUtil.getHTree(recman, activityName);
 		summaries = JdbmUtil.getHTree(recman, summariesName);
 		dbinfo = JdbmUtil.getHTree(recman, dbinfoName);
-		try { recman.commit(); }
-		catch (Exception ignore) { }
+		setDBVersion();
 	}
 
 	private void getDatabase(File dir) {
 		File databaseFile = new File(dir, databaseName);
 		recman = JdbmUtil.getRecordManager(databaseFile.getAbsolutePath());
-		if (!JdbmUtil.containsNamedObject(recman, dbinfoName)) {
-			//If the database doesn't contain the dbinfo HTree, delete it.
-			JdbmUtil.close(recman);
+
+		boolean isCurrentVersion = false;
+		if (JdbmUtil.containsNamedObject(recman, dbinfoName)) {
+			dbinfo = JdbmUtil.getHTree(recman, dbinfoName);
+			try {
+				Long version = (Long)dbinfo.get("dbVersion");
+				isCurrentVersion = ((version != null) && (LibraryActivity.serialVersionUID == version.longValue()));
+			}
+			catch (Exception notCurrent) { }
+		}
+
+		JdbmUtil.close(recman);
+		if (!isCurrentVersion) {
 			(new File(dir, databaseName+".db")).delete();
 			(new File(dir, databaseName+".lg")).delete();
-			recman = JdbmUtil.getRecordManager(databaseFile.getAbsolutePath());
 			logger.info("Activity database upgraded");
 		}
+		recman = JdbmUtil.getRecordManager(databaseFile.getAbsolutePath());
+	}
+
+	private void setDBVersion() {
+		try {
+			dbinfo.put("dbVersion", new Long(LibraryActivity.serialVersionUID));
+			recman.commit();
+		}
+		catch (Exception ignore) { }
 	}
 
 	/**
