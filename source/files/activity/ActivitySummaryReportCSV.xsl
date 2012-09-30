@@ -9,6 +9,7 @@
 	<xsl:for-each select="MonthlyReport">
 		<xsl:text>="</xsl:text><xsl:value-of select="../@siteID"/><xsl:text>",</xsl:text>
 		<xsl:text>"</xsl:text><xsl:value-of select="../@url"/><xsl:text>",</xsl:text>
+		<xsl:text>"</xsl:text><xsl:value-of select="../@ip"/><xsl:text>",</xsl:text>
 		<xsl:text>"</xsl:text><xsl:value-of select="../@name"/><xsl:text>",</xsl:text>
 		<xsl:value-of select="../@version"/><xsl:text>,</xsl:text>
 		<xsl:value-of select="../@email"/><xsl:text>,</xsl:text>
@@ -33,7 +34,7 @@
 
 
 <xsl:template name="headings">
-Site ID,URL,Site Name,Version,Admin email,Accounts,Report Date,Active Users,Libraries,Total Docs,Docs Displayed,Display Reqs,Adv Auth,Basic Auth,Submit,Zip,DICOM,TCE,MyRSNA
+Site ID,URL,IP,Site Name,Version,Admin email,Accounts,Report Date,Active Users,Libraries,Total Docs,Docs Displayed,Display Reqs,Adv Auth,Basic Auth,Submit,Zip,DICOM,TCE,MyRSNA
 </xsl:template>
 
 </xsl:stylesheet>

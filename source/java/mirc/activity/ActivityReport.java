@@ -32,6 +32,8 @@ public class ActivityReport extends Servlet {
 
 	static final Logger logger = Logger.getLogger(ActivityReport.class);
 
+	static long aWeek = 7 * 24 * 3600 * 1000;
+
 	/**
 	 * Construct an ActivityReport servlet.
 	 * @param root the root directory of the server.
@@ -89,6 +91,28 @@ public class ActivityReport extends Servlet {
 			res.send();
 		}
 
+		else if ((path.length() == 2) && path.element(1).equals("check")) {
+			//Return text indicating whether the last report was within the last week.
+			long lastReport = ActivityDB.getInstance().getLastReportTime();
+			long now = System.currentTimeMillis();
+			long age = now - lastReport;
+			if (age > aWeek) res.write("old");
+			else res.write("old"); //****************test; replace with "recent"
+			res.setContentType("txt");
+			res.send();
+		}
+
+		else if ((path.length() == 2) && path.element(1).equals("update")) {
+			//Update the lastReportTime with the current time.
+			if (req.userHasRole("admin")) {
+				ActivityDB.getInstance().setLastReportTime(System.currentTimeMillis());
+				logger.info("Summary report sent from client.");
+			}
+			res.write("ok");
+			res.setContentType("txt");
+			res.send();
+		}
+
 		else if ((path.length() == 2) && path.element(1).equals("submit")) {
 
 			//Do not require authentication so we can receive reports from remote sites.
@@ -98,7 +122,7 @@ public class ActivityReport extends Servlet {
 
 			String report = req.getParameter("report");
 			try {
-				SummariesDBEntry entry = new SummariesDBEntry(report);
+				SummariesDBEntry entry = new SummariesDBEntry(report, req.getRemoteAddress());
 				ActivityDB.getInstance().put(entry);
 				res.write("Thank you for submitting the activity summary report.");
 			}

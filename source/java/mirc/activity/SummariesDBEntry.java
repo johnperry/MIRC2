@@ -28,15 +28,15 @@ public class SummariesDBEntry implements Serializable {
 	 * Construct a summary report for storage in the summaries database.
 	 * @param report the XML string containing the summary report.
 	 */
-	public SummariesDBEntry(String report) throws Exception {
-		this( XmlUtil.getDocument(report) );
+	public SummariesDBEntry(String report, String ipAddress) throws Exception {
+		this( XmlUtil.getDocument(report), ipAddress );
 	}
 
 	/**
 	 * Construct a summary report for storage in the summaries database.
 	 * @param report the summary report XML document.
 	 */
-	public SummariesDBEntry(Document report) throws Exception {
+	public SummariesDBEntry(Document report, String ipAddress) throws Exception {
 		Element root = report.getDocumentElement();
 		String idString = root.getAttribute("siteID");
 		Long idValue = Long.parseLong(idString);
@@ -44,6 +44,7 @@ public class SummariesDBEntry implements Serializable {
 				|| (idValue.longValue() < 1340000000000L)) {
 			throw new Exception("Invalid Report");
 		}
+		root.setAttribute("ip", ipAddress);
 		this.report = report;
 		this.id = idString;
 	}

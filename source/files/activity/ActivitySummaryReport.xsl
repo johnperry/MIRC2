@@ -7,6 +7,7 @@
 		siteID="{@id}"
 		name="{@name}"
 		url="{@url}"
+		ip="{@ip}"
 		users="{@users}"
 		version="{@version}"
 		email="{@email}">

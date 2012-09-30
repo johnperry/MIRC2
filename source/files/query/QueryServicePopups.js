@@ -200,8 +200,18 @@ function showDisclaimerPopup() {
 
 function showSessionPopup() {
 	var cooks = getCookieObject();
-	var cook = getCookie("MIRC", cooks);
-	if ((cook == null) || (cook == "")) {
+
+	var admin = getCookie("ADMIN", cooks);
+	if ((admin == "") && user.isLoggedIn && user.hasRole("admin")) {
+		setSessionCookie("ADMIN", "session");
+		if (checkActivityReport()) {
+			showActivityReportPopup();
+			return;
+		}
+	}
+
+	var mirc = getCookie("MIRC", cooks);
+	if (mirc == "") {
 		setSessionCookie("MIRC", "session");
 		if (sessionPopup == "help") {
 			showHelpPopup();
@@ -213,7 +223,111 @@ function showSessionPopup() {
 			if (!user.isLoggedIn) loginLogout();
 		}
 	}
-	else if (user.isLoggedIn && user.hasRole("admin")) {
+}
 
+function checkActivityReport() {
+	var req = new AJAX();
+	req.GET("/activity/check", req.timeStamp(), null);
+	if (req.success()) {
+		return (req.responseText() == "old");
 	}
+	return false
+}
+
+function showActivityReportPopup() {
+	var id = "activityPopupID";
+	var pop = document.getElementById(id);
+	if (pop) pop.parentNode.removeChild(pop);
+
+	var w = 375;
+	var h = 375;
+
+	var div = document.createElement("DIV");
+	div.className = "content";
+	var h1 = document.createElement("H1");
+	h1.appendChild(document.createTextNode("Activity Report"));
+	h1.style.fontSize = "24pt";
+	div.appendChild(h1);
+	div.appendChild(document.createTextNode("\u00A0"));
+	var p = document.createElement("P");
+	p.style.textAlign = "left";
+	p.appendChild(document.createTextNode(
+		"This site has not sent an activity " +
+		"summary report to the RSNA for more " +
+		"than one week. Click the button below " +
+		"to view the detailed activity report on your " +
+		"your site."));
+	div.appendChild(p);
+
+	div.appendChild(document.createElement("BR"));
+
+	p = document.createElement("P");
+	var button = document.createElement("INPUT");
+	button.className = "stdbutton";
+	button.style.width = "200px";
+	button.type = "button";
+	button.value = "View Activity Report";
+	button.onclick = loadActivityReport;
+	p.appendChild(button);
+	div.appendChild(p);
+
+	div.appendChild(document.createElement("BR"));
+
+	p = document.createElement("P");
+	p.style.textAlign = "left";
+	p.appendChild(document.createTextNode(
+		"Click the button below to send a " +
+		"summary of the detailed activity " +
+		"report to the RSNA site."));
+	div.appendChild(p);
+
+	div.appendChild(document.createElement("BR"));
+
+	p = document.createElement("P");
+	button = document.createElement("INPUT");
+	button.className = "stdbutton";
+	button.style.width = "200px";
+	button.type = "button";
+	button.value = "Send Summary Report";
+	button.onclick = sendSummaryReport;
+	p.appendChild(button);
+	div.appendChild(p);
+
+	div.appendChild(document.createElement("BR"));
+
+	var p = document.createElement("P");
+	p.style.textAlign = "left";
+	p.appendChild(document.createTextNode(
+		"You can enable the automatic sending\n" +
+		"of summary reports on the "));
+	var a = document.createElement("A");
+	a.href = "/qsadmin";
+	a.appendChild(document.createTextNode("Query Service Admin"));
+	p.appendChild(a);
+	p.appendChild(document.createTextNode(" page."));
+	div.appendChild(p);
+
+	var closebox = "/icons/closebox.gif";
+	showDialog(id, w, h, "Activity Report", closebox, null, div, null, null);
+}
+
+function loadActivityReport() {
+	hidePopups();
+	window.open("/activity", "shared");
+}
+
+function sendSummaryReport() {
+	hidePopups();
+	var req = new AJAX();
+	//get the summary report from the local server
+	req.GET("/activity", "format=xml&type=summary&"+req.timeStamp(), null);
+	if (req.success()) {
+		//send the report to the RSNA site
+		var report = req.responseText();
+		window.open("http://mirc.rsna.org/activity/submit?report="+encodeURIComponent(report)+"&"+req.timeStamp(), "RSNA");
+		//update the lastReportTime on the local server
+		var updatereq = new AJAX();
+		updatereq.GET("/activity/update", req.timeStamp(), null);
+	}
+	else alert("Unable to obtain the summary report from the local server.");
 }
