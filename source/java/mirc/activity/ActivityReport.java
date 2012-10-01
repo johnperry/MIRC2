@@ -97,7 +97,7 @@ public class ActivityReport extends Servlet {
 			long now = System.currentTimeMillis();
 			long age = now - lastReport;
 			if (age > aWeek) res.write("old");
-			else res.write("old"); //****************test; replace with "recent"
+			else res.write("recent");
 			res.setContentType("txt");
 			res.send();
 		}

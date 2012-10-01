@@ -324,7 +324,7 @@ function sendSummaryReport() {
 	if (req.success()) {
 		//send the report to the RSNA site
 		var report = req.responseText();
-		window.open("http://mirc.rsna.org/activity/submit?report="+encodeURIComponent(report)+"&"+req.timeStamp(), "RSNA");
+		showSubmissionPopup("http://mirc.rsna.org/activity/submit?report="+encodeURIComponent(report)+"&"+req.timeStamp());
 		//update the lastReportTime on the local server
 		var updatereq = new AJAX();
 		updatereq.GET("/activity/update", req.timeStamp(), null);

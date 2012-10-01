@@ -8,8 +8,11 @@
 	<html>
 		<head>
 			<title>Activity Report - <xsl:value-of select="@name"/></title>
+			<link rel="stylesheet" href="/JSPopup.css" type="text/css"/>
 			<link rel="Stylesheet" type="text/css" media="all" href="/activity/ActivityReport.css"></link>
 			<script language="JavaScript" type="text/javascript" src="/JSUtil.js">;</script>
+			<script language="JavaScript" type="text/javascript" src="/JSPopup.js">;</script>
+			<script language="JavaScript" type="text/javascript" src="/activity/SummaryPopup.js">;</script>
 		</head>
 		<body>
 			<center>
@@ -42,9 +45,10 @@
 				<xsl:apply-templates select="MonthlyReport"/>
 
 				<br/>
+
 				<p>
 					<input type="button" value="Send the summary report to the RSNA"
-						onclick="window.open('http://mirc.rsna.org/activity/submit?report={$report}', 'RSNA');"/>
+						onclick="showSubmissionPopup('http://mirc.rsna.org/activity/submit?report={$report}');"/>
 					<br/><br/>
 					<input type="button" value="Format the full report as XML"
 						onclick="window.open('/activity?format=xml', '_self');"/>

@@ -46,6 +46,7 @@
 	<script language="JavaScript" type="text/javascript" src="/JSSplitPane.js">;</script>
 	<script language="JavaScript" type="text/javascript" src="/JSScrollableTable.js">;</script>
 	<script language="JavaScript" type="text/javascript" src="/JSMenu.js">;</script>
+	<script language="JavaScript" type="text/javascript" src="/activity/SummaryPopup.js">;</script>
 	<script language="JavaScript" type="text/javascript" src="/query/QueryServicePopups.js">;</script>
 	<script language="JavaScript" type="text/javascript" src="/query/IntegratedUIConfs.js">;</script>
 	<script language="JavaScript" type="text/javascript" src="/query/IntegratedUIFiles.js">;</script>
