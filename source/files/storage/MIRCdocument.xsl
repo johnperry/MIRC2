@@ -12,6 +12,7 @@
 <xsl:param name="user-can-post"/>
 
 <xsl:param name="edit-url"/>
+<xsl:param name="revert-url"/>
 <xsl:param name="add-url"/>
 <xsl:param name="sort-url"/>
 <xsl:param name="publish-url"/>
@@ -488,6 +489,7 @@
 			<xsl:otherwise>
 				<table class="footer">
 					<xsl:call-template name="edit-button"/>
+					<xsl:call-template name="revert-button"/>
 					<xsl:call-template name="publish-button"/>
 					<xsl:call-template name="caseoftheday-button"/>
 					<xsl:call-template name="conferences-button"/>
@@ -601,6 +603,17 @@
 			<td>
 				<input type="button" value="Edit" title="Edit this document"
 					onclick="openURL('{$edit-url}','_self');"/>
+			</td>
+		</tr>
+	</xsl:if>
+</xsl:template>
+
+<xsl:template name="revert-button">
+	<xsl:if test="string-length($revert-url)!=0">
+		<tr>
+			<td>
+				<input type="button" value="Edit" title="Revert tto draft document"
+					onclick="openURL('{$revert-url}','_self');"/>
 			</td>
 		</tr>
 	</xsl:if>

@@ -757,6 +757,7 @@ public class StorageService extends Servlet {
 		//	sorting the images
 		//	publishing
 		String editurl = "";
+		String reverturl = "";
 		String addurl = "";
 		String sorturl = "";
 		String publishurl = "";
@@ -764,6 +765,9 @@ public class StorageService extends Servlet {
 			editurl = "/aauth" + docIndexEntry;
 			addurl = "/addimg" + docIndexEntry;
 			sorturl = "/sort" + docIndexEntry;
+			if (!doc.getDocumentElement().getAttribute("draftpath").equals("")) {
+				reverturl = "/revert" + docIndexEntry;
+			}
 			if (req.userHasRole("publisher")) {
 				publishurl = "/publish" + docIndexEntry;
 			}
@@ -818,6 +822,7 @@ public class StorageService extends Servlet {
 			"user-can-post",		userisauthor,
 
 			"edit-url",				editurl,
+			"revert-url",			reverturl,
 			"add-url",				addurl,
 			"sort-url",				sorturl,
 			"publish-url",			publishurl,

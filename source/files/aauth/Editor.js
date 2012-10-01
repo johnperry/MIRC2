@@ -947,6 +947,9 @@ function getDocumentDescriptionText(section) {
 		var tab = trim(sList[2].value);
 		if (tab != "") text += " first-tab=\"" + tab + "\"";
 		text += " as-mode=\""+ show + "\"";
+		if (draftpath != "") {
+			text += " draftpath=\"" + draftpath + "\"";
+		}
 	}
 	else {
 		var docref = trim(iList[2].value);
@@ -954,6 +957,9 @@ function getDocumentDescriptionText(section) {
 	}
 	if (iList[3].checked) {
 		text += " pubreq=\"yes\"";
+	}
+	if (draftpath != "") {
+		text += " draftpath=\"" + draftpath + "\"";
 	}
 
 	text += ">\n";

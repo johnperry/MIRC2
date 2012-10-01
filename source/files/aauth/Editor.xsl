@@ -14,6 +14,7 @@
 <xsl:param name="activetab">1</xsl:param>
 
 <xsl:param name="draft" select="/MIRCdocument/@temp"/>
+<xsl:param name="draftpath" select="/MIRCdocument/@draftpath"/>
 
 <xsl:template match="*|@*">
   <xsl:copy>
@@ -87,6 +88,7 @@
 <script>
 	var ssid = "<xsl:value-of select="$ssid"/>";
 	var dirpath = "<xsl:value-of select="$dirpath"/>";
+	var draftpath = "<xsl:value-of select="$draftpath"/>";
 	var mode = "<xsl:value-of select="$mode"/>";
 	var show = <xsl:value-of select="$as-mode"/>;
 	var firstTabAttribute = "<xsl:value-of select="@first-tab"/>";
@@ -547,7 +549,7 @@
 			Enter the title of the document as you want it displayed for normal viewing.
 		</p>
 		<textarea class="title">
-			<xsl:if test="not($draft='yes')">
+			<xsl:if test="not($draft='yes') or $draftpath">
 				<xsl:value-of select="$norm-title"/>
 			</xsl:if>
 		</textarea>
@@ -558,7 +560,7 @@
 			want this feature, you can leave this field blank.
 		</p>
 		<textarea class="title" hideable="true">
-			<xsl:if test="not($draft='yes')">
+			<xsl:if test="not($draft='yes') or $draftpath">
 				<xsl:value-of select="$norm-alttitle"/>
 			</xsl:if>
 		</textarea>

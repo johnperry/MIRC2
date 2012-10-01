@@ -5,7 +5,7 @@
 *  RSNA Public License (http://mirc.rsna.org/rsnapubliclicense)
 *----------------------------------------------------------------*/
 
-package mirc.sort;
+package mirc.revert;
 
 import java.io.File;
 
@@ -21,22 +21,23 @@ import org.rsna.servlets.Servlet;
 
 import org.apache.log4j.Logger;
 
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
- * Class to sort the images in the image-section of a MIRCdocument..
+ * Servlet to convert a MIRCdocument back to draft mode.
  * This service accepts only a GET and returns the modified MIRCdocument.
  */
-public class SortImagesService extends Servlet {
+public class RevertService extends Servlet {
 
-	static final Logger logger = Logger.getLogger(SortImagesService.class);
+	static final Logger logger = Logger.getLogger(RevertService.class);
 
 	/**
-	 * Construct a SortImagesService servlet.
+	 * Construct a RevertService servlet.
 	 * @param root the root directory of the server.
 	 * @param context the path identifying the servlet.
 	 */
-	public SortImagesService(File root, String context) {
+	public RevertService(File root, String context) {
 		super(root, context);
 		//Override the root supplied by the HttpServer
 		//with the root of the MIRC plugin.
@@ -44,7 +45,7 @@ public class SortImagesService extends Servlet {
 	}
 
 	/**
-	 * Sort the image-section and return the modified MIRCdocument.
+	 * Convert the document to draft mode, if possible, and return the modified MIRCdocument.
 	 * @param req The HttpServletRequest provided by the servlet container.
 	 * @param res The HttpServletResponse provided by the servlet container.
 	 * @throws ServletException if the servlet cannot handle the request.
@@ -67,25 +68,42 @@ public class SortImagesService extends Servlet {
 				//Get the document
 				Index index = Index.getInstance(ssid);
 				String docPath = path.subpath(3).substring(1);
-				File docFile = new File( index.getDocumentsDir(), docPath );
+				File docsDir = index.getDocumentsDir();
+				File docFile = new File( docsDir, docPath );
 				MircDocument md = new MircDocument(docFile);
 
 				//See if we can update this document
 				if (md.authorizes( "update", req.getUser() )) {
 
-					//Sort and save the document
-					md.sortImageSection();
-					md.save();
+					//See if we can revert the document to draft mode.
+					//This is only possible if the root element's temp attribute
+					//is not "yes" and the draftpath attribute is non-blank.
+					Document doc = md.getXML();
+					Element root = doc.getDocumentElement();
+					String temp = root.getAttribute("temp");
+					String draftpath = root.getAttribute("draftpath");
+					if (!temp.equals("yes") && !draftpath.equals("")) {
 
-					//Redirect to the document
-					res.redirect("/storage" + path.subpath(1));
-					return;
+						//First, fix up the attributes
+						root.setAttribute("temp", "yes");
+						root.removeAttribute("draftpath");
+						md.save();
+
+						//Now change the directory name
+						File parent = docFile.getParentFile();
+						File destination = new File( docsDir, draftpath );
+						parent.renameTo(destination);
+
+						//Redirect to the document in the new location
+						res.redirect("/storage/" + draftpath);
+						return;
+					}
 
 				}
 			}
 		}
-		//If we get here, either the user isn't allowed to modify the document
-		//or the POST didn't come from a MIRC site and somebody is hacking us.
+		//If we ever get here, something isn the UI is wrong or somebody
+		//is typing in a URL; just redirect to the query page.
 		res.redirect("/query");
 	}
 
