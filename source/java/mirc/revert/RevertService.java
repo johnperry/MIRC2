@@ -84,21 +84,36 @@ public class RevertService extends Servlet {
 					String draftpath = root.getAttribute("draftpath");
 					if (!temp.equals("yes") && !draftpath.equals("")) {
 
-						//First, fix up the attributes
+						Path newpath = new Path(draftpath);
+						String basepath = newpath.subpath(2).substring(1);
+
+						//First, set the temp attribute to indicate that
+						//the document is a draft. Note that we keep the
+						//draftpath attribute so the Advanced Author Tool
+						//won't replace the titles if the document is edited.
 						root.setAttribute("temp", "yes");
-						root.removeAttribute("draftpath");
 						md.save();
 
 						//Now change the directory name
 						File parent = docFile.getParentFile();
-						File destination = new File( docsDir, draftpath );
-						parent.renameTo(destination);
+						File newDocFile = new File( docsDir, basepath );
+						File destination = newDocFile.getParentFile();
+
+						if (!parent.renameTo(destination)) {
+							logger.warn("Unable to rename to draft status");
+						}
+
+						//Remove the document from the index
+						index.removeDocument(index.getKey(docFile));
+
+						//Index the document in its current location
+						index.insertDocument(index.getKey(newDocFile));
+						index.commit();
 
 						//Redirect to the document in the new location
-						res.redirect("/storage/" + draftpath);
+						res.redirect("/storage" + draftpath);
 						return;
 					}
-
 				}
 			}
 		}

@@ -196,6 +196,7 @@ public class AuthorService extends Servlet {
 						new Object[] {
 							"prefs",	prefs,
 							"ssid",		ssid,
+							"docpath",	path.subpath(1),
 							"dirpath",	dirPath,
 							"icons",	getIcon96(docFile.getParentFile()),
 							"authpath",	authPath,

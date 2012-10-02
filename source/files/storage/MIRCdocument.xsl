@@ -489,7 +489,6 @@
 			<xsl:otherwise>
 				<table class="footer">
 					<xsl:call-template name="edit-button"/>
-					<xsl:call-template name="revert-button"/>
 					<xsl:call-template name="publish-button"/>
 					<xsl:call-template name="caseoftheday-button"/>
 					<xsl:call-template name="conferences-button"/>
@@ -499,6 +498,7 @@
 					<xsl:call-template name="myrsna-button"/>
 					<xsl:call-template name="addimages-button"/>
 					<xsl:call-template name="sortimages-button"/>
+					<xsl:call-template name="revert-button"/>
 					<xsl:call-template name="delete-button"/>
 				</table>
 			</xsl:otherwise>
@@ -612,7 +612,7 @@
 	<xsl:if test="string-length($revert-url)!=0">
 		<tr>
 			<td>
-				<input type="button" value="Edit" title="Revert tto draft document"
+				<input type="button" value="Revert to draft status"
 					onclick="openURL('{$revert-url}','_self');"/>
 			</td>
 		</tr>

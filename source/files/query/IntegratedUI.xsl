@@ -139,14 +139,16 @@
 		</div>
 
 		<div class="L2x" id="CaseOfTheDay">
-			<a href="{news/url}" target="shared" title="{news/title}">Case of the Day</a>
+			<xsl:variable name="url" select="normalize-space(news/url)"/>
+			<xsl:variable name="title" select="normalize-space(news/title)"/>
+			<a href="{$url}" target="shared" title="{$title}">Case of the Day</a>
 			<br/>
 			<xsl:if test="news/image">
 				<img class="cod"
-					 src="{news/image}"
+					 src="{normalize-space(news/image)}"
 					 width="128"
-					 title="{news/title}"
-					 onclick="window.open('{news/url}', 'shared');"/>
+					 title="{$title}"
+					 onclick="window.open('{$url}', 'shared');"/>
 				<br/>
 			</xsl:if>
 		</div>

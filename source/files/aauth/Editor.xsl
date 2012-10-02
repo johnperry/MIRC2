@@ -3,6 +3,7 @@
 
 <xsl:param name="prefs"/>
 <xsl:param name="ssid"/>
+<xsl:param name="docpath"/>
 <xsl:param name="dirpath"/>
 <xsl:param name="authpath"/>
 <xsl:param name="date"/>
@@ -87,7 +88,9 @@
 </xsl:variable>
 <script>
 	var ssid = "<xsl:value-of select="$ssid"/>";
+	var docpath = "<xsl:value-of select="$docpath"/>";
 	var dirpath = "<xsl:value-of select="$dirpath"/>";
+	var draft = "<xsl:value-of select="@temp"/>";
 	var draftpath = "<xsl:value-of select="$draftpath"/>";
 	var mode = "<xsl:value-of select="$mode"/>";
 	var show = <xsl:value-of select="$as-mode"/>;

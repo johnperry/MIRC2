@@ -396,6 +396,12 @@ public class SubmitService extends Servlet {
 						Element root = doc.getDocumentElement();
 						if (root.getTagName().equals("MIRCdocument")) {
 							xmlFile = checkFilename(outFile);
+							if (!root.getAttribute("temp").equals("")
+									|| !root.getAttribute("draftpath").equals("")) {
+								root.removeAttribute("temp");
+								root.removeAttribute("draftpath");
+								FileUtil.setText(xmlFile, XmlUtil.toString(doc));
+							}
 						}
 					}
 					catch (Exception doesNotParse) {
