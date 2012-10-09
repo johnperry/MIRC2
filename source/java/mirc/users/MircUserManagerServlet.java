@@ -440,7 +440,7 @@ public class MircUserManagerServlet extends Servlet {
 			}
 			sb.append("<input name=\"r"+i+"\" type=\"hidden\" value=\""+rolenames[i]+"\"/></th>\n" );
 		}
-		sb.append( "  <th class=\"thleft\">Password</th>\n" );
+		sb.append( "  <th class=\"thleft\" colspan=\"3\">Password</th>\n" );
 		sb.append( " </tr>\n" );
 		sb.append( "</thead>\n" );
 	}

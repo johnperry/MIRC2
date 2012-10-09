@@ -23,13 +23,13 @@ div.cnbdiv {
 table.AIsel {
 	border: thin solid red;
 	width: 100%;
-	background-color: #c6d8f9;
+	background-color: #f8f8f8;
 }
 
 table.AIdesel {
 	border: thin solid #c6d8f9;
 	width: 100%;
-	background-color: #c6d8f9;
+	background-color: #f8f8f8;
 }
 
 td.AIbullet {

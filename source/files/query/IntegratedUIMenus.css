@@ -15,7 +15,6 @@ div.MenuBar {
 	color: black;
 	margin-left: 20px;
 	margin-top: 8px;
-	background: #A8C7FF;
 }
 
 
@@ -25,11 +24,13 @@ div.MenuBar span {
 }
 
 div.Menubar span.highlight {
-	background: white;
+	font-weight: bold;
+	/*background: white;*/
 }
 
 div.MenuBar span.dehighlight {
-	background: #A8C7FF;
+	font-weight:normal;
+	/*background: #f8f8f8;*/
 }
 
 div.MenuBar div.desc {
@@ -46,8 +47,8 @@ div.Menu {
 	font-size: 10pt;
 	font-family: Arial, Helvetica, Verdana, sans-serif;
 	font-weight: normal; /*bold;*/
-	background-color: #A8C7FF;
-	border: thin outset #A8C7FF;*/
+	background-color: #f8f8f8;
+	border: thin outset gray;
 }
 
 div.Menu hr {
@@ -58,6 +59,7 @@ div.Menu hr {
 div.Menu span { 
 	color: black; /*#0000c0;*/
 	cursor: hand;
+	font-weight: bold;
 }
 
 div.Menu span.unselectable {
@@ -66,14 +68,19 @@ div.Menu span.unselectable {
 
 div.Menu span.notenabled {
 	color: gray;
+	font-weight: normal;
 }
 
 div.Menu span.highlight {
-	background: white;
+	color: #2977b9;
+	font-weight: bold;
+	/*background: white;*/
 }
 
 div.Menu span.dehighlight {
-	background: #A8C7FF;
+	color: black;
+	font-weight:bold;
+	/*background: #f8f8f8;*/
 }
 
 div.Menu span.larr {

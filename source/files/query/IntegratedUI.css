@@ -17,19 +17,23 @@ body {
 }
 
 div.header {
-	background:#C6D8F9;
+	background:#ffffff;
 	margin: 0;
 	padding: 0;
 	padding-bottom: 3px;
 	text-align: left;
 	border: none;
-	border-bottom: thin solid black;
+	border-bottom: thin solid #2977b9;
 	/*overflow: hidden;*/
 	white-space: nowrap;
 	height: 41px;
 }
 
-div.header input#freetext { width:250px; }
+div.header input#freetext { 
+	width:250px;
+	border: 1px solid gray;
+}
+
 div.header .modifiers {
 	display: block;
 	width: 250;
@@ -55,7 +59,7 @@ span.sitename {
 	font-size: 18pt;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-weight: bold;
-	color: blue;
+	color: #2977b9;
 	padding: 6px;
 	padding-top: 10px;
 	padding-right: 10px;
@@ -120,27 +124,39 @@ img.cod {
 }
 
 div.footer {
-	font-size: 10pt;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
-	font-weight: normal;
-	color: black;	
-	background:#C6D8F9;
 	border: none;
-	border-top: thin solid black;
+	border-top: thin solid #2977b9;
 }
 
-div.footer span.productname {
+div.footerlogo {
+	height:26px;
+	background-color:#FFFFFF;
+}
+
+div.footerlogo span.productname {
 	font-size: 10pt;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-weight: bold;
 	color: #004E96;
-	padding-left:3pt;
-	margin-bottom: 2px;
+	vertical-align: 3px;
 }	
 
 div.footerRight { 
-	margin-top: 9px;
-	float: right; 
+	background:url(/mirc/images/FooterBackground.jpg);
+	height:29px;
+	width:100%;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	color:white;
+	text-align:right;
+	font-size:12px;
+}
+
+div.footerRight a {
+	color: white;
+}
+
+div.footerRight a:visited { 
+	color: white; 
 }
 
 div.rightpane {
@@ -154,7 +170,10 @@ div.rightpane div.scrollDiv {
 
 div.rightpane table {
 	width: 100%;
+	border-collapse:collapse;
 }
+
+
 div.rightpane table img.spaceRight {
 	margin-right: 4px;
 }
@@ -163,9 +182,11 @@ div.rightpane table th {
 	text-align: left;
 	font-size: 10pt;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
-	background: #A8C7FF;
+	background: #d0d0d0;
+	border: 1px solid #d0d0d0;
+	border-collapse:collapse;
 }
-div.rightpane table th.sort A { color: white; }
+div.rightpane table th.sort A { color: #2977b9; }
 div.rightpane table th.none A { color: black; }
 	
 div.rightpane table td {
@@ -174,6 +195,8 @@ div.rightpane table td {
 	background: white;
 	font-size: 10pt;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
+	border: 1px solid #99ccff;
+	border-collapse:collapse;
 }
 div.rightpane table td .center {
 	text-align: center;
@@ -183,11 +206,9 @@ div.rightpane table td.tableCB {
 }
 div.rightpane table td.blankTD {
 	width: 20px;
-	background:#C6D8F9;
 }
 div.rightpane table td.detailsTD {
 	white-space: normal;
-	background:#C6D8F9;
 	padding-left: 20px;
 	overflow: auto;
 }
@@ -240,14 +261,14 @@ div.links img {
 	padding:0;
 	overflow:auto;
 	white-space:nowrap;
-	background:#A8C7FF;
+	background:#f8f8f8;
 }
 .centerpane {
 	position:absolute;
 	border:0;
 	margin:0;
 	padding:0;
-	background:#C6D8F9;
+	background:#2977b9;
 	cursor:col-resize;
 }
 .rightpane {
@@ -256,7 +277,7 @@ div.links img {
 	margin:0;
 	padding:0;
 	overflow:auto;
-	background:#C6D8F9;
+	background:#f8f8f8;
 }
 
 .w0  { padding-left: 0px; }
@@ -298,7 +319,7 @@ div#right img.sel {
 }
 
 div#right img.desel {
-	border:1px #C6D8F9 solid; 
+	border:1px #ffffff solid; 
 	margin:1px;
 }
 
@@ -327,7 +348,7 @@ div#AdvancedQuery input.clearbutton {
 	margin-top:5px;
 	width:165px;
 	background-color: white;
-	color: #6495ED;
+	color: #2977b9;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-weight: bold;
 }
@@ -337,7 +358,7 @@ div#AdvancedQuery input.tab {
 	font-weight: bold;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	background-color: white;
-	color: #6495ED;
+	color: #2977b9;
 }
 
 div#AdvancedQuery input.go {
@@ -345,7 +366,7 @@ div#AdvancedQuery input.go {
 	color: white;
 	border: 3px outset white;
 	border-style: outset;
-	background-color: #6495ED;
+	background-color: #2977b9;
 	font-size: 18pt;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-weight: bold;

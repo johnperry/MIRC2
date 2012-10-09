@@ -521,7 +521,7 @@ function disableButton(id, display) {
 function enableButton(id, display) {
 	var b = document.getElementById(id)
 	b.disabled = false;
-	b.style.backgroundColor = 'dodgerblue';
+	b.style.backgroundColor = '#2977b9';
 	b.style.color = 'white';
 	b.style.fontWeight = 'bold';
 	b.style.visibility = 'visible';

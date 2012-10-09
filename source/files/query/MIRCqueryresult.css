@@ -2,7 +2,7 @@ p {margin:0;padding:0;}
 
 hr {
 	margin-right: 10px;
-	color: #6495ED;
+	color: #2977b9;
 }
 
 body.stdresults {
@@ -10,7 +10,7 @@ body.stdresults {
 	padding: 0; 
 	padding-bottom: 0
 	overflow: hidden;
-	background: #c6d8f9; /*url(bg.jpg);*/
+	background: #f8f8f8; /*url(bg.jpg);*/
 	background-repeat: no-repeat;
 	background-attachment: fixed;
 }

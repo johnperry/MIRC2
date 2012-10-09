@@ -12,7 +12,7 @@
 <xsl:template match="/User">
 	<html>
 		<head>
-			<title>Author Service</title>
+			<title>Advanced Author Tool</title>
 			<link rel="Stylesheet" type="text/css" media="all" href="/JSPopup.css"></link>
 			<link rel="Stylesheet" type="text/css" media="all" href="/aauth/AuthorService.css"></link>
 			<script language="JavaScript" type="text/javascript" src="/JSUtil.js">;</script>
@@ -47,7 +47,7 @@
 				</div>
 			</xsl:if>
 
-			<h1>Author Service</h1>
+			<h1>Advanced Author Tool</h1>
 
 			<form id="formID" action="" method="POST" accept-charset="UTF-8" >
 

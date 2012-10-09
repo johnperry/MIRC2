@@ -173,7 +173,6 @@ public class MircConfig {
 				siteurl = protocol + "://" + host + ":" + ctp.getServerPort();
 				mircRoot.setAttribute("siteurl", siteurl);
 			}
-			logger.info("Site URL: "+siteurl);
 		}
 		catch (Exception ex) { }
 		return siteurl;

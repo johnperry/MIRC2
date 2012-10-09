@@ -15,7 +15,7 @@
 	<xsl:variable name="title" select="title"/>
 	<html>
 		<head>
-			<title>Basic Author Service</title>
+			<title>Basic Author Tool</title>
 			<link rel="Stylesheet" type="text/css" media="all" href="/JSPopup.css"></link>
 			<link rel="Stylesheet" type="text/css" media="all" href="/bauth/BasicAuthorService.css"></link>
 			<script language="JavaScript" type="text/javascript" src="/JSUtil.js">;</script>
@@ -46,7 +46,7 @@
 				</div>
 			</xsl:if>
 
-			<h1>Basic Author Service</h1>
+			<h1>Basic Author Tool</h1>
 
 			<form id="formID" action="" method="POST" accept-charset="UTF-8" enctype="multipart/form-data" >
 			<input type="hidden" name="ui" value="{$ui}"/>

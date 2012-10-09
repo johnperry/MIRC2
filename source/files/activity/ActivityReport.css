@@ -1,5 +1,5 @@
 body {
-	background: #c6d8f9;
+	background: #f8f8f8;
 	padding:0;
 	margin:0;
 	border-style: none;
@@ -39,7 +39,7 @@ th {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-size: 10pt;
 	padding:5;
-	background:#8cb0f2;
+	background:#e0e0e0;
 	vertical-align: bottom;
 }
 
@@ -47,7 +47,8 @@ td {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-size: 10pt;
 	padding: 5;
-	vertical-align:top;
+	vertical-align: top;
+	background: white;
 }
 
 td.n {
@@ -61,13 +62,13 @@ td.right {
 td.t {
 	text-align:center;
 	font-weight: bold;
-	background:#8cb0f2;
+	background:#e0e0e0;
 }
 
 td.tl {
 	text-align:left;
 	font-weight: bold;
-	background:#8cb0f2;
+	background:#e0e0e0;
 }
 
 p {
