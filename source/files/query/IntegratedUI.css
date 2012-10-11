@@ -129,8 +129,8 @@ div.footer {
 }
 
 div.footerlogo {
-	height:26px;
 	background-color:#FFFFFF;
+	clear:both;
 }
 
 div.footerlogo span.productname {
