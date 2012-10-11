@@ -20,7 +20,7 @@ import org.w3c.dom.*;
  */
 public class LibraryActivity implements Serializable {
 
-	public static final long serialVersionUID = 3;
+	public static final long serialVersionUID = 5;
 	static final Logger logger = Logger.getLogger(LibraryActivity.class);
 
 	Hashtable<String,Integer> counters;
@@ -30,6 +30,7 @@ public class LibraryActivity implements Serializable {
 	Hashtable<String,String> titles; //docKey -> title
 	String ssid;
 	String date;
+	int size;
 
 	String[] services = {
 		"aauth",
@@ -50,6 +51,7 @@ public class LibraryActivity implements Serializable {
 		activeUsers = new HashSet<String>();
 		userDisplayActivity = new Hashtable<String,HashSet<String>>();
 		titles = new Hashtable<String,String>();
+		size = 0;
 
 		//preload the standard trackers
 		for (String type : services) counters.put( type, new Integer(0) );
@@ -66,6 +68,17 @@ public class LibraryActivity implements Serializable {
 		counter = new Integer(counter.intValue() + 1);
 		counters.put(type, counter);
 		if (username != null) activeUsers.add(username);
+
+		//Update the size parameter
+		update();
+	}
+
+	/**
+	 * Update the library size.
+	 */
+	public synchronized void update() {
+		Index index = Index.getInstance(ssid);
+		if (index != null) size = index.getIndexSize();
 	}
 
 	/**
@@ -103,10 +116,7 @@ public class LibraryActivity implements Serializable {
 			String title = "";
 			if (titleEl != null) title = titleEl.getTextContent();
 			el.setAttribute("title", title);
-			Index index = Index.getInstance(ssid);
-			if (index != null) {
-				el.setAttribute("docs", Integer.toString(index.getAllDocuments().length));
-			}
+			el.setAttribute("docs", Integer.toString(size));
 			el.setAttribute("docsDisplayed", Integer.toString(docsDisplayed.size()));
 			el.setAttribute("activeUsers", Integer.toString(activeUsers.size()));
 			for (String type : counters.keySet()) {

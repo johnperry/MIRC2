@@ -63,6 +63,7 @@ public class ActivityDB {
 			try {
 				Long version = (Long)dbinfo.get("dbVersion");
 				isCurrentVersion = ((version != null) && (LibraryActivity.serialVersionUID == version.longValue()));
+				if (isCurrentVersion) return;
 			}
 			catch (Exception notCurrent) { }
 		}
@@ -215,10 +216,19 @@ public class ActivityDB {
 		catch (Exception ignore) { }
 	}
 
+	//Update the library sizes for the current month.
+	private synchronized void updateSizes() {
+		ActivityDBEntry dbe = get();
+		if (dbe != null) dbe.update();
+	}
+
 	/**
 	 * Get an XML Document containing the contents of the activities database.
 	 */
 	public synchronized Document getXML() {
+		updateSizes();
+
+		//Now generate the XML
 		MircConfig mc = MircConfig.getInstance();
 		Document doc = null;
 		try {
@@ -263,6 +273,9 @@ public class ActivityDB {
 	 * Get an XML Document containing the contents of the summaries database.
 	 */
 	public synchronized Document getSummariesXML() {
+		updateSizes();
+
+		//Now generate the XML
 		Document doc = null;
 		try {
 			doc = XmlUtil.getDocument();

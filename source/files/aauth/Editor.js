@@ -43,7 +43,7 @@ window.onresize = setSize;
 
 //These variables set the border-colors of selected and unselected objects.
 //Note: these colors must correspond to the values in the editor-styles.cs file.
-var unselColor = "#88bbff";
+var unselColor = "#eeeeee";
 var selColor = "red";
 
 //These variables define the state of the editor.

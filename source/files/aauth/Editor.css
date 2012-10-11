@@ -2,7 +2,7 @@
 
 /* The body of the document */
 body {
-	background-color:	#88bbff; 
+	background-color:	white; 
 	margin:			0; 
 	border:			0; 
 	padding:		4; 
@@ -27,7 +27,7 @@ h1 {
 	text-align:		left;
 	margin-left:		10;
 	margin-top:		10;
-	color:			blue;
+	color:			#2977b9;
 }
 
 /* The sub-heading level used on some pages */
@@ -39,12 +39,12 @@ h2 {
 	margin-bottom:		0;
 	font-size:		xx-small;
 	font-weight:		bold;
-	color:			blue;
+	color:			#2977b9;
 }
 
 /* The rule that goes below the tabs */
 hr {
-	color:			#77aaff;
+	color:			#2977b9;
 }
 
 /*------------- The toolbar --------------*/
@@ -54,7 +54,7 @@ hr {
 	font-family:		Verdana, Arial, Helvetica, sans-serif;
 	font-weight:		normal;
 	color:			gray;
-	background-color:	#99ccff; 
+	background-color:	white; 
 	margin:			0; 
 	margin-bottom:		4;
 	border:			0; 
@@ -74,7 +74,7 @@ hr {
 
 .group {
 	margin-right:		10;
-	border:			thin solid #88bbff;
+	border:			thin solid #2977b9;
 	padding:		2;
 }
 
@@ -86,13 +86,13 @@ hr {
 
 /*------------------- The tabs --------------------*/
 .tabs {
-	background-color:	#88bbff;
+	background-color:	whitef;
 }
 
 /* A deselected tab - with background the same as the tabs div */
 input.deselectedTab {
 	color:			white;
-	background-color:	#66aaff;
+	background-color:	#2977b9;
 	font-size:		xx-small;
 	font-family:		Verdana, Arial, Helvetica, sans-serif;
 	font-weight:		bold;
@@ -100,12 +100,13 @@ input.deselectedTab {
 	margin:			3;
 	padding:		0 5 0 5;
 	overflow:		visible;
+	border:			thin solid #2977b9;
 }
 
 /* A selected tab - with the same text color but a bright background */
 input.selectedTab {
-	color:			white;
-	background-color:	blue;
+	color:			#2977b9;
+	background-color:	white;
 	font-size:		xx-small;
 	font-family:		Verdana, Arial, Helvetica, sans-serif;
 	font-weight:		bold;
@@ -113,12 +114,13 @@ input.selectedTab {
 	margin:			3;
 	padding:		0 5 0 5;
 	overflow:		visible;
+	border:			thin solid #2977b9;
 }
 /*---------------- End of the tabs ----------------*/
 
 /*------------- The palette --------------*/
 div.palette {
-	background-color:#88bbff; 
+	background-color:#f8f8f8; 
 	margin:			0; 
 	border:			0; 
 	padding:		0; 
@@ -144,15 +146,15 @@ div.filesdiv {
 div.hide {visibility:hidden; display:none;}
 
 .sectionImg {
-	border:			thin solid #88bbff;
+	border:			thin solid #f8f8f8;
 }
 
 .commentblockImg {
-	border:			thin solid #88bbff;
+	border:			thin solid #eeeeee;
 }
 
 .editor {
-	background-color:	#77aaff; 
+	background-color:	#eeeeee; 
 	margin:			0; 
 	border:			0;
 	padding:		0; 
@@ -162,7 +164,7 @@ div.hide {visibility:hidden; display:none;}
 
 .fileImg {
 	width:			96;
-	border:			thin solid #77aaff;
+	border:			thin solid #eeeeee;
 }
 
 .sectionPage {
@@ -194,7 +196,7 @@ div.hide {visibility:hidden; display:none;}
 }
 
 .p2 {
-	border:			thin solid #88bbff;
+	border:			thin solid #eeeeee;
 	margin-left:		15%;
 	margin-right:		15%;
 	padding:		10;
@@ -225,7 +227,7 @@ div.hide {visibility:hidden; display:none;}
 	margin-right:		20;
 	margin-top:		10;
 	margin-bottom:		20;
-	border:			thin solid #77aaff;
+	border:			thin solid #eeeeee;
 }
 
 .w300 {
@@ -279,7 +281,7 @@ table.captiontable {
 	margin:			auto;
 	width:			40%;
 	border-collapse:collapse;
-	border:			thin solid #88bbff;
+	border:			thin solid #eeeeee;
 }
 
 table.captiontable td.checkbox {
@@ -290,13 +292,13 @@ table.captiontable td.checkbox {
 table.pttable {
 	margin:			auto;
 	border-collapse:collapse;
-	border:			thin solid #88bbff;
+	border:			thin solid #eeeeee;
 }
 
 table.techtable {
 	margin:			auto;
 	border-collapse:collapse;
-	border:			thin solid #88bbff;
+	border:			thin solid #eeeeee;
 }
 
 table.pttable td {
@@ -306,11 +308,11 @@ table.pttable td {
 table.pmtable {
 	margin:			auto;
 	border-collapse:collapse;
-	border:			thin solid #88bbff;
+	border:			thin solid #eeeeee;
 }
 
 table.pmtable td {
-	border:			thin solid #88bbff;
+	border:			thin solid #eeeeee;
 	padding:		5;
 }
 
@@ -326,7 +328,7 @@ table.pmtable td {
 }
 
 .sectionP {
-	border:			thin solid #88bbff;
+	border:			thin solid #eeeeee;
 	margin-left:		0;
 	margin-right:		0;
 	width:			600;
@@ -334,7 +336,7 @@ table.pmtable td {
 }
 
 .sectionP40 {
-	border:			thin solid #88bbff;
+	border:			thin solid #eeeeee;
 	margin-left:		0;
 	margin-right:		0;
 	width:			600;
@@ -345,7 +347,7 @@ table.pmtable td {
 table.quiz {
 	margin:			auto;
 	width:			80%;
-	border:			thin solid #88bbff;
+	border:			thin solid #2977b9;
 	border-collapse:	collapse;
 	background-color:	#99ccff;
 }
@@ -391,16 +393,16 @@ table.quiz td.ans {
 	font-weight:	bold;
 	text-align:	right;
 	width:		10%;
-	border-top:	thin solid #88bbff;
-	border-bottom:	thin solid #88bbff;
+	border-top:	thin solid #2977b9;
+	border-bottom:	thin solid #2977b9;
 }
 
 table.quiz td.ansa {
-	border-top:	thin solid #88bbff;
+	border-top:	thin solid #2977b9;
 }
 
 table.quiz td.ansr {
-	border-bottom:	thin solid #88bbff;
+	border-bottom:	thin solid #2977b9;
 }
 
 table.quiz button.quiz {
@@ -472,6 +474,6 @@ table.quiz button.quiz {
 	width:		100%;
 	text-align: 	left;
 	overflow: 	auto;
-	background: 	#A8C7FF;
+	background: 	#eeeeee;
 }
 /*----------End of File tree popup ------------*/

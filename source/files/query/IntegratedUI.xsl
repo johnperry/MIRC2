@@ -226,7 +226,7 @@
 <div class="footer">
     <div class="footerlogo">
     	<img src="/mirc/images/RSNAinformaticsLogo.jpg"/>
-    	<span class="productname">TEACHING FILE SYSTEM</span>
+    	<span class="productname">MIRC TEACHING FILE SYSTEM</span>
 	</div>
 	<div class="footerRight">
 		<a href="/query?UI=classic">Classic UI</a>&#160;&#160;

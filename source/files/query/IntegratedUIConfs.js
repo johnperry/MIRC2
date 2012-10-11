@@ -32,33 +32,35 @@ function setConfEnables() {
 	confMenuBar.setEnable("unknowntitles", showNormalTitles);
 	confMenuBar.setEnable("conferenceCenter", user.isLoggedIn);
 
-	var ctrls = document.getElementById("ConfControls");
-	if (!ctrls) {
-		ctrls = document.createElement("DIV");
-		ctrls.id = "ConfControls";
-		var parent = document.getElementById("right");
-		parent.insertBefore(ctrls, parent.firstChild);
-	}
-	else while (ctrls.firstChild) ctrls.removeChild(ctrls.firstChild);
+	if (currentConfTreeNode) {
+		var ctrls = document.getElementById("ConfControls");
+		if (!ctrls) {
+			ctrls = document.createElement("DIV");
+			ctrls.id = "ConfControls";
+			var parent = document.getElementById("right");
+			parent.insertBefore(ctrls, parent.firstChild);
+		}
+		else while (ctrls.firstChild) ctrls.removeChild(ctrls.firstChild);
 
-	insertConfDragControl(ctrls, startAgendaItemDrag, "/icons/bullet.gif", "Drag the selected casess", user.isLoggedIn && (nSelected > 0));
-	insertConfImgControl(ctrls, newConference, "/mirc/images/newfolder.png", "Create a new conference in the current conference", user.isLoggedIn && currentConfTreeNode);
-	insertConfImgControl(ctrls, renameConference, "/mirc/images/renamefolder.png", "Rename the current conference", user.isLoggedIn && currentConfTreeNode && !root);
-	insertConfImgControl(ctrls, deleteConference, "/mirc/images/deletefolder.png", "Delete the current conference", user.isLoggedIn && currentConfTreeNode && !root);
-	insertConfImgControl(ctrls, newAgendaItem, "/mirc/images/newitem.png", "Create a link to a new case in the current conference", user.isLoggedIn && currentConfTreeNode);
-	insertConfImgControl(ctrls, deleteAgendaItems, "/mirc/images/deleteitem.png", "Remove the selected cases from the conference", user.isLoggedIn && (nSelected > 0));
-	insertConfImgControl(ctrls, normalTitles, "/mirc/images/toggletitles.png", "Display titles as knowns", !showNormalTitles);
-	insertConfImgControl(ctrls, unknownTitles, "/mirc/images/toggletitles.png", "Display titles as unknowns", showNormalTitles);
-	insertConfImgControl(ctrls, displayCN, "/mirc/images/film-projector.gif", "Display the selected cases in the Case Navigator", (nSelected > 0));
-/*
-	insertConfButtonControl(ctrls, newConference, "New Conference", "Create a new conference in the current conference", user.isLoggedIn && currentConfTreeNode);
-	insertConfButtonControl(ctrls, renameConference, "Rename Conference", "Rename the current conference", user.isLoggedIn && currentConfTreeNode && !root);
-	insertConfButtonControl(ctrls, deleteConference, "Delete Conference", "Delete the current conference", user.isLoggedIn && currentConfTreeNode && !root);
-	insertConfButtonControl(ctrls, newAgendaItem, "New Agenda Item", "Create a new agenda item in the current conference", user.isLoggedIn && currentConfTreeNode);
-	insertConfButtonControl(ctrls, deleteAgendaItems, "Delete Agenda Items", "Delete the selected agenda items", user.isLoggedIn && (nSelected > 0));
-	insertConfButtonControl(ctrls, normalTitles, "Normal Titles", "Display titles as knowns", !showNormalTitles);
-	insertConfButtonControl(ctrls, unknownTitles, "Unknown Titles", "Display titles as unknowns", showNormalTitles);
-*/
+		insertConfDragControl(ctrls, startAgendaItemDrag, "/icons/bullet.gif", "Drag the selected casess", user.isLoggedIn && (nSelected > 0));
+		insertConfImgControl(ctrls, newConference, "/mirc/images/newfolder.png", "Create a new conference in the current conference", user.isLoggedIn && currentConfTreeNode);
+		insertConfImgControl(ctrls, renameConference, "/mirc/images/renamefolder.png", "Rename the current conference", user.isLoggedIn && currentConfTreeNode && !root);
+		insertConfImgControl(ctrls, deleteConference, "/mirc/images/deletefolder.png", "Delete the current conference", user.isLoggedIn && currentConfTreeNode && !root);
+		insertConfImgControl(ctrls, newAgendaItem, "/mirc/images/newitem.png", "Create a link to a new case in the current conference", user.isLoggedIn && currentConfTreeNode);
+		insertConfImgControl(ctrls, deleteAgendaItems, "/mirc/images/deleteitem.png", "Remove the selected cases from the conference", user.isLoggedIn && (nSelected > 0));
+		insertConfImgControl(ctrls, normalTitles, "/mirc/images/toggletitles.png", "Display titles as knowns", !showNormalTitles);
+		insertConfImgControl(ctrls, unknownTitles, "/mirc/images/toggletitles.png", "Display titles as unknowns", showNormalTitles);
+		insertConfImgControl(ctrls, displayCN, "/mirc/images/film-projector.gif", "Display the selected cases in the Case Navigator", (nSelected > 0));
+		/*
+		insertConfButtonControl(ctrls, newConference, "New Conference", "Create a new conference in the current conference", user.isLoggedIn && currentConfTreeNode);
+		insertConfButtonControl(ctrls, renameConference, "Rename Conference", "Rename the current conference", user.isLoggedIn && currentConfTreeNode && !root);
+		insertConfButtonControl(ctrls, deleteConference, "Delete Conference", "Delete the current conference", user.isLoggedIn && currentConfTreeNode && !root);
+		insertConfButtonControl(ctrls, newAgendaItem, "New Agenda Item", "Create a new agenda item in the current conference", user.isLoggedIn && currentConfTreeNode);
+		insertConfButtonControl(ctrls, deleteAgendaItems, "Delete Agenda Items", "Delete the selected agenda items", user.isLoggedIn && (nSelected > 0));
+		insertConfButtonControl(ctrls, normalTitles, "Normal Titles", "Display titles as knowns", !showNormalTitles);
+		insertConfButtonControl(ctrls, unknownTitles, "Unknown Titles", "Display titles as unknowns", showNormalTitles);
+		*/
+	}
 }
 
 function insertConfDragControl(ctrls, func, src, title, enb) {

@@ -4,8 +4,7 @@ var confItems = new Array(
 		new Item("Delete conference", deleteConference, "deleteconference"),
 		new Item("", null),
 		new Item("New case", newAgendaItem, "newagendaitem"),
-		new Item("Delete cases", deleteAgendaItems, "deleteagendaitems")
-	);
+		new Item("Delete cases", deleteAgendaItems, "deleteagendaitems") );
 
 var viewItems = new Array(
 		new Item("Show normal titles", normalTitles, "normaltitles"),

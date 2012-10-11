@@ -62,6 +62,15 @@ public class ActivityDBEntry implements Serializable {
 	}
 
 	/**
+	 * Update all the libraries.
+	 */
+	public void update() {
+		for (LibraryActivity libact : libraries.values()) {
+			libact.update();
+		}
+	}
+
+	/**
 	 * Get the date string (YYYYMM) for this entry, representing the month of the activity report.
 	 */
 	public synchronized String getDate() {

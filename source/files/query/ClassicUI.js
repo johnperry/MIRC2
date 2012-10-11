@@ -149,13 +149,13 @@ function bclick(next_page_Id, theEvent) {
 }
 
 function selectTab(tab) {
-	tab.style.backgroundColor = "#6495ED";
+	tab.style.backgroundColor = "#2977b9";
 	tab.style.color = 'white';
 }
 
 function deselectTab(tab) {
 	tab.style.backgroundColor = 'white';
-	tab.style.color = "#6495ED";
+	tab.style.color = "#2977b9";
 }
 
 function clearQueryFields() {

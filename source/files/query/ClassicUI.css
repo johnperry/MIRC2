@@ -80,12 +80,12 @@ div.selectlibraries input {
 	font-weight: bold;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	background-color: white;
-	color: #6495ED;
+	color: #2977b9;
 }
 div.footer {
 	position: absolute;
 	bottom: -1;
-	background-color: #C6D8F9;
+	background-color: #2977b9;
 	width: 100%;
 	text-align: center;
 }
@@ -162,7 +162,7 @@ div.search input {
 	color: white;
 	border: 3px outset white;
 	border-style: outset;
-	background-color: #6495ED;
+	background-color: #2977b9;
 	font-size: 18pt;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-weight: bold;
@@ -176,13 +176,13 @@ div.formatselect {
 
 div.formatselect select {
 	width:165px;
-	background-color:#C6D8F9;
+	background-color:white;
 }
 
 input.clearbutton {
 	margin-top:5px;
 	width:165px;
-	background-color:#6495ED;
+	background-color:#2977b9;
 	color:white;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-weight: bold;
@@ -193,6 +193,6 @@ input.tab {
 	font-weight: bold;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	background-color: white;
-	color: #6495ED;
+	color: #2977b9;
 }
 					
