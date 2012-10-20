@@ -203,23 +203,30 @@ public class ActivityReport extends Servlet {
 			res.send();
 		}
 
-		else if ((path.length() == 2) && path.element(1).equals("summary")) {
+		else if ((path.length() >= 2) && path.element(1).equals("summary")) {
 
 			//This path is only intended for the admin user (at RSNA HQ).
 			if (!req.userHasRole("admin")) { res.redirect("/query"); return; }
 
 			Document doc = ActivityDB.getInstance().getSummariesXML();
 
-			String format = req.getParameter("format", "csv");
-			if (format.equals("csv")) {
+			String format = path.element(2);
+			if (format.equals("xml")) {
+				res.setContentType("xml");
+				res.write( XmlUtil.toString(doc) );
+			}
+
+			else if (format.equals("html")) {
+				res.setContentType("html");
+				Document summaryXSL = XmlUtil.getDocument( FileUtil.getStream( "/activity/ActivitySummaryReportHTML.xsl" ) );
+				res.write( XmlUtil.getTransformedText(doc, summaryXSL, null) );
+			}
+
+			else {
 				res.setContentType("csv");
 				res.setContentDisposition( new File("ActivitySummary.csv") );
 				Document summaryXSL = XmlUtil.getDocument( FileUtil.getStream( "/activity/ActivitySummaryReportCSV.xsl" ) );
 				res.write( XmlUtil.getTransformedText(doc, summaryXSL, null) );
-			}
-			else {
-				res.setContentType("xml");
-				res.write( XmlUtil.toString(doc) );
 			}
 			res.send();
 		}
