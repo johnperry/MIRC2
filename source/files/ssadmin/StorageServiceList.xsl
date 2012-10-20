@@ -8,6 +8,7 @@
 	<html>
 		<head>
 			<title>Storage Service List - <xsl:value-of select="$ssid"/></title>
+			<link rel="Stylesheet" type="text/css" media="all" href="/BaseStyles.css"></link>
 			<link rel="Stylesheet" type="text/css" media="all" href="/JSPopup.css"></link>
 			<link rel="Stylesheet" type="text/css" media="all" href="/ssadmin/StorageServiceList.css"></link>
 			<script language="JavaScript" type="text/javascript" src="/JSUtil.js">;</script>

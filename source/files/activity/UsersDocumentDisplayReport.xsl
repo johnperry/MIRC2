@@ -15,6 +15,7 @@
 	<html>
 		<head>
 			<title>Display Activity Report - <xsl:value-of select="@name"/></title>
+			<link rel="Stylesheet" type="text/css" media="all" href="/BaseStyles.css"></link>
 			<link rel="Stylesheet" type="text/css" media="all" href="/activity/ActivityReport.css"></link>
 			<script language="JavaScript" type="text/javascript" src="/JSUtil.js">;</script>
 		</head>

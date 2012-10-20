@@ -6,6 +6,7 @@
 	<html>
 		<head>
 			<title>Query Service Admin</title>
+			<link rel="Stylesheet" type="text/css" media="all" href="/BaseStyles.css"></link>
 			<link rel="Stylesheet" type="text/css" media="all" href="/JSPopup.css"></link>
 			<link rel="Stylesheet" type="text/css" media="all" href="/qsadmin/QueryServiceAdmin.css"></link>
 			<script language="JavaScript" type="text/javascript" src="/JSUtil.js">;</script>

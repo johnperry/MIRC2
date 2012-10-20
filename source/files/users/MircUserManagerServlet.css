@@ -1,7 +1,3 @@
-body	{
-	background: #f8f8f8;
-}
-
 .tdtext {
 	text-align:left; 
 	font-family: Arial, Helvetica, Verdana, sans-serif;
@@ -14,7 +10,8 @@ body	{
 	text-align:left; 
 	font-family: Arial, Helvetica, Verdana, sans-serif;
 	vertical-align: bottom;
-	background:#d0d0d0;
+	background:#2977b9;
+	color: white;
 }
 	
 	

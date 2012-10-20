@@ -8,6 +8,7 @@
 	<html>
 		<head>
 			<title>Activity Report - <xsl:value-of select="@name"/></title>
+			<link rel="stylesheet" href="/BaseStyles.css" type="text/css"/>
 			<link rel="stylesheet" href="/JSPopup.css" type="text/css"/>
 			<link rel="Stylesheet" type="text/css" media="all" href="/activity/ActivityReport.css"></link>
 			<script language="JavaScript" type="text/javascript" src="/JSUtil.js">;</script>

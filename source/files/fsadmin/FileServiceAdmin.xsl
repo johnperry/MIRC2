@@ -6,6 +6,7 @@
 	<html>
 		<head>
 			<title>File Service Admin</title>
+			<link rel="Stylesheet" type="text/css" media="all" href="/BaseStyles.css"></link>
 			<link rel="Stylesheet" type="text/css" media="all" href="/JSPopup.css"></link>
 			<link rel="Stylesheet" type="text/css" media="all" href="/fsadmin/FileServiceAdmin.css"></link>
 			<script language="JavaScript" type="text/javascript" src="/JSUtil.js">;</script>

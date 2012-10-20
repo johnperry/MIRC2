@@ -496,6 +496,7 @@ public class MircUserManagerServlet extends Servlet {
 				"<html>\n"
 			+	" <head>\n"
 			+	"  <title>User Manager</title>\n"
+			+	"  <link rel=\"Stylesheet\" type=\"text/css\" media=\"all\" href=\"/BaseStyles.css\"></link>\n"
 			+	"  <link rel=\"Stylesheet\" type=\"text/css\" media=\"all\" href=\"/JSPopup.css\"></link>\n"
 			+	"  <link rel=\"Stylesheet\" type=\"text/css\" media=\"all\" href=\"/UserManagerServlet.css\"></link>\n"
 			+	"  <link rel=\"Stylesheet\" type=\"text/css\" media=\"all\" href=\"/users/MircUserManagerServlet.css\"></link>\n"
