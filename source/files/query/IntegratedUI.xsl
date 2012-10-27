@@ -125,7 +125,13 @@
 		<!--<div class="L1">Cases</div>-->
 		<div class="L2" id="MyDocuments"><a href="javascript:queryMineNew();">My Cases</a><br/></div>
 		<div class="L2" id="AllDocuments"><a href="javascript:queryAllNew();">Completed Cases</a><br/></div>
-		<div class="L2" id="DraftDocuments"><a href="javascript:queryTemp();">Draft Cases</a><br/></div>
+		<div class="L2" id="DraftDocuments">
+			<a href="javascript:queryTemp();"
+			   			title="Draft cases can be viewed and claimed by any user with the author privilege.">
+				Draft Cases
+			</a>
+			<br/>
+		</div>
 		<div class="L2" id="ApprovalQueue"><a href="javascript:approvalQueueNew();">Case Approval Queue</a><br/></div>
 
 		<div id="Conferences">
@@ -215,6 +221,8 @@
 		<div class="L2"><a href="/logs?home=/query">Log Viewer</a><br/></div>
 		<div class="L2"><a href="/level">Logger Levels</a><br/></div>
 		<div class="L2"><a href="javascript:listCookies();">List Cookies</a><br/></div>
+		<hr/>
+		<div class="L2"><a href="/reset" title="Reset the DICOM and TCE Service templates and clear the cache">Reset Templates</a><br/></div>
 	</div>
 </xsl:template>
 

@@ -25,7 +25,9 @@
 				<h2><xsl:value-of select="$rearrangedDate"/></h2>
 				<table border="1">
 					<xsl:call-template name="headings"/>
-					<xsl:apply-templates select="Document"/>
+					<xsl:apply-templates select="Document">
+						<xsl:sort select="@n" order="descending" data-type="number"/>
+					</xsl:apply-templates>
 				</table>
 			</center>
 		</body>

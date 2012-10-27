@@ -4,7 +4,7 @@
 
 	<title><g0010e0020 desc="PatientID"/>: <g0010e0010 desc="PatientName"/></title>
 
-	<alternative-title><g0008e0020 desc="StudyDate"/> <g0008e0060 desc="Modality"/> Study</alternative-title>
+	<alternative-title><g0010e0020 desc="PatientID"/>: <g0010e0010 desc="PatientName"/></alternative-title>
 
 	<author>
 		<name><g0012e0020 desc="Calling AETitle"/> (draft)</name>

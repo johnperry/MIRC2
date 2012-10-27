@@ -28,6 +28,7 @@ import mirc.publish.*;
 import mirc.qsadmin.*;
 import mirc.query.*;
 import mirc.radlex.*;
+import mirc.reset.*;
 import mirc.revert.*;
 import mirc.sort.*;
 import mirc.ssadmin.*;
@@ -105,6 +106,7 @@ public class MIRC extends AbstractPlugin {
 		selector.addServlet("fsadmin", FileServiceAdmin.class);
 		selector.addServlet("challenge", ChallengeServlet.class);
 		selector.addServlet("radlex", RadLexSuggest.class);
+		selector.addServlet("reset", ResetService.class);
 		selector.addServlet("revert", RevertService.class);
 		selector.addServlet("sort", SortImagesService.class);
 		selector.addServlet("storage", StorageService.class);

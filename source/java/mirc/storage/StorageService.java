@@ -173,7 +173,7 @@ public class StorageService extends Servlet {
 						byte[] bytes = SerializerUtil.serialize(img);
 						res.write(bytes);
 					}
-					//Note 1: If it isn't an image, we return zero bytes, instead of notfound.
+					//Note 1: If it isn't an image, we return zero bytes instead of notfound.
 					//Note 2: We set a special content type to indicate this is a java object.
 					res.setHeader("Content-Type", "application/java.awt.image.BufferedImage");
 				}

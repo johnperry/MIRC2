@@ -46,8 +46,8 @@ public class RevertService extends Servlet {
 
 	/**
 	 * Convert the document to draft mode, if possible, and return the modified MIRCdocument.
-	 * @param req The HttpServletRequest provided by the servlet container.
-	 * @param res The HttpServletResponse provided by the servlet container.
+	 * @param req The HttpRequest provided by the servlet container.
+	 * @param res The HttpResponse provided by the servlet container.
 	 * @throws ServletException if the servlet cannot handle the request.
 	 */
 	public void doGet(HttpRequest req, HttpResponse res) throws Exception {

@@ -948,7 +948,7 @@
 					<td rowspan="3" class="pmlabel">Read:</td>
 					<td>
 						<input type="radio" name="read" value="public">
-							<xsl:if test="contains($read-field,'*')">
+							<xsl:if test="contains($read-field,'*') and not($draft='yes')">
 								<xsl:attribute name="checked">
 									<xsl:text>true</xsl:text>
 								</xsl:attribute>
@@ -960,7 +960,7 @@
 				<tr>
 					<td>
 						<input type="radio" name="read" value="private">
-							<xsl:if test="string-length($read-field)=0">
+							<xsl:if test="string-length($read-field)=0 and not($draft='yes')">
 								<xsl:attribute name="checked">
 									<xsl:text>true</xsl:text>
 								</xsl:attribute>
@@ -972,7 +972,7 @@
 				<tr>
 					<td>
 						<input type="radio" name="read" value="specify">
-							<xsl:if test="not(contains($read-field,'*')) and not(string-length($read-field)=0)">
+							<xsl:if test="(not(contains($read-field,'*')) and not(string-length($read-field)=0)) or ($draft='yes')">
 								<xsl:attribute name="checked">
 									<xsl:text>true</xsl:text>
 								</xsl:attribute>
@@ -983,6 +983,9 @@
 						<input type="text" style="width:310">
 							<xsl:attribute name="value">
 								<xsl:value-of select="$read-field"/>
+								<xsl:if test="not(contains($read-field,'department')) and ($draft='yes')">
+									<xsl:text>,department</xsl:text>
+								</xsl:if>
 							</xsl:attribute>
 						</input>
 					</td>
@@ -999,7 +1002,7 @@
 					<td rowspan="3" class="pmlabel">Update:</td>
 					<td>
 						<input type="radio" name="update" value="public">
-							<xsl:if test="contains($update-field,'*')">
+							<xsl:if test="contains($update-field,'*') and not($draft='yes')">">
 								<xsl:attribute name="checked">
 									<xsl:text>true</xsl:text>
 								</xsl:attribute>
@@ -1011,7 +1014,7 @@
 				<tr>
 					<td>
 						<input type="radio" name="update" value="private">
-							<xsl:if test="string-length($update-field)=0">
+							<xsl:if test="string-length($update-field)=0 or ($draft='yes')">
 								<xsl:attribute name="checked">
 									<xsl:text>true</xsl:text>
 								</xsl:attribute>
@@ -1023,7 +1026,7 @@
 				<tr>
 					<td>
 						<input type="radio" name="update" value="specify">
-							<xsl:if test="not(contains($update-field,'*')) and not(string-length($update-field)=0)">
+							<xsl:if test="not(contains($update-field,'*')) and not(string-length($update-field)=0) and not($draft='yes')">
 								<xsl:attribute name="checked">
 									<xsl:text>true</xsl:text>
 								</xsl:attribute>

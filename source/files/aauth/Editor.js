@@ -549,6 +549,10 @@ function sectionImageDblClicked(myEvent) {
 		//Open the image for creating captions
 		loadCaptionEditor(source);
 	}
+	else if (evt.altKey) {
+		//Open the image for window width and level
+		loadWWWLEditor(source);
+	}
 	else {
 		//Open the image for annotation
 		var imageSrc = dirpath + source.getAttribute("base-image");
@@ -2441,6 +2445,99 @@ function setBreedList(myEvent) {
 	for (var i=0; i!=breeds.length; i++) {
 		ptBreed.options[i] = new Option(breeds[i], breeds[i]);
 	}
+}
+
+//Set the WW/WL editor div and handle the button click event
+function loadWWWLEditor(source) {
+	var wwwlEditorDiv = document.createElement("DIV");
+	wwwlEditorDiv.id = "wwwlEditorDiv";
+	wwwlEditorDiv.source = source;
+
+	var pImage = document.createElement("P");
+	var src = source.getAttribute("src");
+	var img = document.createElement("IMG");
+	img.src = src;
+	pImage.appendChild(img);
+
+	var pTable = document.createElement("P");
+	var table = document.createElement("TABLE");
+	var tbody = document.createElement("TBODY");
+	table.appendChild(tbody);
+
+	var tr = document.createElement("TR");
+	tbody.appendChild(tr);
+	var td = document.createElement("TD");
+	td.appendChild(document.createTextNode("Window Level"));
+	tr.appendChild(td);
+	td = document.createElement("TD");
+	var wl = document.createElement("INPUT");
+	wl.id = "WindowLevel";
+	wl.intValue = 1000;
+	wl.value = "" + wl.intValue;
+	td.appendChild(wl);
+	tr.appendChild(td);
+	td = document.createElement("TD");
+	var bb = document.createElement("IMG");
+	bb.src = "/aauth/buttons/up.gif";
+	td.appendChild(bb);
+	td.appendChild(wl);
+	tr.appendChild(td);
+	td = document.createElement("TD");
+	bb = document.createElement("IMG");
+	bb.src = "/aauth/buttons/down.gif";
+	td.appendChild(bb);
+
+	tr.appendChild(td);
+
+	tr = document.createElement("TR");
+	tbody.appendChild(tr);
+	var td = document.createElement("TD");
+	td.appendChild(document.createTextNode("Window Width"));
+	tr.appendChild(td);
+	td = document.createElement("TD");
+	var ww = document.createElement("INPUT");
+	ww.id = "WindowWidth";
+	ww.intValue = 50;
+	ww.value = "" + ww.intValue;
+	td.appendChild(ww);
+	tr.appendChild(td);
+	pTable.appendChild(table);
+
+	var pOK = document.createElement("P");
+	var b = document.createElement("INPUT");
+	b.type = "button";
+	b.value = " OK ";
+	b.onclick = wwwlOK;
+	pOK.appendChild(b);
+
+	wwwlEditorDiv.appendChild(pImage);
+	wwwlEditorDiv.appendChild(pTable);
+	wwwlEditorDiv.appendChild(pOK);
+
+	var mainEditorDiv = document.getElementById("mainEditorDiv");
+	var parent = mainEditorDiv.parentNode;
+	var nextSibling = mainEditorDiv.nextSibling;
+	parent.insertBefore(wwwlEditorDiv,nextSibling);
+	mainEditorDiv.style.visibility = "hidden";
+	mainEditorDiv.style.display = "none";
+	wwwlEditorDiv.style.visibility = "visible";
+	wwwlEditorDiv.style.display = "block";
+	wwwlEditorDiv.style.overflow = "auto";
+}
+
+function wwwlOK() {
+	var wwwlEditorDiv = document.getElementById("wwwlEditorDiv");
+	var source = wwwlEditorDiv.source;
+
+	var mainEditorDiv = document.getElementById("mainEditorDiv");
+	wwwlEditorDiv.style.visibility = "hidden";
+	wwwlEditorDiv.style.display = "none";
+	mainEditorDiv.style.visibility = "visible";
+	mainEditorDiv.style.display = "block";
+	var parent = wwwlEditorDiv.parentNode;
+	parent.removeChild(wwwlEditorDiv);
+	alert("OK clicked for "+source.src);
+	saveClicked();
 }
 
 //Set the caption editor div and handle the button click event.

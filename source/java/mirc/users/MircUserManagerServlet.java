@@ -545,6 +545,7 @@ public class MircUserManagerServlet extends Servlet {
 		sb.append(
 				"    </table>\n"
 			+	"   </form>\n"
+			+	"   <p>Suggestion: Assign all users the \"department\" role.</p>\n"
 			+	"  </center>\n"
 			+	" </body>\n"
 			+	"</html>\n"
