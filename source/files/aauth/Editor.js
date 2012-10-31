@@ -534,8 +534,7 @@ function sectionImageClicked(myEvent) {
 //Swap the editor divs around to show the SVG editor.
 function sectionImageDblClicked(myEvent) {
 	var source = getSource(getEvent(myEvent));
-	var basesrc = source.getAttribute("base-image");
-	if ((basesrc == null) || (basesrc == "")) {
+	if (!imageHasBeenSaved(source)) {
 		alert("This image has been inserted since\n" +
 			  "the document was last saved.\n\n" +
 			  "The document must be saved before\n" +
@@ -555,19 +554,39 @@ function sectionImageDblClicked(myEvent) {
 	}
 	else {
 		//Open the image for annotation
-		var imageSrc = dirpath + source.getAttribute("base-image");
-		var svgSrc;
-		//If this is a new annotation, start with the svg file in
-		//the root of the servlet. If this is an existing
-		//annotation, start with the one identified by the
-		//annotation attribute of the img element.
-		var annSrc = source.getAttribute("ansvgsrc");
-		if ((annSrc == null) || (annSrc == ""))
-			svgSrc = "/aauth/svg-editor.svg"
-		else
-			svgSrc = dirpath + annSrc;
-		loadSVGEditor(source,svgSrc,imageSrc);
+		runSVGEditor(source);
 	}
+}
+
+//Set the annotation editor div and handle the button click event.
+function startSVGEditor() {
+	var div = document.getElementById("imginfo");
+	if (div) {
+		runSVGEditor(div.source);
+	}
+}
+function runSVGEditor(source) {
+	removeImgInfo();
+	var imageSrc = dirpath + source.getAttribute("base-image");
+	var svgSrc;
+	//If this is a new annotation, start with the svg file in
+	//the root of the servlet. If this is an existing
+	//annotation, start with the one identified by the
+	//annotation attribute of the img element.
+	var annSrc = source.getAttribute("ansvgsrc");
+	if ((annSrc == null) || (annSrc == ""))
+		svgSrc = "/aauth/svg-editor.svg"
+	else
+		svgSrc = dirpath + annSrc;
+	loadSVGEditor(source,svgSrc,imageSrc);
+}
+
+function imageHasBeenSaved(source) {
+	var basesrc = source.getAttribute("base-image");
+	if ((basesrc == null) || (basesrc == "")) {
+		return false;
+	}
+	return true;
 }
 
 //Handle image selection in either the palette or the image-section.
@@ -2448,7 +2467,14 @@ function setBreedList(myEvent) {
 }
 
 //Set the WW/WL editor div and handle the button click event
+function startWWWLEditor() {
+	var div = document.getElementById("imginfo");
+	if (div) {
+		loadWWWLEditor(div.source);
+	}
+}
 function loadWWWLEditor(source) {
+	removeImgInfo();
 	var wwwlEditorDiv = document.createElement("DIV");
 	wwwlEditorDiv.id = "wwwlEditorDiv";
 	wwwlEditorDiv.source = source;
@@ -2540,8 +2566,106 @@ function wwwlOK() {
 	saveClicked();
 }
 
+function imgMouseEnter(event) {
+	var evt = getEvent(event);
+	var source = getSource(evt);
+	var sourcePos = findObject(source);
+	var div = document.getElementById("imginfo");
+	if (div) document.body.removeChild(div);
+	div = document.createElement("DIV");
+	div.source = source;
+	div.id = "imginfo";
+	div.className = "imginfo";
+	div.onmouseleave = imgMouseLeave;
+	var srcName = source.src;
+	srcName = srcName.substring(srcName.lastIndexOf("/") + 1);
+	var height = 45;
+	div.appendChild(document.createTextNode(srcName));
+	div.appendChild(document.createElement("BR"));
+
+	if (imageHasBeenSaved(source)) {
+		var a = document.createElement("A");
+		a.onclick = startSVGEditor;
+		a.appendChild(document.createTextNode("Double-click to edit annotations"));
+		div.appendChild(a);
+		div.appendChild(document.createElement("BR"));
+		height += 15;
+
+		var a = document.createElement("A");
+		a.onclick = startCaptionEditor;
+		a.appendChild(document.createTextNode("CTRL-double-click to edit captions"));
+		div.appendChild(a);
+		div.appendChild(document.createElement("BR"));
+		height += 15;
+
+		var orig = source.getAttribute("original-format");
+		var isDCM = orig && (orig.lastIndexOf(".dcm") == orig.length-4)
+		if (isDCM) {
+			a = document.createElement("A");
+			a.onclick = startWWWLEditor;
+			a.appendChild(document.createTextNode("ALT-double-click to adjust WW/WL"));
+			div.appendChild(a);
+			div.appendChild(document.createElement("BR"));
+			height += 15;
+		}
+	}
+
+	var x = sourcePos.x + sourcePos.w/4;
+	var y = sourcePos.y + (sourcePos.h * 3)/4;
+	div.style.height = height;
+	div.style.left = x;
+	div.style.top = y;
+	div.style.zIndex = 50;
+	document.body.appendChild(div);
+}
+
+function imgMouseLeave(event) {
+	var div = document.getElementById("imginfo");
+	if (div) {
+		var source = div.source;
+		var x = window.event.clientX;
+		var y = window.event.clientY;
+		if (!containsXY(source, x, y) && !containsXY(div, x, y)) {
+			document.body.removeChild(div);
+		}
+	}
+}
+
+function removeImgInfo() {
+	var div = document.getElementById("imginfo");
+	if (div) document.body.removeChild(div);
+}
+
+function containsXY(obj, x, y) {
+	var pos = findObject(obj);
+	if (pos) {
+		/*
+		alert("Testing "+obj.tagName
+				+"\npos.x = "+pos.x
+				+"\npos.y = "+pos.y
+				+"\npos.w = "+pos.w
+				+"\npos.h = "+pos.h
+				+"\n"
+				+"\nMouse x = "+x
+				+"\nMouse y = "+y);
+		*/
+		if ((pos.x <= x) && (x < (pos.x + pos.w))
+			&& (pos.y <= y) && (y < (pos.y + pos.h))) {
+			return true;
+		}
+	}
+	return false;
+}
+
 //Set the caption editor div and handle the button click event.
+function startCaptionEditor() {
+	var div = document.getElementById("imginfo");
+	if (div) {
+		loadCaptionEditor(div.source);
+	}
+}
 function loadCaptionEditor(source) {
+	removeImgInfo();
 	var captionEditorDiv = document.createElement("DIV");
 	captionEditorDiv.id = "captionEditorDiv";
 	captionEditorDiv.source = source;

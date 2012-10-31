@@ -1710,23 +1710,17 @@
 	<xsl:param name="ref"/>
 	<xsl:param name="onclick"/>
 	<xsl:param name="ondblclick"/>
-	<img class="fileImg">
+	<img class="fileImg" onclick="{$onclick}" onmouseenter="imgMouseEnter(event);" onmouseleave="imgMouseLeave(event);">
 		<xsl:if test="string-length(normalize-space($ref)) != 0">
 			<xsl:attribute name="ref">
 				<xsl:value-of select="$ref"/>
 			</xsl:attribute>
 		</xsl:if>
-		<xsl:attribute name="onclick">
-			<xsl:value-of select="$onclick"/>
-		</xsl:attribute>
 		<xsl:if test="string-length(normalize-space($ondblclick)) != 0">
 			<xsl:attribute name="ondblclick">
 				<xsl:value-of select="$ondblclick"/>
 			</xsl:attribute>
 		</xsl:if>
-		<xsl:attribute name="title">
-			<xsl:value-of select="$image/@src"/>
-		</xsl:attribute>
 		<xsl:choose>
 			<xsl:when test="starts-with($image/@src,'http://') or starts-with($image/@src,'/')">
 				<xsl:copy-of select="$image/@src"/>

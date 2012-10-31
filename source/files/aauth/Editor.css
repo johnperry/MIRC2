@@ -477,3 +477,23 @@ table.quiz button.quiz {
 	background: 	#eeeeee;
 }
 /*----------End of File tree popup ------------*/
+
+/*------------- Image tooltip div ---------------*/
+div.imginfo {
+	position:	absolute;
+	border: 	thin inset #2977b9;
+	margin: 	0;
+	padding: 	10px;
+	height: 	90px;
+	width:		450px;
+	font-family:	Verdana, Arial, Helvetica, sans-serif;
+	font-size:	x-small;
+	text-align: 	left;
+	background: 	#b9d0ed;
+}
+
+div.imginfo a {
+	cursor: hand;
+}
+/*----------End of File tree popup ------------*/
+
