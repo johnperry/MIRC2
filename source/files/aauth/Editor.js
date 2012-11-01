@@ -2482,6 +2482,7 @@ function loadWWWLEditor(source) {
 	var pImage = document.createElement("P");
 	var src = source.getAttribute("src");
 	var img = document.createElement("IMG");
+	img.id="wwwlIMG";
 	img.src = src;
 	pImage.appendChild(img);
 
@@ -2492,9 +2493,19 @@ function loadWWWLEditor(source) {
 
 	var tr = document.createElement("TR");
 	tbody.appendChild(tr);
+
 	var td = document.createElement("TD");
 	td.appendChild(document.createTextNode("Window Level"));
 	tr.appendChild(td);
+
+	td = document.createElement("TD");
+	var bb = document.createElement("IMG");
+	bb.src = "/aauth/buttons/up.gif";
+	bb.id = "WL-up"
+	bb.onclick = wlUP;
+	td.appendChild(bb);
+	tr.appendChild(td);
+
 	td = document.createElement("TD");
 	var wl = document.createElement("INPUT");
 	wl.id = "WindowLevel";
@@ -2502,24 +2513,30 @@ function loadWWWLEditor(source) {
 	wl.value = "" + wl.intValue;
 	td.appendChild(wl);
 	tr.appendChild(td);
-	td = document.createElement("TD");
-	var bb = document.createElement("IMG");
-	bb.src = "/aauth/buttons/up.gif";
-	td.appendChild(bb);
-	td.appendChild(wl);
-	tr.appendChild(td);
+
 	td = document.createElement("TD");
 	bb = document.createElement("IMG");
 	bb.src = "/aauth/buttons/down.gif";
+	bb.id = "WL-down"
+	bb.onclick = wlDOWN;
 	td.appendChild(bb);
-
 	tr.appendChild(td);
 
 	tr = document.createElement("TR");
 	tbody.appendChild(tr);
-	var td = document.createElement("TD");
+
+	td = document.createElement("TD");
 	td.appendChild(document.createTextNode("Window Width"));
 	tr.appendChild(td);
+
+	td = document.createElement("TD");
+	var bb = document.createElement("IMG");
+	bb.src = "/aauth/buttons/left.gif";
+	bb.id = "WW-left"
+	bb.onclick = wwLEFT;
+	td.appendChild(bb);
+	tr.appendChild(td);
+
 	td = document.createElement("TD");
 	var ww = document.createElement("INPUT");
 	ww.id = "WindowWidth";
@@ -2527,6 +2544,15 @@ function loadWWWLEditor(source) {
 	ww.value = "" + ww.intValue;
 	td.appendChild(ww);
 	tr.appendChild(td);
+
+	td = document.createElement("TD");
+	bb = document.createElement("IMG");
+	bb.src = "/aauth/buttons/right.gif";
+	bb.id = "WW-right"
+	bb.onclick = wwRIGHT;
+	td.appendChild(bb);
+	tr.appendChild(td);
+
 	pTable.appendChild(table);
 
 	var pOK = document.createElement("P");
@@ -2549,6 +2575,46 @@ function loadWWWLEditor(source) {
 	wwwlEditorDiv.style.visibility = "visible";
 	wwwlEditorDiv.style.display = "block";
 	wwwlEditorDiv.style.overflow = "auto";
+
+	alert(dirpath+source.getAttribute("original-format"));
+}
+
+function wlUP() {
+	var wlInput = document.getElementById("WindowLevel");
+	var wl = parseInt(wlInput.value) + 100;
+	wlInput.value = wl;
+	changeWWWL()
+}
+function wlDOWN() {
+	var wlInput = document.getElementById("WindowLevel");
+	var wl = parseInt(wlInput.value) - 100;
+	wlInput.value = wl;
+	changeWWWL()
+}
+function wwLEFT() {
+	var wwInput = document.getElementById("WindowWidth");
+	var ww = parseInt(wwInput.value) - 50;
+	if (ww < 1) ww = 1;
+	wwInput.value = ww;
+	changeWWWL()
+}
+function wwRIGHT() {
+	var wwInput = document.getElementById("WindowWidth");
+	var ww = parseInt(wwInput.value) + 50;
+	if (ww < 1) ww = 1;
+	wwInput.value = ww;
+	changeWWWL()
+}
+function changeWWWL() {
+	var div = document.getElementById("wwwlEditorDiv");
+	var source = div.source;
+	var wlInput = document.getElementById("WindowLevel");
+	var wwInput = document.getElementById("WindowWidth");
+	var wl = parseInt(wlInput.value);
+	var ww = parseInt(wwInput.value);
+	src = dirpath + source.getAttribute("original-format") + "?jpeg&ww="+ww+"&wl="+wl;
+	var img = document.getElementById("wwwlIMG");
+	img.src = src;
 }
 
 function wwwlOK() {
@@ -2610,8 +2676,8 @@ function imgMouseEnter(event) {
 		}
 	}
 
-	var x = sourcePos.x + sourcePos.w/4;
-	var y = sourcePos.y + (sourcePos.h * 3)/4;
+	var x = sourcePos.x + sourcePos.w/4 - sourcePos.scrollLeft;
+	var y = sourcePos.y + (sourcePos.h * 3)/4 - sourcePos.scrollTop;
 	div.style.height = height;
 	div.style.left = x;
 	div.style.top = y;
