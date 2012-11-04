@@ -1710,7 +1710,7 @@
 	<xsl:param name="ref"/>
 	<xsl:param name="onclick"/>
 	<xsl:param name="ondblclick"/>
-	<img class="fileImg" onclick="{$onclick}" onmouseenter="imgMouseEnter(event);" onmouseleave="imgMouseLeave(event);">
+	<img class="fileImg" onclick="{$onclick}" onmouseover="imgMouseEnter(event);" onmouseout="imgMouseLeave(event);">
 		<xsl:if test="string-length(normalize-space($ref)) != 0">
 			<xsl:attribute name="ref">
 				<xsl:value-of select="$ref"/>

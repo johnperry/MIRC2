@@ -41,7 +41,7 @@
 	<tr>
 		<td class="right"><xsl:number/></td>
 		<td>
-			<a href="{@docKey}" targer="document">
+			<a href="{@docKey}" target="document">
 				<xsl:value-of select="@title"/>
 			</a>
 		</td>

@@ -487,7 +487,7 @@ div.imginfo {
 	height: 	90px;
 	width:		450px;
 	font-family:	Verdana, Arial, Helvetica, sans-serif;
-	font-size:	x-small;
+	font-size:	10pt;
 	text-align: 	left;
 	background: 	#b9d0ed;
 }
@@ -495,5 +495,16 @@ div.imginfo {
 div.imginfo a {
 	cursor: hand;
 }
-/*----------End of File tree popup ------------*/
+/*----------End of Image tooltip div ------------*/
+
+/*------------- wwwlPopup div ---------------*/
+div#wwwlPopup input.stdbutton {
+	margin-top: 2px;
+}
+div#wwwlPopup input.wwwl {
+	width: 106px;
+}
+/*----------End of wwwlPopup div ------------*/
+
+
 

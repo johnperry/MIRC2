@@ -2480,91 +2480,13 @@ function loadWWWLEditor(source) {
 	wwwlEditorDiv.source = source;
 
 	var pImage = document.createElement("P");
-	var src = source.getAttribute("src");
+	var src = dirpath + source.getAttribute("base-image");
 	var img = document.createElement("IMG");
 	img.id="wwwlIMG";
 	img.src = src;
+	img.onmousedown = startWWWLDrag;
 	pImage.appendChild(img);
-
-	var pTable = document.createElement("P");
-	var table = document.createElement("TABLE");
-	var tbody = document.createElement("TBODY");
-	table.appendChild(tbody);
-
-	var tr = document.createElement("TR");
-	tbody.appendChild(tr);
-
-	var td = document.createElement("TD");
-	td.appendChild(document.createTextNode("Window Level"));
-	tr.appendChild(td);
-
-	td = document.createElement("TD");
-	var bb = document.createElement("IMG");
-	bb.src = "/aauth/buttons/up.gif";
-	bb.id = "WL-up"
-	bb.onclick = wlUP;
-	td.appendChild(bb);
-	tr.appendChild(td);
-
-	td = document.createElement("TD");
-	var wl = document.createElement("INPUT");
-	wl.id = "WindowLevel";
-	wl.intValue = 1000;
-	wl.value = "" + wl.intValue;
-	td.appendChild(wl);
-	tr.appendChild(td);
-
-	td = document.createElement("TD");
-	bb = document.createElement("IMG");
-	bb.src = "/aauth/buttons/down.gif";
-	bb.id = "WL-down"
-	bb.onclick = wlDOWN;
-	td.appendChild(bb);
-	tr.appendChild(td);
-
-	tr = document.createElement("TR");
-	tbody.appendChild(tr);
-
-	td = document.createElement("TD");
-	td.appendChild(document.createTextNode("Window Width"));
-	tr.appendChild(td);
-
-	td = document.createElement("TD");
-	var bb = document.createElement("IMG");
-	bb.src = "/aauth/buttons/left.gif";
-	bb.id = "WW-left"
-	bb.onclick = wwLEFT;
-	td.appendChild(bb);
-	tr.appendChild(td);
-
-	td = document.createElement("TD");
-	var ww = document.createElement("INPUT");
-	ww.id = "WindowWidth";
-	ww.intValue = 50;
-	ww.value = "" + ww.intValue;
-	td.appendChild(ww);
-	tr.appendChild(td);
-
-	td = document.createElement("TD");
-	bb = document.createElement("IMG");
-	bb.src = "/aauth/buttons/right.gif";
-	bb.id = "WW-right"
-	bb.onclick = wwRIGHT;
-	td.appendChild(bb);
-	tr.appendChild(td);
-
-	pTable.appendChild(table);
-
-	var pOK = document.createElement("P");
-	var b = document.createElement("INPUT");
-	b.type = "button";
-	b.value = " OK ";
-	b.onclick = wwwlOK;
-	pOK.appendChild(b);
-
 	wwwlEditorDiv.appendChild(pImage);
-	wwwlEditorDiv.appendChild(pTable);
-	wwwlEditorDiv.appendChild(pOK);
 
 	var mainEditorDiv = document.getElementById("mainEditorDiv");
 	var parent = mainEditorDiv.parentNode;
@@ -2575,36 +2497,226 @@ function loadWWWLEditor(source) {
 	wwwlEditorDiv.style.visibility = "visible";
 	wwwlEditorDiv.style.display = "block";
 	wwwlEditorDiv.style.overflow = "auto";
+	wwwlEditorDiv.style.background = "black";
+	wwwlEditorDiv.style.height = findObject(document.body).h;
 
-	alert(dirpath+source.getAttribute("original-format"));
+	//Display the WW/WL popup
+	var params = getDCMParams(source);
+	//displayParams(wwwlEditorDiv, params);
+	var size = 1 << params.BitsStored;
+	var min = params.RescaleIntercept;
+	var max = size * params.RescaleSlope + min;
+	img.min = min;
+	img.max = max;
+	img.size = size;
+
+	var div = document.getElementById("wwwlPopup");
+	if (div != null) div.parentNode.removeChild(div);
+	div = document.createElement("DIV");
+	div.className = "content";
+	div.id = "wwwlPopupDiv";
+
+	var pTable = document.createElement("P");
+	var table = document.createElement("TABLE");
+	var tbody = document.createElement("TBODY");
+	table.appendChild(tbody);
+
+	var tr = document.createElement("TR");
+	tbody.appendChild(tr);
+	var td = document.createElement("TD");
+	td.appendChild(document.createTextNode("WL:"));
+	tr.appendChild(td);
+	td = document.createElement("TD");
+	var wl = document.createElement("INPUT");
+	wl.className = "wwwl";
+	wl.type = "text";
+	wl.id = "WindowLevel";
+	wl.value = params.WindowCenter;
+	wl.onkeypress = wwwlCheckEnter;
+	td.appendChild(wl);
+	tr.appendChild(td);
+
+	tr = document.createElement("TR");
+	tbody.appendChild(tr);
+
+	td = document.createElement("TD");
+	td.appendChild(document.createTextNode("WW:"));
+	tr.appendChild(td);
+
+	td = document.createElement("TD");
+	var ww = document.createElement("INPUT");
+	ww.className = "wwwl";
+	ww.type = "text";
+	ww.id = "WindowWidth";
+	ww.value = params.WindowWidth;
+	ww.onkeypress = wwwlCheckEnter;
+	td.appendChild(ww);
+	tr.appendChild(td);
+
+	pTable.appendChild(table);
+
+	var pSaveImage = document.createElement("P");
+	var b = document.createElement("INPUT");
+	b.className = "stdbutton";
+	b.type = "button";
+	b.value = " Save Image ";
+	b.onclick = saveWWWLImage;
+	pSaveImage.appendChild(b);
+
+	var pSaveSeries = document.createElement("P");
+	b = document.createElement("INPUT");
+	b.className = "stdbutton";
+	b.type = "button";
+	b.value = " Save Series ";
+	b.onclick = saveWWWLSeries;
+	pSaveSeries.appendChild(b);
+
+	var pOK = document.createElement("P");
+	b = document.createElement("INPUT");
+	b.className = "stdbutton";
+	b.type = "button";
+	b.value = " OK ";
+	b.onclick = wwwlOK;
+	pOK.appendChild(b);
+
+	div.appendChild(pTable);
+	div.appendChild(pSaveImage);
+	div.appendChild(pSaveSeries);
+	div.appendChild(pOK);
+
+	showDialog("wwwlPopup", 190, 196, "Adjust WW/WL", closeboxURL, null/*"Set WW/WL"*/, div, null, null);
 }
 
-function wlUP() {
+function displayParams(div, params) {
+	var p = document.createElement("P");
+	p.style.marginLeft = 10;
+	var table = document.createElement("TABLE");
+	var tbody = document.createElement("TBODY");
+	addWWWLRow(tbody, "Modality", params.Modality);
+	addWWWLRow(tbody, "BitsStored", params.BitsStored);
+	addWWWLRow(tbody, "RescaleSlope", params.RescaleSlope);
+	addWWWLRow(tbody, "RescaleIntercept", params.RescaleIntercept);
+	addWWWLRow(tbody, "WindowCenter", params.WindowCenter);
+	addWWWLRow(tbody, "WindowWidth", params.WindowWidth);
+	table.appendChild(tbody);
+	p.appendChild(table);
+	div.appendChild(p);
+}
+function addWWWLRow(tbody, name, value) {
+	var tr = document.createElement("TR");
+	var td = document.createElement("TD");
+	td.appendChild(document.createTextNode(name));
+	td.style.background = "white";
+	tr.appendChild(td);
+	td = document.createElement("TD");
+	td.appendChild(document.createTextNode(value));
+	td.style.background = "white";
+	tr.appendChild(td);
+	tbody.appendChild(tr);
+}
+
+function startWWWLDrag(evt) {
+	evt = getEvent(evt);
+	var source = getSource(evt);
+	var startX = evt.clientX;
+	var startY = evt.clientY;
+	var max = source.max;
+	var min = source.min;
+	var size = source.size;
+
 	var wlInput = document.getElementById("WindowLevel");
-	var wl = parseInt(wlInput.value) + 100;
-	wlInput.value = wl;
-	changeWWWL()
-}
-function wlDOWN() {
-	var wlInput = document.getElementById("WindowLevel");
-	var wl = parseInt(wlInput.value) - 100;
-	wlInput.value = wl;
-	changeWWWL()
-}
-function wwLEFT() {
+	var startWL = parseInt(wlInput.value);
 	var wwInput = document.getElementById("WindowWidth");
-	var ww = parseInt(wwInput.value) - 50;
-	if (ww < 1) ww = 1;
-	wwInput.value = ww;
-	changeWWWL()
+	var startWW = parseInt(wwInput.value);
+
+	if (document.addEventListener) {
+		document.addEventListener("mousemove", dragWWWL, true);
+		document.addEventListener("mouseup", dropWWWL, true);
+	}
+	else {
+		source.attachEvent("onmousemove", dragWWWL);
+		source.attachEvent("onmouseup", dropWWWL);
+		source.setCapture();
+	}
+	if (event.stopPropagation) event.stopPropagation();
+	else event.cancelBubble = true;
+	if (event.preventDefault) event.preventDefault();
+	else event.returnValue = false;
+	return false;
+
+	function dragWWWL(evt) {
+		if (!evt) evt = window.event;
+		var deltaY = evt.clientY - startY;
+		var wl = startWL - deltaY; //+ is north
+		if (wl > max) { wl = max; startY = evt.clientY; startWL = max; }
+		if (wl < min) { wl = min; startY = evt.clientY; startWL = min; }
+		wlInput.value = wl;
+
+		var deltaX = evt.clientX - startX;
+		var ww = startWW + deltaX; //+ is east
+		if (ww < 1) { ww = 1; startX = evt.clientX; startWW = 1; }
+		if (ww > size) { ww = size; startX = evt.clientX; startWW = size; }
+		wwInput.value = ww;
+
+		if (evt.stopPropagation) evt.stopPropagation();
+		else evt.cancelBubble = true;
+		return false;
+	}
+
+	function dropWWWL(evt) {
+		changeWWWL();
+		if (!evt) evt = window.event;
+		if (document.addEventListener) {
+			document.removeEventListener("mouseup", dropWWWL, true);
+			document.removeEventListener("mousemove", dragWWWL, true);
+		}
+		else {
+			source.detachEvent("onmousemove", dragWWWL);
+			source.detachEvent("onmouseup", dropWWWL);
+			source.releaseCapture();
+		}
+		if (evt.stopPropagation) event.stopPropagation();
+		else evt.cancelBubble = true;
+		return false;
+	}
 }
-function wwRIGHT() {
-	var wwInput = document.getElementById("WindowWidth");
-	var ww = parseInt(wwInput.value) + 50;
-	if (ww < 1) ww = 1;
-	wwInput.value = ww;
-	changeWWWL()
+
+function getDCMParams(source) {
+	var p = new Object();
+	src = dirpath + source.getAttribute("original-format");
+	var req = new AJAX();
+	req.GET(src, "params&" + req.timeStamp(), null);
+	if (req.success()) {
+		var xml = req.responseXML();
+		if (xml) {
+			xml = xml.firstChild;
+			p.Modality = xml.getAttribute("Modality");
+			p.BitsStored = getParamAsInt( xml.getAttribute("BitsStored"), 12 );
+			p.RescaleSlope = getParamAsFloat( xml.getAttribute("RescaleSlope"), 1 );
+			p.RescaleIntercept = getParamAsFloat( xml.getAttribute("RescaleIntercept"), 0 );
+			p.WindowCenter = getParamAsInt( xml.getAttribute("WindowCenter"), 1000 );
+			p.WindowWidth = getParamAsInt( xml.getAttribute("WindowWidth"), 1000 );
+		}
+	}
+	return p;
 }
+
+function getParamAsFloat(string, def) {
+	try { return parseFloat(string); }
+	catch (e) { return def; }
+}
+
+function getParamAsInt(string, def) {
+	try { return Math.round( parseFloat(string) ); }
+	catch (e) { return def; }
+}
+
+function wwwlCheckEnter(evt) {
+	var e = getEvent(evt);
+	var key = e.keyCode;
+	if (key == 13) changeWWWL();
+}
+
 function changeWWWL() {
 	var div = document.getElementById("wwwlEditorDiv");
 	var source = div.source;
@@ -2614,10 +2726,20 @@ function changeWWWL() {
 	var ww = parseInt(wwInput.value);
 	src = dirpath + source.getAttribute("original-format") + "?jpeg&ww="+ww+"&wl="+wl;
 	var img = document.getElementById("wwwlIMG");
+	var w = img.clientWidth;
+	var h = img.clientHeight;
 	img.src = src;
+	img.style.width = w;
+	img.style.height = h;
+}
+
+function saveWWWLImage() {
+}
+function saveWWWLSeries() {
 }
 
 function wwwlOK() {
+	hidePopups();
 	var wwwlEditorDiv = document.getElementById("wwwlEditorDiv");
 	var source = wwwlEditorDiv.source;
 
@@ -2628,7 +2750,6 @@ function wwwlOK() {
 	mainEditorDiv.style.display = "block";
 	var parent = wwwlEditorDiv.parentNode;
 	parent.removeChild(wwwlEditorDiv);
-	alert("OK clicked for "+source.src);
 	saveClicked();
 }
 
@@ -2642,7 +2763,7 @@ function imgMouseEnter(event) {
 	div.source = source;
 	div.id = "imginfo";
 	div.className = "imginfo";
-	div.onmouseleave = imgMouseLeave;
+	div.onmouseout = imgMouseLeave;
 	var srcName = source.src;
 	srcName = srcName.substring(srcName.lastIndexOf("/") + 1);
 	var height = 45;

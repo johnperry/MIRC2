@@ -36,7 +36,6 @@
 
 <xsl:template name="headings">
 	<tr>
-		<th/>
 		<th>Document Title</th>
 		<th>Count</th>
 	</tr>
@@ -44,7 +43,6 @@
 
 <xsl:template match="Document">
 	<tr>
-		<td class="right"><xsl:number/></td>
 		<td>
 			<a href="{@docKey}" targer="document">
 				<xsl:value-of select="@title"/>

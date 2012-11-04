@@ -139,6 +139,25 @@ public class StorageService extends Servlet {
 				catch (Exception ex) { res.setResponseCode( res.notfound ); }
 				res.send();
 			}
+			else if (req.getParameter("params") != null) {
+				try {
+					DicomObject dob = new DicomObject(file);
+					Document doc = XmlUtil.getDocument();
+					Element params = doc.createElement("params");
+					params.setAttribute("Modality", dob.getElementValue("Modality"));
+					params.setAttribute("BitsStored", dob.getElementValue("BitsStored"));
+					params.setAttribute("RescaleSlope", Float.toString(dob.getFloat("RescaleSlope", 1.0f)));
+					params.setAttribute("RescaleIntercept", Float.toString(dob.getFloat("RescaleIntercept", 0.0f)));
+					params.setAttribute("WindowCenter", Float.toString(dob.getFloat("WindowCenter")));
+					params.setAttribute("WindowWidth", Float.toString(dob.getFloat("WindowWidth")));
+					res.write(XmlUtil.toString(params));
+				}
+				catch (Exception ex) {
+					res.write("<params/>");
+				}
+				res.setContentType("xml");
+				res.send();
+			}
 			else if (req.getParameter("jpeg") != null) {
 				//This is a request for a JPEG image with window leveling.
 				try {
@@ -148,11 +167,14 @@ public class StorageService extends Servlet {
 					int wl = StringUtil.getInt( req.getParameter("wl") );
 					DicomObject dob = new DicomObject(file);
 					String name = file.getName();
-					name = name.substring(0, name.lastIndexOf(".")) + "["+wl+","+ww+"].jpeg";
+					name = name.substring(0, name.lastIndexOf(".")) + "["+/*wl+","+ww+"*/"WWWL].jpeg";
 					File windowedFile = new File(file.getParentFile(), name);
-					dob.saveAsWindowLeveledJPEG(windowedFile, frame, q, wl, ww);
+					String lutShape = dob.getElementValue("PresentationLUTShape").toLowerCase().trim();
+					boolean inverse = lutShape.equals("inverse");
+					dob.saveAsWindowLeveledJPEG(windowedFile, frame, q, wl, ww, inverse);
 					res.setContentType(windowedFile);
 					res.write(windowedFile);
+					res.disableCaching();
 					res.send();
 					windowedFile.delete();
 				}
