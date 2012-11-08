@@ -2466,6 +2466,23 @@ function setBreedList(myEvent) {
 	}
 }
 
+//WW/WL Presets
+function WWWLPreset(name, ww, wl) {
+	this.name = name;
+	this.wl = wl;
+	this.ww = ww;
+}
+wwwlPresets = new Array( //WW/WL
+	new WWWLPreset("Presets", 0, 0),
+	new WWWLPreset("Abdomen/pelvis", 350, 40),
+	new WWWLPreset("Bone", 2500, 480),
+	new WWWLPreset("Brain", 80, 40),
+	new WWWLPreset("Liver", 120, 70),
+	new WWWLPreset("Lung", 1500, -500),
+	new WWWLPreset("Stroke", 50, 40),
+	new WWWLPreset("Subdural", 350, 90)
+);
+
 //Set the WW/WL editor div and handle the button click event
 function startWWWLEditor() {
 	var div = document.getElementById("imginfo");
@@ -2500,9 +2517,12 @@ function loadWWWLEditor(source) {
 	wwwlEditorDiv.style.background = "black";
 	wwwlEditorDiv.style.height = findObject(document.body).h;
 
-	//Display the WW/WL popup
+	//Get the image params
 	var params = getDCMParams(source);
+	wwwlEditorDiv.params = params;
 	//displayParams(wwwlEditorDiv, params);
+
+	//Display the WW/WL popup
 	var size = 1 << params.BitsStored;
 	var min = params.RescaleIntercept;
 	var max = size * params.RescaleSlope + min;
@@ -2515,6 +2535,15 @@ function loadWWWLEditor(source) {
 	div = document.createElement("DIV");
 	div.className = "content";
 	div.id = "wwwlPopupDiv";
+
+	var pSelect = document.createElement("P");
+	var select = document.createElement("SELECT");
+	select.id = "SelectPreset";
+	for (var k=0; k<wwwlPresets.length; k++) {
+		addWWWLOption(select, wwwlPresets[k]);
+	}
+	select.onchange = selectPreset;
+	pSelect.appendChild(select);
 
 	var pTable = document.createElement("P");
 	var table = document.createElement("TABLE");
@@ -2571,6 +2600,14 @@ function loadWWWLEditor(source) {
 	b.onclick = saveWWWLSeries;
 	pSaveSeries.appendChild(b);
 
+	var pReset = document.createElement("P");
+	b = document.createElement("INPUT");
+	b.className = "stdbutton";
+	b.type = "button";
+	b.value = " Reset ";
+	b.onclick = wwwlReset;
+	pReset.appendChild(b);
+
 	var pOK = document.createElement("P");
 	b = document.createElement("INPUT");
 	b.className = "stdbutton";
@@ -2579,12 +2616,36 @@ function loadWWWLEditor(source) {
 	b.onclick = wwwlOK;
 	pOK.appendChild(b);
 
+	div.appendChild(pSelect);
 	div.appendChild(pTable);
 	div.appendChild(pSaveImage);
 	div.appendChild(pSaveSeries);
+	div.appendChild(pReset);
 	div.appendChild(pOK);
 
-	showDialog("wwwlPopup", 190, 196, "Adjust WW/WL", closeboxURL, null/*"Set WW/WL"*/, div, null, null);
+	//showDialog(popupDivId, w, h, title, closeboxFile, heading, div, okHandler, cancelHandler, hide);
+	showDialog("wwwlPopup", 190, 236, "Adjust WW/WL", closeboxURL, null, div, null, null, null, wwwlOK);
+}
+
+function addWWWLOption(select, preset) {
+	var option = document.createElement("OPTION");
+	option.appendChild(document.createTextNode(preset.name));
+	select.appendChild(option);
+}
+
+function selectPreset() {
+	var select = document.getElementById("SelectPreset");
+	if (select) {
+		var index = select.selectedIndex;
+		if (index > 0) {
+			var wlInput = document.getElementById("WindowLevel");
+			wlInput.value = wwwlPresets[index].wl;
+			var wwInput = document.getElementById("WindowWidth");
+			wwInput.value = wwwlPresets[index].ww;
+			changeWWWL();
+			select.selectedIndex = 0;
+		}
+	}
 }
 
 function displayParams(div, params) {
@@ -2717,6 +2778,16 @@ function wwwlCheckEnter(evt) {
 	if (key == 13) changeWWWL();
 }
 
+function wwwlReset() {
+	var div = document.getElementById("wwwlEditorDiv");
+	var params = div.params;
+	var wlInput = document.getElementById("WindowLevel");
+	var wwInput = document.getElementById("WindowWidth");
+	wlInput.value = params.WindowCenter;
+	wwInput.value = params.WindowWidth;
+	changeWWWL();
+}
+
 function changeWWWL() {
 	var div = document.getElementById("wwwlEditorDiv");
 	var source = div.source;
@@ -2734,8 +2805,30 @@ function changeWWWL() {
 }
 
 function saveWWWLImage() {
+	doWWWLSave("");
 }
 function saveWWWLSeries() {
+	doWWWLSave("&series");
+}
+function doWWWLSave(series) {
+	var div = document.getElementById("wwwlEditorDiv");
+	var source = div.source;
+	var wlInput = document.getElementById("WindowLevel");
+	var wwInput = document.getElementById("WindowWidth");
+	var wl = parseInt(wlInput.value);
+	var ww = parseInt(wwInput.value);
+	var doc = docpath.substring(docpath.lastIndexOf("/")+1);
+	var src = dirpath + source.getAttribute("original-format");
+	var req = new AJAX();
+	var qs = "update"+series+"&ww="+ww+"&wl="+wl+"&doc="+doc + "&"+req.timeStamp();
+	req.GET(src, qs, null);
+	if (req.success()) {
+		var xml = req.responseXML();
+		if (xml) {
+			xml = xml.firstChild;
+			alert(xml.tagName);
+		}
+	}
 }
 
 function wwwlOK() {
@@ -2750,7 +2843,6 @@ function wwwlOK() {
 	mainEditorDiv.style.display = "block";
 	var parent = wwwlEditorDiv.parentNode;
 	parent.removeChild(wwwlEditorDiv);
-	saveClicked();
 }
 
 function imgMouseEnter(event) {

@@ -19,6 +19,7 @@ import mirc.MircConfig;
 import mirc.prefs.Preferences;
 import mirc.ssadmin.StorageServiceAdmin;
 
+import mirc.util.MircDocument;
 import mirc.util.MyRsnaSession;
 import mirc.util.MyRsnaSessions;
 
@@ -169,9 +170,7 @@ public class StorageService extends Servlet {
 					String name = file.getName();
 					name = name.substring(0, name.lastIndexOf(".")) + "["+/*wl+","+ww+"*/"WWWL].jpeg";
 					File windowedFile = new File(file.getParentFile(), name);
-					String lutShape = dob.getElementValue("PresentationLUTShape").toLowerCase().trim();
-					boolean inverse = lutShape.equals("inverse");
-					dob.saveAsWindowLeveledJPEG(windowedFile, frame, q, wl, ww, inverse);
+					dob.saveAsWindowLeveledJPEG(windowedFile, -1, -1, frame, q, wl, ww);
 					res.setContentType(windowedFile);
 					res.write(windowedFile);
 					res.disableCaching();
@@ -179,6 +178,24 @@ public class StorageService extends Servlet {
 					windowedFile.delete();
 				}
 				catch (Exception ex) { res.setResponseCode( res.notfound ); res.send(); }
+			}
+			else if (req.getParameter("update") != null) {
+				//This is a request to resave an image with window leveling
+				try {
+					int frame = StringUtil.getInt( req.getParameter("frame"), 0);
+					int q = StringUtil.getInt( req.getParameter("q"), -1 );
+					int ww = StringUtil.getInt( req.getParameter("ww") );
+					int wl = StringUtil.getInt( req.getParameter("wl") );
+					File dir = file.getParentFile();
+					File docFile = new File(dir, req.getParameter("doc"));
+					boolean doSeries = (req.getParameter("series") != null);
+					Updater updater = new Updater(docFile, file, frame, q, wl, ww, doSeries);
+					updater.start();
+					res.write("<OK/>");
+				}
+				catch (Exception ex) { res.write("<NOTOK/>"); }
+				res.setContentType("xml");
+				res.send();
 			}
 			else if (req.getParameter("bi") != null) {
 				//This is a request for a java.awt.image.BufferedImage
@@ -1002,6 +1019,39 @@ public class StorageService extends Servlet {
 			}
 		}
 		return "Unable to export the zip file";
+	}
+
+	class Updater extends Thread {
+		MircDocument md;
+		DicomObject dicomObject;
+		int frame;
+		int ww;
+		int wl;
+		int q;
+		boolean doSeries;
+
+		public Updater(File docFile, File imageFile, int frame, int q, int ww, int wl, boolean doSeries) throws Exception {
+			this.md = new MircDocument(docFile);
+			this.dicomObject = new DicomObject(imageFile);
+			this.frame = frame;
+			this.q = q;
+			this.ww = ww;
+			this.wl = wl;
+			this.doSeries = doSeries;
+		}
+		public void run() {
+			try {
+				if (doSeries) {
+					md.updateSeries(dicomObject, frame, q, ww, wl);
+				}
+				else {
+					md.updateImage(dicomObject, frame, q, ww, wl);
+				}
+			}
+			catch (Exception unable) {
+				logger.warn("Unable to update "+(doSeries ? "series" : "image")+" for "+dicomObject.getFile());
+			}
+		}
 	}
 
 }

@@ -504,6 +504,9 @@ div#wwwlPopup input.stdbutton {
 div#wwwlPopup input.wwwl {
 	width: 106px;
 }
+div#wwwlPopup select {
+	width: 150px;
+}
 /*----------End of wwwlPopup div ------------*/
 
 

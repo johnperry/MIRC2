@@ -1063,6 +1063,125 @@ public class MircDocument {
 
 	//*********************************************************************************************
 	//
+	//	Update images and series with new WW and WL values
+	//
+	//*********************************************************************************************
+	/**
+	 * Update an image, saving it with the specified parameters.
+	 * @param dicomObject the object to use in creating the JPEGs.
+	 * @param frame the frame to use in creating JPEGs.
+	 * @param wl the window level to use in creating JPEGs.
+	 * @param ww the window width to use in creating JPEGs.
+	 * @param q the quality level to use in creating JPEGs.
+	 */
+	public void updateImage(DicomObject dicomObject, int frame, int q, int wl, int ww) throws Exception {
+		File imageFile = dicomObject.getFile();
+		String name = imageFile.getName();
+		Element root = getXML().getDocumentElement();
+		NodeList imageSections = root.getElementsByTagName("image-section");
+		for (int i=0; i<imageSections.getLength(); i++) {
+			Element imageSection = (Element)imageSections.item(i);
+			NodeList alts = root.getElementsByTagName("alternative-image");
+			for (int k=0; k<alts.getLength(); k++) {
+				Element alt = (Element)alts.item(k);
+				if (alt.getAttribute("role").equals("original-format") && alt.getAttribute("src").equals(name)) {
+					Element baseImage = (Element)alt.getParentNode();
+					saveWWWLImages(dicomObject, baseImage, frame, q, wl, ww);
+				}
+			}
+		}
+	}
+
+	public void updateSeries(DicomObject dicomObject, int frame, int q, int wl, int ww) throws Exception {
+		//First, find the study and series information as stored in the order-by element for the DicomObject in the MircDocument.
+		String study = null;
+		String series = null;
+		File imageFile = dicomObject.getFile();
+		String name = imageFile.getName();
+		Element root = getXML().getDocumentElement();
+		NodeList imageSections = root.getElementsByTagName("image-section");
+		for (int i=0; i<imageSections.getLength(); i++) {
+			Element imageSection = (Element)imageSections.item(i);
+			NodeList alts = root.getElementsByTagName("alternative-image");
+			for (int k=0; k<alts.getLength(); k++) {
+				Element alt = (Element)alts.item(k);
+				if (alt.getAttribute("role").equals("original-format") && alt.getAttribute("src").equals(name)) {
+					//Okay, we found the DicomObject in the MircDocument, see if it has an order-by element.
+					Element baseImage = (Element)alt.getParentNode();
+					NodeList obs = baseImage.getElementsByTagName("order-by");
+					if (obs.getLength() > 0) {
+						Element ob = (Element)obs.item(0);
+						study = ob.getAttribute("study");
+						series = ob.getAttribute("series");
+						break;
+					}
+				}
+			}
+			if (series !=  null) break;
+		}
+		if (series == null) {
+			//We didn't find an order-by element to use to identify the series.
+			//The best we can do is try to update the image itself.
+			updateImage(dicomObject, frame, q, wl, ww);
+			return;
+		}
+
+		//Okay, if we get here, we know the study and series information.
+		//Look for all images that match the study and series and update them.
+		//Note that this will also pick up the identified image.
+		//Note also that we still have the nodelist of image-sections.
+		for (int i=0; i<imageSections.getLength(); i++) {
+			Element imageSection = (Element)imageSections.item(i);
+			NodeList obs = root.getElementsByTagName("order-by");
+			for (int k=0; k<obs.getLength(); k++) {
+				Element ob = (Element)obs.item(k);
+				if (ob.getAttribute("study").equals(study) && ob.getAttribute("series").equals(series)) {
+					//Okay, we found an object in the study and series; now get the DicomObject for it
+					Element baseImage = (Element)ob.getParentNode();
+					NodeList alts = baseImage.getElementsByTagName("alternative-image");
+					for (int x=0; x<alts.getLength(); x++) {
+						Element alt = (Element)alts.item(x);
+						if (alt.getAttribute("role").equals("original-format")) {
+							try {
+								DicomObject dob = new DicomObject(new File(docDir, alt.getAttribute("src")));
+								saveWWWLImages(dob, baseImage, frame, q, wl, ww);
+							}
+							catch (Exception skip) { }
+						}
+					}
+				}
+			}
+		}
+	}
+
+	private void saveWWWLImages(DicomObject dicomObject, Element baseImage, int frame, int q, int wl, int ww) throws Exception {
+		if (baseImage == null) return;
+		saveWWWLImage(dicomObject, baseImage, frame, q, wl, ww);
+		Node child = baseImage.getFirstChild();
+		while (child != null) {
+			if (child instanceof Element) {
+				saveWWWLImage(dicomObject, (Element)child, frame, q, wl, ww);
+			}
+			child = child.getNextSibling();
+		}
+	}
+
+	private void saveWWWLImage(DicomObject dob, Element el, int frame, int q, int wl, int ww) throws Exception {
+		if (el == null) return;
+		String tag = el.getTagName();
+		String attr = el.getAttribute("role");
+		if (tag.equals("image") || (tag.equals("alternative-image") && (attr.equals("icon") || attr.equals("original-dimensions")))) {
+			String src = el.getAttribute("src");
+			int w = StringUtil.getInt(el.getAttribute("w"), -1);
+			int h = StringUtil.getInt(el.getAttribute("h"), -1);
+			File file = new File (docDir, src);
+			file.delete();
+			dob.saveAsWindowLeveledJPEG(file, w, h, frame, q, wl, ww);
+		}
+	}
+
+	//*********************************************************************************************
+	//
 	//	Insert images
 	//
 	//*********************************************************************************************
