@@ -1175,8 +1175,19 @@ public class MircDocument {
 			int w = StringUtil.getInt(el.getAttribute("w"), -1);
 			int h = StringUtil.getInt(el.getAttribute("h"), -1);
 			File file = new File (docDir, src);
-			file.delete();
+			if (!file.delete()) logger.info("Unable to delete "+file+" before saving");
+			//logger.info("Saving window-leveled JPEG: "+file.getAbsoluteFile()+" ("+wl+","+ww+") ("+w+","+h+")");
 			dob.saveAsWindowLeveledJPEG(file, w, h, frame, q, wl, ww);
+
+			/*
+			//This code was used for testing, to find the problem where it worked only if the image was not scaled.
+			int x = src.lastIndexOf(".jpeg");
+			if (x > 0) {
+				String xsrc = src.substring(0, x) +"["+wl+","+ww+"].jpeg";
+				File xfile = new File(docDir, xsrc);
+				dob.saveAsWindowLeveledJPEG(xfile, -1, -1, frame, q, wl, ww);
+			}
+			*/
 		}
 	}
 

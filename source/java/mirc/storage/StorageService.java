@@ -193,7 +193,10 @@ public class StorageService extends Servlet {
 					updater.start();
 					res.write("<OK/>");
 				}
-				catch (Exception ex) { res.write("<NOTOK/>"); }
+				catch (Exception ex) {
+					res.write("<NOTOK/>");
+					logger.warn("Unable to update an image", ex);
+				}
 				res.setContentType("xml");
 				res.send();
 			}

@@ -376,6 +376,7 @@ public class AuthorService extends Servlet {
 							new Object[] {
 								"prefs",	prefs,
 								"ssid",		ssid,
+								"docpath",	path.subpath(1),
 								"dirpath",	dirPath,
 								"authpath",	authPath,
 								"icons",	getIcon96(dir),
@@ -456,6 +457,7 @@ public class AuthorService extends Servlet {
 								new Object[] {
 									"prefs",	prefs,
 									"ssid",		ssid,
+									"docpath",	path.subpath(1),
 									"dirpath",	dirPath,
 									"authpath",	authPath,
 									"icons",	getIcon96(dir),

@@ -2499,7 +2499,7 @@ function loadWWWLEditor(source) {
 	var pImage = document.createElement("P");
 	var src = dirpath + source.getAttribute("base-image");
 	var img = document.createElement("IMG");
-	img.id="wwwlIMG";
+	img.id = "wwwlIMG";
 	img.src = src;
 	img.onmousedown = startWWWLDrag;
 	pImage.appendChild(img);
@@ -2826,13 +2826,20 @@ function doWWWLSave(series) {
 		var xml = req.responseXML();
 		if (xml) {
 			xml = xml.firstChild;
-			alert(xml.tagName);
+			if (xml.tagName == "NOTOK") alert("Unable to save the modified image values.");
+			else alert("The modified image values are\n"
+					  +"being saved in a background process.\n"
+					  +"You may continue to modify this or\n"
+					  +"other images.");
 		}
 	}
 }
 
 function wwwlOK() {
-	hidePopups();
+	var popup = document.getElementById("wwwlPopup");
+	if (popup) popup.parentNode.removeChild(popup);
+	hidePopups(); //just in case
+
 	var wwwlEditorDiv = document.getElementById("wwwlEditorDiv");
 	var source = wwwlEditorDiv.source;
 
