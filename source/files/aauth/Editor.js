@@ -851,7 +851,10 @@ function saveClicked() {
 
 	//Require that there be a non-blank title
 	if (!hasTitle()) {
-		alert("The document must have a title.");
+		//Switch to the Title section
+		var n = getTitleSectionNumber();
+		if (n >= 0) showSection(n);
+		alert("The document must have a title\nbefore it can be saved.");
 		return;
 	}
 
@@ -863,6 +866,41 @@ function saveClicked() {
 	form.activetab.value = currentSection;
 	window.onbeforeunload = "";
 	form.submit();
+}
+
+function getTitleSectionNumber() {
+	var child = document.getElementById("editor").firstChild;
+	var n = 0;
+	while (child != null) {
+		if (child.nodeName.toLowerCase() == "div") {
+			if (child.getAttribute("type") == 'title') return n;
+			else n++;
+		}
+		child = child.nextSibling;
+	}
+	return -1;
+}
+
+function getTitleSection() {
+	var child = document.getElementById("editor").firstChild;
+	while (child != null) {
+		if ((child.nodeName.toLowerCase() == "div")
+			&& (child.getAttribute("type") == 'title')) {
+				return child;
+		}
+		child = child.nextSibling;
+	}
+	return null;
+}
+
+function hasTitle() {
+	var titleSection = getTitleSection();
+	if (titleSection) {
+		var list = titleSection.getElementsByTagName("TEXTAREA");
+		var title = filter(normalize(trim(list[0].value)));
+		return (title != "");
+	}
+	return false;
 }
 
 function hasTitle() {
@@ -2608,23 +2646,14 @@ function loadWWWLEditor(source) {
 	b.onclick = wwwlReset;
 	pReset.appendChild(b);
 
-	var pOK = document.createElement("P");
-	b = document.createElement("INPUT");
-	b.className = "stdbutton";
-	b.type = "button";
-	b.value = " OK ";
-	b.onclick = wwwlOK;
-	pOK.appendChild(b);
-
 	div.appendChild(pSelect);
 	div.appendChild(pTable);
 	div.appendChild(pSaveImage);
 	div.appendChild(pSaveSeries);
 	div.appendChild(pReset);
-	div.appendChild(pOK);
 
 	//showDialog(popupDivId, w, h, title, closeboxFile, heading, div, okHandler, cancelHandler, hide);
-	showDialog("wwwlPopup", 190, 236, "Adjust WW/WL", closeboxURL, null, div, null, null, null, wwwlOK);
+	showDialog("wwwlPopup", 190, 216, "Adjust WW/WL", closeboxURL, null, div, null, null, null, wwwlOK);
 }
 
 function addWWWLOption(select, preset) {
