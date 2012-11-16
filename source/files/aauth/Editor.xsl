@@ -842,6 +842,12 @@
 						</input>
 					</td>
 				</tr>
+				<tr>
+					<td>Number of images:</td>
+					<td>
+						<xsl:value-of select="count(//image-section/image)"/>
+					</td>
+				</tr>
 			</table>
 		</p>
 		<div>
@@ -1173,7 +1179,7 @@
 		</p>
 		<div>
 			<xsl:choose>
-				<xsl:when test="phi">
+				<xsl:when test="phi and ($draft!='yes')">
 					<xsl:for-each select="phi/study">
 						<xsl:call-template name="phi-study">
 							<xsl:with-param name="study" select="."/>

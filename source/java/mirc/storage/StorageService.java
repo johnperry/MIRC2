@@ -141,6 +141,7 @@ public class StorageService extends Servlet {
 				res.send();
 			}
 			else if (req.getParameter("params") != null) {
+				//This is a request for the key image parameters from the DICOM dataset
 				try {
 					DicomObject dob = new DicomObject(file);
 					Document doc = XmlUtil.getDocument();
@@ -180,7 +181,9 @@ public class StorageService extends Servlet {
 				catch (Exception ex) { res.setResponseCode( res.notfound ); res.send(); }
 			}
 			else if (req.getParameter("update") != null) {
-				//This is a request to resave an image with window leveling
+				//This is a request to resave an image with window leveling.
+				//This is done in a background thread because it could take
+				//time to update all the images if it's a series request.
 				try {
 					int frame = StringUtil.getInt( req.getParameter("frame"), 0);
 					int q = StringUtil.getInt( req.getParameter("q"), -1 );
@@ -258,7 +261,40 @@ public class StorageService extends Servlet {
 				return;
 			}
 
-			//It's a MIRCdocument. See if this is a zip export request.
+			//It's a MIRCdocument. See if this is a PPT export request.
+			String pptParameter = req.getParameter("ppt");
+			if (pptParameter != null) {
+
+				//Check whether export is authorized.
+				if (userIsAuthorizedTo("export", doc, req)) {
+					//Construct a MircDocument from the Document object
+					//to avoid parsing it again, but then we have to
+					//tell it the file.
+					MircDocument md = new MircDocument(doc);
+					md.setFile(file);
+
+					//Get the PPT file
+					File odpFile = md.getPresentation();
+					res.write(odpFile);
+					res.setContentType(odpFile);
+					res.setContentDisposition(odpFile);
+					//NOTE: Do not disable caching; otherwise, the download will
+					//fail because the browser won't be able to store the file;
+
+					res.send();
+					//odpFile.delete(); //Enable this after debugging is done **********************************
+					AccessLog.logAccess(req, doc);
+					return;
+				}
+				else {
+					//Export is not authorized.
+					res.setResponseCode( res.forbidden );
+					res.send();
+					return;
+				}
+			}
+
+			//It's not a PPT export. See if this is a zip export request.
 			String zipParameter = req.getParameter("zip");
 			if (zipParameter != null) {
 
@@ -267,7 +303,7 @@ public class StorageService extends Servlet {
 
 					//Export is authorized; make the file for the zip file
 					String extParameter = req.getParameter("ext", "").trim();
-					File zipFile = getFileForZip(doc, file, extParameter);
+					File zipFile = MircDocument.getFileForZip(doc, file, extParameter);
 
 					//Insert the path attribute (if necessary) for third party author tools.
 					//The path attribute starts with the ssid, as in: "ss1/docs/...".
@@ -375,16 +411,6 @@ public class StorageService extends Servlet {
 			}
 			AccessLog.logAccess(req, doc);
 		}
-	}
-
-	private static String makeNameFromParent(File file) {
-		file = new File(file.getAbsolutePath());
-		File parent = file.getParentFile();
-		String name = parent.getName();
-		while ((name.length() < 10) && ( (parent=parent.getParentFile()) != null )) {
-			name = parent.getName() + "_" + name;
-		}
-		return name;
 	}
 
 	/**
@@ -820,15 +846,16 @@ public class StorageService extends Servlet {
 		if (userIsAuthorizedTo("delete", doc, req))
 			deleteurl = "/storage/delete" + docIndexEntry;
 
-		//Set up the link for exporting the document
-		String exporturl = "";
-		if (userIsAuthorizedTo("export", doc, req))
-			exporturl = docPath + "?zip";
-
-		//Set up the link for saving the images from this document to the user's file cabinet
+		//Set up the links for exporting the document
+		boolean canExport = userIsAuthorizedTo("export", doc, req);
+		String pptexporturl = "";
+		String zipexporturl = "";
 		String filecabineturl = "";
-		if (req.isFromAuthenticatedUser() && !exporturl.equals(""))
+		if (canExport) {
+			pptexporturl = docPath + "?ppt";
+			zipexporturl = docPath + "?zip";
 			filecabineturl = "/files/save" + docPath;
+		}
 
 		//Set the parameter that identifies this as a preview, in which case
 		//certain functions are disabled in the MIRCdocument display.
@@ -869,7 +896,8 @@ public class StorageService extends Servlet {
 			"sort-url",				sorturl,
 			"publish-url",			publishurl,
 			"delete-url",			deleteurl,
-			"export-url",			exporturl,
+			"ppt-export-url",		pptexporturl,
+			"zip-export-url",		zipexporturl,
 			"filecabinet-url",		filecabineturl,
 
 			"preview",				preview,
@@ -927,36 +955,6 @@ public class StorageService extends Servlet {
 			}
 		}
 		return "";
-	}
-
-	/**
-	 * Construct a File to contain a MIRCdocument zip export. The filename
-	 * consists of the name of the parent directory, an underscore, and the
-	 * text content of the MIRCdocument's title element (modified to make an
-	 * acceptable filename, with whitespace, slashes, backslashes, and ampersands
-	 * replaced by underscores). The extension is ".zip" unless the extParameter
-	 * is supplied as non-null and non-empty, in which case the extension is
-	 * "." + extParameter.
-	 * @param doc the MIRCdocument XML Document object.
-	 * @param file the file containing the MIRCdocument.
-	 * @param extParameter the desired extension (with no leading period). If this parameter
-	 * is null or empty, the default extension ".zip" is supplied.
-	 * @return the file (note that this is only a File object; this method does not
-	 * insert the zip contents).
-	 */
-	public static File getFileForZip(Document doc, File file, String extParameter) {
-		String ext = ".zip";
-		if ((extParameter != null) && !extParameter.equals("")) ext = "." + extParameter;
-		File parent = file.getParentFile();
-		String name = makeNameFromParent(file);
-		Element titleEl = XmlUtil.getFirstNamedChild(doc, "title");
-		if (titleEl != null) {
-			String title = titleEl.getTextContent().trim();
-			title = title.replaceAll("\\s+", "_");
-			if (title.length() > 0) name = title + "_" + name;
-		}
-		name += ext;
-		return new File(parent, name);
 	}
 
 	/**

@@ -17,7 +17,8 @@
 <xsl:param name="sort-url"/>
 <xsl:param name="publish-url"/>
 <xsl:param name="delete-url"/>
-<xsl:param name="export-url"/>
+<xsl:param name="ppt-export-url"/>
+<xsl:param name="zip-export-url"/>
 <xsl:param name="filecabinet-url"/>
 <xsl:param name="post-url"/>
 
@@ -334,6 +335,14 @@
 </xsl:template>
 
 <xsl:template name="make-token-buttons">
+	<xsl:variable name="imagecount" select="count(//image-section/image)"/>
+	<p class="imagecount">
+		<xsl:value-of select="$imagecount"/>
+		<xsl:text> image</xsl:text>
+		<xsl:if test="$imagecount != 1">
+			<xsl:text>s</xsl:text>
+		</xsl:if>
+	</p>
 	<xsl:for-each select="//image-section/image">
 		<xsl:variable name="n"><xsl:number /></xsl:variable>
 		<input type="image" class="tokenbuttonDESEL" width="64">
@@ -492,7 +501,8 @@
 					<xsl:call-template name="publish-button"/>
 					<xsl:call-template name="caseoftheday-button"/>
 					<xsl:call-template name="conferences-button"/>
-					<xsl:call-template name="export-button"/>
+					<xsl:call-template name="ppt-export-button"/>
+					<xsl:call-template name="zip-export-button"/>
 					<xsl:call-template name="export-to-button"/>
 					<xsl:call-template name="saveimages-button"/>
 					<xsl:call-template name="myrsna-button"/>
@@ -507,12 +517,12 @@
 </xsl:template>
 
 <xsl:template name="myrsna-button">
-	<xsl:if test="($user-has-myrsna-acct = 'yes') and (string-length($export-url)!=0)">
+	<xsl:if test="($user-has-myrsna-acct = 'yes') and (string-length($zip-export-url)!=0)">
 		<tr>
 			<td>
 				<input type="button" value="Export to myRSNA Files"
 						title="Export to myRSNA Files"
-						onclick="exportToMyRsnaFiles('{$export-url}');"/>
+						onclick="exportToMyRsnaFiles('{$zip-export-url}');"/>
 			</td>
 		</tr>
 	</xsl:if>
@@ -575,23 +585,34 @@
 	</xsl:if>
 </xsl:template>
 
-<xsl:template name="export-button">
-	<xsl:if test="string-length($export-url)!=0">
+<xsl:template name="ppt-export-button">
+	<xsl:if test="string-length($ppt-export-url)!=0">
 		<tr>
 			<td>
-				<input type="button" value="Download this Document" title="Download this document to your browser"
-					onclick="exportZipFile('{$export-url}','_self',event);"/>
+				<input type="button" value="Download Slides" title="Download this document to your browser as a slide presentation"
+					onclick="exportZipFile('{$ppt-export-url}','_self',event);"/>
+			</td>
+		</tr>
+	</xsl:if>
+</xsl:template>
+
+<xsl:template name="zip-export-button">
+	<xsl:if test="string-length($zip-export-url)!=0">
+		<tr>
+			<td>
+				<input type="button" value="Download Document" title="Download this document to your browser as a zip file"
+					onclick="exportZipFile('{$zip-export-url}','_self',event);"/>
 			</td>
 		</tr>
 	</xsl:if>
 </xsl:template>
 
 <xsl:template name="export-to-button">
-	<xsl:if test="(string-length($export-url)!=0) and ($prefs/User/export/site)">
+	<xsl:if test="(string-length($zip-export-url)!=0) and ($prefs/User/export/site)">
 		<tr>
 			<td>
 				<input type="button" value="Export to Destination" title="Export to another MIRC site"
-					onclick="exportTo('{$export-url}');"/>
+					onclick="exportTo('{$zip-export-url}');"/>
 			</td>
 		</tr>
 	</xsl:if>

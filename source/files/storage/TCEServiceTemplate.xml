@@ -15,13 +15,14 @@
  <keywords/>
 
  <section heading="History"/>
- <section heading="Findings"/>
- <section heading="Diagnosis"/>
- <section heading="Discussion"/>
 
  <image-section heading="Images">
  <insert-megasave width="512"/>
  </image-section>
+
+ <section heading="Findings"/>
+ <section heading="Diagnosis"/>
+ <section heading="Discussion"/>
 
  <section heading="Files">
   <p>

@@ -16,6 +16,10 @@
 		<p/>
 	</section>
 
+	<image-section heading="Images">
+		<insert-megasave width="700"/>
+	</image-section>
+
 	<section heading="Findings">
 		<p/>
 	</section>
@@ -32,10 +36,6 @@
 		<p/>
 	</section>
 
-	<image-section heading="Images">
-		<insert-megasave width="700"/>
-	</image-section>
-
 	<section heading="Comments">
 		<threadblock id="CB-0-0" />
 	</section>
@@ -46,6 +46,11 @@
 		<update>author</update>
 		<export></export>
 	</authorization>
+
+	<phi>
+		<pt-name><g0010e0010 desc="Patient Name"/></pt-name>
+		<pt-id><g0010e0020 desc="Patient ID"/></pt-id>
+	</phi>
 
 	<publication-date/>
 

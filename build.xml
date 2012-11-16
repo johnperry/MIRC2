@@ -1,6 +1,6 @@
 <project name="MIRC" default="all" basedir=".">
 
-	<property name="version" value="Z84"/>
+	<property name="version" value="Z86"/>
 
 	<property name="build" value="${basedir}/build"/>
 	<property name="source" value="${basedir}/source"/>
@@ -89,11 +89,6 @@
 		<copy overwrite="true" todir="${build}/CTP/libraries">
 			<fileset dir="${libraries}" includes="**"/>
 		</copy>
-		<!--
-		<copy overwrite="true" todir="${build}/CTP/xml">
-			<fileset dir="xml" includes="*.*"/>
-		</copy>
-		-->
 		<copy overwrite="true" todir="${build}/config">
 			<fileset dir="${source}/config" includes="*.*"/>
 		</copy>

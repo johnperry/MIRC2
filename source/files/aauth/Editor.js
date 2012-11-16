@@ -274,10 +274,10 @@ function fileDblClicked(theEvent) {
 	var theEvent = getEvent(theEvent)
 	stopEvent(theEvent);
 	var source = getSource(theEvent);
-	var filename = source.getAttribute("title");
+	var url = source.xml.getAttribute("fileURL");
 	deselectAll();
 	lastFileClicked = -1;
-	var path = "/file/service/"+currentPath+"/"+filename;
+	var path = "/files/"+url;
 	window.open(path,"_blank");
 	setToolEnables();
 }
@@ -531,7 +531,7 @@ function sectionImageClicked(myEvent) {
 }
 
 //Handle a double click of an image.
-//Swap the editor divs around to show the SVG editor.
+//Swap the editor divs around to show the selected editor.
 function sectionImageDblClicked(myEvent) {
 	var source = getSource(getEvent(myEvent));
 	if (!imageHasBeenSaved(source)) {
@@ -593,24 +593,26 @@ function imageHasBeenSaved(source) {
 //Handle ctrl-clicks and shift-clicks. Set the border colors appropriately.
 function handleSelection(item,list,lastClick,myEvent) {
 	var last = lastClick;
+	var evt = getEvent(myEvent);
+	var source = getSource(evt);
 	//Handle alt-clicks
-	if (getEvent(myEvent).altKey) {
+	if (evt.altKey) {
 		var filename = item.getAttribute("title");
 		if ((filename.toLowerCase().lastIndexOf(".dcm") == filename.length - 4) ||
 			(filename.replace(/[\.\d]/g,"").length == 0)) {
-			var path = "/file/service/"+currentPath+"/"+filename+"?list";
+			var path = "/files/"+source.xml.getAttribute("fileURL")+"?list";
 			window.open(path,"_blank");
 			deselectAll();
 			last = -1;
 		}
 	}
 	//Handle ctrl-clicks
-	else if (getEvent(myEvent).ctrlKey) {
+	else if (evt.ctrlKey) {
 		if (isSelected(item)) deselect(item);
 		else select(item);
 	}
 	//Handle shift-clicks
-	else if (getEvent(myEvent).shiftKey && (lastClick != -1)) {
+	else if (evt.shiftKey && (lastClick != -1)) {
 		var sel = false;
 		var clicked;
 		for (var i=0; i<list.length; i++) {
@@ -2591,7 +2593,7 @@ function loadWWWLEditor(source) {
 	var tr = document.createElement("TR");
 	tbody.appendChild(tr);
 	var td = document.createElement("TD");
-	td.appendChild(document.createTextNode("WL:"));
+	td.appendChild(document.createTextNode("Level:"));
 	tr.appendChild(td);
 	td = document.createElement("TD");
 	var wl = document.createElement("INPUT");
@@ -2607,7 +2609,7 @@ function loadWWWLEditor(source) {
 	tbody.appendChild(tr);
 
 	td = document.createElement("TD");
-	td.appendChild(document.createTextNode("WW:"));
+	td.appendChild(document.createTextNode("Width:"));
 	tr.appendChild(td);
 
 	td = document.createElement("TD");
@@ -2628,6 +2630,7 @@ function loadWWWLEditor(source) {
 	b.type = "button";
 	b.value = " Save Image ";
 	b.onclick = saveWWWLImage;
+	b.title = "Save these values in this image";
 	pSaveImage.appendChild(b);
 
 	var pSaveSeries = document.createElement("P");
@@ -2636,6 +2639,7 @@ function loadWWWLEditor(source) {
 	b.type = "button";
 	b.value = " Save Series ";
 	b.onclick = saveWWWLSeries;
+	b.title = "Save these values in all images of the same series as this image";
 	pSaveSeries.appendChild(b);
 
 	var pReset = document.createElement("P");
@@ -2653,7 +2657,7 @@ function loadWWWLEditor(source) {
 	div.appendChild(pReset);
 
 	//showDialog(popupDivId, w, h, title, closeboxFile, heading, div, okHandler, cancelHandler, hide);
-	showDialog("wwwlPopup", 190, 216, "Adjust WW/WL", closeboxURL, null, div, null, null, null, wwwlOK);
+	showDialog("wwwlPopup", 190, 216, "Change Level & Width", closeboxURL, null, div, null, null, null, wwwlOK);
 }
 
 function addWWWLOption(select, preset) {
@@ -2737,7 +2741,7 @@ function startWWWLDrag(evt) {
 	function dragWWWL(evt) {
 		if (!evt) evt = window.event;
 		var deltaY = evt.clientY - startY;
-		var wl = startWL - deltaY; //+ is north
+		var wl = startWL + deltaY; //- is north
 		if (wl > max) { wl = max; startY = evt.clientY; startWL = max; }
 		if (wl < min) { wl = min; startY = evt.clientY; startWL = min; }
 		wlInput.value = wl;
@@ -2901,14 +2905,14 @@ function imgMouseEnter(event) {
 	if (imageHasBeenSaved(source)) {
 		var a = document.createElement("A");
 		a.onclick = startSVGEditor;
-		a.appendChild(document.createTextNode("Double-click to edit annotations"));
+		a.appendChild(document.createTextNode("Edit annotations (Double-click)"));
 		div.appendChild(a);
 		div.appendChild(document.createElement("BR"));
 		height += 15;
 
 		var a = document.createElement("A");
 		a.onclick = startCaptionEditor;
-		a.appendChild(document.createTextNode("CTRL-double-click to edit captions"));
+		a.appendChild(document.createTextNode("Edit captions (CTRL-double-click)"));
 		div.appendChild(a);
 		div.appendChild(document.createElement("BR"));
 		height += 15;
@@ -2918,7 +2922,7 @@ function imgMouseEnter(event) {
 		if (isDCM) {
 			a = document.createElement("A");
 			a.onclick = startWWWLEditor;
-			a.appendChild(document.createTextNode("ALT-double-click to adjust WW/WL"));
+			a.appendChild(document.createTextNode("Adjust level and width (ALT-double-click)"));
 			div.appendChild(a);
 			div.appendChild(document.createElement("BR"));
 			height += 15;
@@ -2954,16 +2958,6 @@ function removeImgInfo() {
 function containsXY(obj, x, y) {
 	var pos = findObject(obj);
 	if (pos) {
-		/*
-		alert("Testing "+obj.tagName
-				+"\npos.x = "+pos.x
-				+"\npos.y = "+pos.y
-				+"\npos.w = "+pos.w
-				+"\npos.h = "+pos.h
-				+"\n"
-				+"\nMouse x = "+x
-				+"\nMouse y = "+y);
-		*/
 		if ((pos.x <= x) && (x < (pos.x + pos.w))
 			&& (pos.y <= y) && (y < (pos.y + pos.h))) {
 			return true;

@@ -502,10 +502,16 @@ div#wwwlPopup input.stdbutton {
 	margin-top: 2px;
 }
 div#wwwlPopup input.wwwl {
-	width: 106px;
+	width: 96px;
 }
 div#wwwlPopup select {
 	width: 150px;
+}
+div#wwwlPopup a {
+	text-decoration:none;
+}
+div#wwwlPopup a:hover {
+	text-decoration: underline;
 }
 /*----------End of wwwlPopup div ------------*/
 

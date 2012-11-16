@@ -14,6 +14,7 @@ import mirc.MircConfig;
 import mirc.activity.ActivityDB;
 import mirc.prefs.Preferences;
 import mirc.storage.StorageService;
+import mirc.util.MircDocument;
 
 import org.rsna.servlets.Servlet;
 import org.rsna.server.HttpRequest;
@@ -140,7 +141,7 @@ public class MyRSNAServlet extends Servlet {
 				try {
 					Document doc = XmlUtil.getDocument(file);
 					if (StorageService.userIsAuthorizedTo("export", doc, req)) {
-						File zipFile = StorageService.getFileForZip(doc, file, null);
+						File zipFile = MircDocument.getFileForZip(doc, file, null);
 						String[] filenames = StorageService.getFilenames(doc, file);
 						boolean ok = FileUtil.zipFiles(filenames, file.getParentFile(), zipFile);
 						if (ok) {

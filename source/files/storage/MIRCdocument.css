@@ -21,6 +21,15 @@ li {text-align:left; margin-left:5%;}
 	margin-bottom:0;
 	}
 
+/******* imagecount style *******/
+p.imagecount {
+	margin:0;
+	padding:0;
+	font-weight:bold;
+	font-family:sans-serif;
+	font-size:10pt;
+}	
+
 /******* document footer styles *******/
 table.footer {
 	margin:auto;

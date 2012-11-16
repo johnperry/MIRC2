@@ -8,6 +8,10 @@
 		<p/>
 	</section>
 
+	<image-section heading="Images" image-pane-width="600">
+		<insert-megasave/>
+	</image-section>
+
 	<section heading="Findings">
 		<p/>
 	</section>
@@ -23,10 +27,6 @@
 	<section heading="Discussion">
 		<p/>
 	</section>
-
-	<image-section heading="Images" image-pane-width="600">
-		<insert-megasave/>
-	</image-section>
 
 	<section heading="Comments">
 		<threadblock id="CB-0-0" />

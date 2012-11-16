@@ -170,6 +170,92 @@ public class MircDocument {
 	}
 
 	/**
+	 * Construct a File to contain a MIRCdocument zip export. The filename
+	 * consists of the name of the parent directory, an underscore, and the
+	 * text content of the MIRCdocument's title element (modified to make an
+	 * acceptable filename, with whitespace, slashes, backslashes, and ampersands
+	 * replaced by underscores). The extension is ".zip" unless the extParameter
+	 * is supplied as non-null and non-empty, in which case the extension is
+	 * "." + extParameter.
+	 * @param doc the MIRCdocument XML Document object.
+	 * @param file the file containing the MIRCdocument.
+	 * @param extParameter the desired extension (with no leading period). If this parameter
+	 * is null or empty, the default extension ".zip" is supplied.
+	 * @return the file (note that this is only a File object; this method does not
+	 * insert the zip contents).
+	 */
+	public static File getFileForZip(Document doc, File file, String extParameter) {
+		String ext = ".zip";
+		if ((extParameter != null) && !extParameter.equals("")) ext = "." + extParameter;
+		File parent = file.getParentFile();
+		String name = makeNameFromParent(file);
+		Element titleEl = XmlUtil.getFirstNamedChild(doc, "title");
+		if (titleEl != null) {
+			String title = titleEl.getTextContent().trim();
+			title = title.replaceAll("\\s+", "_");
+			if (title.length() > 0) name = title + "_" + name;
+		}
+		name += ext;
+		return new File(parent, name);
+	}
+
+	private static String makeNameFromParent(File file) {
+		file = new File(file.getAbsolutePath());
+		File parent = file.getParentFile();
+		String name = parent.getName();
+		while ((name.length() < 10) && ( (parent=parent.getParentFile()) != null )) {
+			name = parent.getName() + "_" + name;
+		}
+		return name;
+	}
+
+	/**
+	 * Create an OpenOffice presentation file for this MircDocument;
+	 * @return a file in the temp directory containing an OpenOffice
+	 * presentation (ODP) file
+	 * @throws Exception if any error occurs..
+	 */
+	public File getPresentation() throws Exception {
+		//Make a directory in which to play
+		File dir = FileUtil.createTempDirectory(docDir);
+
+		//Get a file for the presentation (in the root directory of the MIRCdocument)
+		File odpFile = getFileForZip(doc, docFile, "odp");
+
+		//Find all the images, put them into the pictures directory,
+		//and create the XML document that lists them
+		File pictures = new File(dir, "Pictures");
+		pictures.mkdirs();
+		Document imagesDoc = XmlUtil.getDocument();
+		Element images = imagesDoc.createElement("images");
+		imagesDoc.appendChild(images);
+		NodeList nl = doc.getDocumentElement().getElementsByTagName("image");
+		for (int k=0; k<nl.getLength(); k++) {
+
+		}
+
+		//Copy in the styles
+		FileUtil.getFile(new File(dir, "styles.xml"), "/odp/styles.xml");
+
+		//Make the META-INF directory and create the manifest.xml file
+		File metaInf = new File(dir, "META-INF");
+		metaInf.mkdirs();
+		File manifestFile = new File(metiInf, "manifest.xml");
+		Document xsl = XmlUtil.getDocument( FileUtil.getStream( "/odp/manifest.xsl" ) );
+		String manifest = XmlUtil.getTransformedText( imagesDoc, xsl, null ) );
+		FileUtil.setText(manifestFile, manifest);
+
+		//Process the Document and create the slides file
+
+		//Now zip it all up. Note that we suppress the name of the dir.
+		//If we didn't, neither OO nor PPT will open the file.
+		FileUtil.zipDirectory(dir, odpFile, true);
+
+		//We're done, zip everything up and return the file.
+		return odpFile;
+	}
+
+	/**
 	 * Set the publication-date element to the current time, creating
 	 * the element if it is missing from the document. This method does
 	 * not modify the element if it already exists and contains non-whitespace
