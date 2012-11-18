@@ -282,7 +282,7 @@ public class StorageService extends Servlet {
 					//fail because the browser won't be able to store the file;
 
 					res.send();
-					//odpFile.delete(); //Enable this after debugging is done **********************************
+					odpFile.delete(); //Enable this after debugging is done **********************************
 					AccessLog.logAccess(req, doc);
 					return;
 				}

@@ -2560,7 +2560,7 @@ function loadWWWLEditor(source) {
 	//Get the image params
 	var params = getDCMParams(source);
 	wwwlEditorDiv.params = params;
-	//displayParams(wwwlEditorDiv, params);
+/**/displayParams(wwwlEditorDiv, params);
 
 	//Display the WW/WL popup
 	var size = 1 << params.BitsStored;

@@ -230,9 +230,78 @@ public class MircDocument {
 		Element images = imagesDoc.createElement("images");
 		imagesDoc.appendChild(images);
 		NodeList nl = doc.getDocumentElement().getElementsByTagName("image");
-		for (int k=0; k<nl.getLength(); k++) {
+		for (int i=0; i<nl.getLength(); i++) {
+			Element img = (Element)nl.item(i);
+			String name = img.getAttribute("src");
+			if (!name.startsWith("/") && !name.toLowerCase().startsWith("http://")) {
 
+				//Check whether there is an original-dimensions version
+				NodeList alt = img.getElementsByTagName("alternative-image");
+				for (int k=0; k<alt.getLength(); k++) {
+					Element altimg = (Element)alt.item(k);
+					if (altimg.getAttribute("role").equals("original-dimensions")) {
+						img = altimg;
+						break;
+					}
+				}
+				String src = img.getAttribute("src");
+				int w = StringUtil.getInt(img.getAttribute("w"));
+				int h = StringUtil.getInt(img.getAttribute("h"));
+
+				if ((w != 0) && (h != 0)) {
+
+					//Now figure out how to place and scale the image on the slide.
+					//This has to be a lot easier done in Java than in XSL.
+					float slideWidth = 28;
+					float slideHeight = 21;
+					float marginX = 1;
+					float marginY = 1;
+					float areaWidth = slideWidth - 2*marginX;
+					float areaHeight = slideHeight - 2*marginY;
+					float areaAspectRatio = areaHeight / areaWidth;;
+					float imageAspectRatio = (float)h / (float)w;
+
+					float xcm, ycm, wcm, hcm;
+
+					if (areaAspectRatio < imageAspectRatio) {
+						//fit the image to the height of the area
+						float scale = areaHeight / (float)h;
+						ycm = marginY;
+						hcm = areaHeight;
+						wcm = (float)w * scale;
+						xcm = marginX + (areaWidth - wcm)/2;
+					}
+					else {
+						//fit the image to the width of the area
+						xcm = marginX;
+						wcm = areaWidth;
+						float scale = areaWidth / (float)w;
+						hcm = (float)h * scale;
+						ycm = marginY + (areaHeight - hcm)/2;
+					}
+
+					//Okay, now create the element
+					Element image = imagesDoc.createElement("image");
+					images.appendChild(image);
+					image.setAttribute("name", name); //this is the value that indexes the image
+					image.setAttribute("src", src); //this is the value that points to the version to use
+					image.setAttribute("x", String.format("%.3fcm",xcm));
+					image.setAttribute("y", String.format("%.3fcm",ycm));
+					image.setAttribute("w", String.format("%.3fcm",wcm));
+					image.setAttribute("h", String.format("%.3fcm",hcm));
+
+					//Now copy the selected image to the Pictures directory
+					File inFile = new File(docDir, src);
+					File outFile = new File(pictures, src);
+					FileUtil.copy(inFile, outFile);
+				}
+			}
 		}
+
+		//Add in the little png that OO needs for one of its styles
+		String pngName = "10000000000000200000002000309F1C.png";
+		File png = new File(pictures, pngName);
+		FileUtil.getFile(png, "/odp/"+pngName);
 
 		//Copy in the styles
 		FileUtil.getFile(new File(dir, "styles.xml"), "/odp/styles.xml");
@@ -240,18 +309,24 @@ public class MircDocument {
 		//Make the META-INF directory and create the manifest.xml file
 		File metaInf = new File(dir, "META-INF");
 		metaInf.mkdirs();
-		File manifestFile = new File(metiInf, "manifest.xml");
+		File manifestFile = new File(metaInf, "manifest.xml");
 		Document xsl = XmlUtil.getDocument( FileUtil.getStream( "/odp/manifest.xsl" ) );
-		String manifest = XmlUtil.getTransformedText( imagesDoc, xsl, null ) );
-		FileUtil.setText(manifestFile, manifest);
+		Document manifest = XmlUtil.getTransformedDocument( imagesDoc, xsl, null );
+		FileUtil.setText(manifestFile, XmlUtil.toString(manifest));
 
 		//Process the Document and create the slides file
+		File contentFile = new File(dir, "content.xml");
+		xsl = XmlUtil.getDocument( FileUtil.getStream( "/odp/content.xsl" ) );
+		Object[] params = { "images", imagesDoc };
+		Document content = XmlUtil.getTransformedDocument( doc, xsl, params );
+		FileUtil.setText(contentFile, XmlUtil.toString(content));
 
 		//Now zip it all up. Note that we suppress the name of the dir.
 		//If we didn't, neither OO nor PPT will open the file.
 		FileUtil.zipDirectory(dir, odpFile, true);
 
-		//We're done, zip everything up and return the file.
+		//Delete the temp directory and return the file.
+		FileUtil.deleteAll(dir);
 		return odpFile;
 	}
 
