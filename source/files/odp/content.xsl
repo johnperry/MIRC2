@@ -89,26 +89,29 @@
 <xsl:template name="body">
 	<office:body>
 		<office:presentation>
-			<xsl:call-template name="title-slide"/>
-			<xsl:apply-templates select="section/p | section/image | image-section/image"/>
+			<xsl:apply-templates select="title"/>
+			<xsl:apply-templates select="section/p
+											| section/image
+												| image-section/image"/>
 		</office:presentation>
 	</office:body>
 </xsl:template>
 
-<xsl:template name="title-slide">
-	<draw:page draw:style-name="dp1" draw:master-page-name="Default" presentation:presentation-page-layout-name="AL1T32">
+<xsl:template match="title">
+	<xsl:variable name="n"><xsl:number level="any"/></xsl:variable>
+	<draw:page draw:style-name="dp1" draw:id="Title-{$n}" draw:name="Title-{$n}" draw:master-page-name="Default" presentation:presentation-page-layout-name="AL1T32">
 		<draw:frame presentation:style-name="pr1" draw:text-style-name="P1" draw:layer="layout" svg:width="25.199cm" svg:height="17.935cm" svg:x="1.4cm" svg:y="0.837cm" presentation:class="subtitle" presentation:user-transformed="true">
 			<draw:text-box>
 				<text:p>
-					<text:span text:style-name="T1"><xsl:value-of select="normalize-space(title)"/></text:span>
+					<text:span text:style-name="T1"><xsl:value-of select="normalize-space(.)"/></text:span>
 				</text:p>
-				<xsl:apply-templates select="author/name"/>
+				<xsl:apply-templates select="../author/name"/>
 			</draw:text-box>
 		</draw:frame>
-		<draw:frame draw:style-name="gr1" draw:text-style-name="P1" draw:layer="layout" svg:width="10.000cm" svg:height="0.963cm" svg:x="16.000cm" svg:y="19.746cm">
+		<draw:frame draw:style-name="gr1" draw:text-style-name="P1" draw:layer="layout" svg:width="12.000cm" svg:height="0.963cm" svg:x="16.000cm" svg:y="19.746cm">
 			<draw:text-box>
 				<text:p>
-					<text:span text:style-name="T1">RSNA Teaching File System</text:span>
+					<text:span text:style-name="T1">RSNA MIRC Teaching File System</text:span>
 				</text:p>
 			</draw:text-box>
 		</draw:frame>
@@ -122,7 +125,8 @@
 </xsl:template>
 
 <xsl:template match="p">
-	<draw:page draw:style-name="dp1" draw:master-page-name="Default" presentation:presentation-page-layout-name="AL2T1">
+	<xsl:variable name="n"><xsl:number level="any"/></xsl:variable>
+	<draw:page draw:style-name="dp1" draw:id="Paragraph-{$n}" draw:name="Paragraph-{$n}" draw:master-page-name="Default" presentation:presentation-page-layout-name="AL2T1">
 		<draw:frame presentation:style-name="pr3" draw:layer="layout" svg:width="25.199cm" svg:height="3.506cm" svg:x="1.4cm" svg:y="0.837cm" presentation:class="title" presentation:user-transformed="true">
 			<draw:text-box>
 			<text:p><xsl:value-of select="normalize-space(../@heading)"/></text:p>
@@ -137,10 +141,48 @@
 </xsl:template>
 
 <xsl:template match="image">
+	<xsl:variable name="n"><xsl:number level="any"/></xsl:variable>
 	<xsl:variable name="src" select="@src"/>
 	<xsl:variable name="img" select="$images/images/image[@name=$src]"/>
 	<xsl:if test="$img">
-		<draw:page draw:style-name="dp1" draw:master-page-name="Default">
+		<draw:page draw:style-name="dp1" draw:id="Image-{$n}" draw:name="Image-{$n}" draw:master-page-name="Default">
+			<draw:frame
+					draw:style-name="gr3"
+					draw:text-style-name="P2"
+					draw:layer="layout"
+					svg:width="{$img/@w}"
+					svg:height="{$img/@h}"
+					svg:x="{$img/@x}"
+					svg:y="{$img/@y}">
+				<draw:image
+						xlink:href="Pictures/{$img/@src}"
+						xlink:type="simple"
+						xlink:show="embed"
+						xlink:actuate="onLoad">
+					<text:p />
+				</draw:image>
+			</draw:frame>
+			<xsl:if test="image-caption">
+				<draw:frame draw:style-name="gr1" draw:text-style-name="P1" draw:layer="layout" svg:width="26.000cm" svg:height="3.000cm" svg:x="1.000cm" svg:y="0.100cm">
+					<draw:text-box>
+						<xsl:apply-templates select="image-caption[@display='always']"/>
+						<xsl:apply-templates select="image-caption[@display='click']"/>
+					</draw:text-box>
+				</draw:frame>
+			</xsl:if>
+		</draw:page>
+		<xsl:apply-templates select="alternative-image[@role='annotation']">
+			<xsl:with-param name="n" select="$n"/>
+		</xsl:apply-templates>
+	</xsl:if>
+</xsl:template>
+
+<xsl:template match="alternative-image[@role='annotation']">
+	<xsl:param name="n"/>
+	<xsl:variable name="src" select="@src"/>
+	<xsl:variable name="img" select="$images/images/image[@name=$src]"/>
+	<xsl:if test="$img">
+		<draw:page draw:style-name="dp1" draw:id="Annotation-{$n}" draw:name="Annotation-{$n}" draw:master-page-name="Default">
 			<draw:frame
 					draw:style-name="gr3"
 					draw:text-style-name="P2"
@@ -159,6 +201,12 @@
 			</draw:frame>
 		</draw:page>
 	</xsl:if>
+</xsl:template>
+
+<xsl:template match="image-caption">
+	<text:p>
+		<text:span text:style-name="T1"><xsl:value-of select="normalize-space(.)"/></text:span>
+	</text:p>
 </xsl:template>
 
 <xsl:template name="scripts">
@@ -213,85 +261,85 @@
       <style:text-properties fo:color="#ffffff" />
     </style:style>
     <text:list-style style:name="L1">
-      <text:list-level-style-bullet text:level="1" text:bullet-char="?">
+      <text:list-level-style-bullet text:level="1" text:bullet-char="-">
         <style:list-level-properties />
         <style:text-properties fo:font-family="StarSymbol" style:use-window-font-color="true" fo:font-size="45%" />
       </text:list-level-style-bullet>
-      <text:list-level-style-bullet text:level="2" text:bullet-char="?">
+      <text:list-level-style-bullet text:level="2" text:bullet-char="-">
         <style:list-level-properties text:space-before="0.6cm" text:min-label-width="0.6cm" />
         <style:text-properties fo:font-family="StarSymbol" style:use-window-font-color="true" fo:font-size="45%" />
       </text:list-level-style-bullet>
-      <text:list-level-style-bullet text:level="3" text:bullet-char="?">
+      <text:list-level-style-bullet text:level="3" text:bullet-char="-">
         <style:list-level-properties text:space-before="1.2cm" text:min-label-width="0.6cm" />
         <style:text-properties fo:font-family="StarSymbol" style:use-window-font-color="true" fo:font-size="45%" />
       </text:list-level-style-bullet>
-      <text:list-level-style-bullet text:level="4" text:bullet-char="?">
+      <text:list-level-style-bullet text:level="4" text:bullet-char="-">
         <style:list-level-properties text:space-before="1.8cm" text:min-label-width="0.6cm" />
         <style:text-properties fo:font-family="StarSymbol" style:use-window-font-color="true" fo:font-size="45%" />
       </text:list-level-style-bullet>
-      <text:list-level-style-bullet text:level="5" text:bullet-char="?">
+      <text:list-level-style-bullet text:level="5" text:bullet-char="-">
         <style:list-level-properties text:space-before="2.4cm" text:min-label-width="0.6cm" />
         <style:text-properties fo:font-family="StarSymbol" style:use-window-font-color="true" fo:font-size="45%" />
       </text:list-level-style-bullet>
-      <text:list-level-style-bullet text:level="6" text:bullet-char="?">
+      <text:list-level-style-bullet text:level="6" text:bullet-char="-">
         <style:list-level-properties text:space-before="3cm" text:min-label-width="0.6cm" />
         <style:text-properties fo:font-family="StarSymbol" style:use-window-font-color="true" fo:font-size="45%" />
       </text:list-level-style-bullet>
-      <text:list-level-style-bullet text:level="7" text:bullet-char="?">
+      <text:list-level-style-bullet text:level="7" text:bullet-char="-">
         <style:list-level-properties text:space-before="3.6cm" text:min-label-width="0.6cm" />
         <style:text-properties fo:font-family="StarSymbol" style:use-window-font-color="true" fo:font-size="45%" />
       </text:list-level-style-bullet>
-      <text:list-level-style-bullet text:level="8" text:bullet-char="?">
+      <text:list-level-style-bullet text:level="8" text:bullet-char="-">
         <style:list-level-properties text:space-before="4.2cm" text:min-label-width="0.6cm" />
         <style:text-properties fo:font-family="StarSymbol" style:use-window-font-color="true" fo:font-size="45%" />
       </text:list-level-style-bullet>
-      <text:list-level-style-bullet text:level="9" text:bullet-char="?">
+      <text:list-level-style-bullet text:level="9" text:bullet-char="-">
         <style:list-level-properties text:space-before="4.8cm" text:min-label-width="0.6cm" />
         <style:text-properties fo:font-family="StarSymbol" style:use-window-font-color="true" fo:font-size="45%" />
       </text:list-level-style-bullet>
-      <text:list-level-style-bullet text:level="10" text:bullet-char="?">
+      <text:list-level-style-bullet text:level="10" text:bullet-char="-">
         <style:list-level-properties text:space-before="5.4cm" text:min-label-width="0.6cm" />
         <style:text-properties fo:font-family="StarSymbol" style:use-window-font-color="true" fo:font-size="45%" />
       </text:list-level-style-bullet>
     </text:list-style>
     <text:list-style style:name="L2">
-      <text:list-level-style-bullet text:level="1" text:bullet-char="?">
+      <text:list-level-style-bullet text:level="1" text:bullet-char="-">
         <style:list-level-properties text:space-before="0.3cm" text:min-label-width="0.9cm" />
         <style:text-properties fo:font-family="StarSymbol" style:use-window-font-color="true" fo:font-size="45%" />
       </text:list-level-style-bullet>
-      <text:list-level-style-bullet text:level="2" text:bullet-char="?">
+      <text:list-level-style-bullet text:level="2" text:bullet-char="-">
         <style:list-level-properties text:space-before="1.5cm" text:min-label-width="0.9cm" />
         <style:text-properties fo:font-family="StarSymbol" style:use-window-font-color="true" fo:font-size="45%" />
       </text:list-level-style-bullet>
-      <text:list-level-style-bullet text:level="3" text:bullet-char="?">
+      <text:list-level-style-bullet text:level="3" text:bullet-char="-">
         <style:list-level-properties text:space-before="2.8cm" text:min-label-width="0.8cm" />
         <style:text-properties fo:font-family="StarSymbol" style:use-window-font-color="true" fo:font-size="75%" />
       </text:list-level-style-bullet>
-      <text:list-level-style-bullet text:level="4" text:bullet-char="?">
+      <text:list-level-style-bullet text:level="4" text:bullet-char="-">
         <style:list-level-properties text:space-before="4.2cm" text:min-label-width="0.6cm" />
         <style:text-properties fo:font-family="StarSymbol" style:use-window-font-color="true" fo:font-size="45%" />
       </text:list-level-style-bullet>
-      <text:list-level-style-bullet text:level="5" text:bullet-char="?">
+      <text:list-level-style-bullet text:level="5" text:bullet-char="-">
         <style:list-level-properties text:space-before="5.4cm" text:min-label-width="0.6cm" />
         <style:text-properties fo:font-family="StarSymbol" style:use-window-font-color="true" fo:font-size="75%" />
       </text:list-level-style-bullet>
-      <text:list-level-style-bullet text:level="6" text:bullet-char="?">
+      <text:list-level-style-bullet text:level="6" text:bullet-char="-">
         <style:list-level-properties text:space-before="6.6cm" text:min-label-width="0.6cm" />
         <style:text-properties fo:font-family="StarSymbol" style:use-window-font-color="true" fo:font-size="45%" />
       </text:list-level-style-bullet>
-      <text:list-level-style-bullet text:level="7" text:bullet-char="?">
+      <text:list-level-style-bullet text:level="7" text:bullet-char="-">
         <style:list-level-properties text:space-before="7.8cm" text:min-label-width="0.6cm" />
         <style:text-properties fo:font-family="StarSymbol" style:use-window-font-color="true" fo:font-size="45%" />
       </text:list-level-style-bullet>
-      <text:list-level-style-bullet text:level="8" text:bullet-char="?">
+      <text:list-level-style-bullet text:level="8" text:bullet-char="-">
         <style:list-level-properties text:space-before="9cm" text:min-label-width="0.6cm" />
         <style:text-properties fo:font-family="StarSymbol" style:use-window-font-color="true" fo:font-size="45%" />
       </text:list-level-style-bullet>
-      <text:list-level-style-bullet text:level="9" text:bullet-char="?">
+      <text:list-level-style-bullet text:level="9" text:bullet-char="-">
         <style:list-level-properties text:space-before="10.2cm" text:min-label-width="0.6cm" />
         <style:text-properties fo:font-family="StarSymbol" style:use-window-font-color="true" fo:font-size="45%" />
       </text:list-level-style-bullet>
-      <text:list-level-style-bullet text:level="10" text:bullet-char="?">
+      <text:list-level-style-bullet text:level="10" text:bullet-char="-">
         <style:list-level-properties text:space-before="11.4cm" text:min-label-width="0.6cm" />
         <style:text-properties fo:font-family="StarSymbol" style:use-window-font-color="true" fo:font-size="45%" />
       </text:list-level-style-bullet>

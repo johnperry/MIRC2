@@ -147,7 +147,10 @@ public class StorageService extends Servlet {
 					Document doc = XmlUtil.getDocument();
 					Element params = doc.createElement("params");
 					params.setAttribute("Modality", dob.getElementValue("Modality"));
+					params.setAttribute("BitsAllocated", dob.getElementValue("BitsAllocated"));
 					params.setAttribute("BitsStored", dob.getElementValue("BitsStored"));
+					params.setAttribute("HighBit", dob.getElementValue("HighBit"));
+					params.setAttribute("PixelRepresentation", dob.getElementValue("PixelRepresentation"));
 					params.setAttribute("RescaleSlope", Float.toString(dob.getFloat("RescaleSlope", 1.0f)));
 					params.setAttribute("RescaleIntercept", Float.toString(dob.getFloat("RescaleIntercept", 0.0f)));
 					params.setAttribute("WindowCenter", Float.toString(dob.getFloat("WindowCenter")));
@@ -328,14 +331,14 @@ public class StorageService extends Servlet {
 							res.setContentDisposition(zipFile);
 						}
 						else if (myrsnaParameter != null) {
-							String myRsnaResult = "The zip file was stored successfully.";
+							String myRsnaResult = "The case file was stored successfully.";
 							if (exportToMyRsna(req.getUser(), zipFile)) {
 								 //Record the activity
 								String ssid = path.element(1);
 								ActivityDB.getInstance().increment(ssid, "myrsna", username);
 							}
 							else {
-								myRsnaResult = "The zip file could not be stored.";
+								myRsnaResult = "The case file could not be stored.";
 							}
 							res.write( myRsnaResult );
 							res.setContentType("txt");
@@ -347,7 +350,7 @@ public class StorageService extends Servlet {
 					}
 					else {
 						res.write( "<html><head><title>ZipException</title></head>" );
-						res.write( "<body><h3>Server Exception</h3><p>Unable to create the zip file.</p></body></html>" );
+						res.write( "<body><h3>Server Exception</h3><p>Unable to create the case file.</p></body></html>" );
 						res.setContentType("html");
 					}
 					//NOTE: Do not disable caching; otherwise, the download will

@@ -240,60 +240,26 @@ public class MircDocument {
 				for (int k=0; k<alt.getLength(); k++) {
 					Element altimg = (Element)alt.item(k);
 					if (altimg.getAttribute("role").equals("original-dimensions")) {
-						img = altimg;
-						break;
+						String altsrc = altimg.getAttribute("src").toLowerCase();
+						if (altsrc.endsWith(".jpg") || altsrc.endsWith("jpeg")) {
+							img = altimg;
+							break;
+						}
 					}
 				}
-				String src = img.getAttribute("src");
-				int w = StringUtil.getInt(img.getAttribute("w"));
-				int h = StringUtil.getInt(img.getAttribute("h"));
+				appendImg(images, img, name, pictures);
 
-				if ((w != 0) && (h != 0)) {
-
-					//Now figure out how to place and scale the image on the slide.
-					//This has to be a lot easier done in Java than in XSL.
-					float slideWidth = 28;
-					float slideHeight = 21;
-					float marginX = 1;
-					float marginY = 1;
-					float areaWidth = slideWidth - 2*marginX;
-					float areaHeight = slideHeight - 2*marginY;
-					float areaAspectRatio = areaHeight / areaWidth;;
-					float imageAspectRatio = (float)h / (float)w;
-
-					float xcm, ycm, wcm, hcm;
-
-					if (areaAspectRatio < imageAspectRatio) {
-						//fit the image to the height of the area
-						float scale = areaHeight / (float)h;
-						ycm = marginY;
-						hcm = areaHeight;
-						wcm = (float)w * scale;
-						xcm = marginX + (areaWidth - wcm)/2;
+				//Check whether there is an annotated image.
+				for (int k=0; k<alt.getLength(); k++) {
+					Element altimg = (Element)alt.item(k);
+					if (altimg.getAttribute("role").equals("annotation")) {
+						String altsrc = altimg.getAttribute("src").toLowerCase();
+						if (altsrc.endsWith(".jpg") || altsrc.endsWith("jpeg")) {
+							String altname = altimg.getAttribute("src");
+							appendImg(images, altimg, altname, pictures);
+							break;
+						}
 					}
-					else {
-						//fit the image to the width of the area
-						xcm = marginX;
-						wcm = areaWidth;
-						float scale = areaWidth / (float)w;
-						hcm = (float)h * scale;
-						ycm = marginY + (areaHeight - hcm)/2;
-					}
-
-					//Okay, now create the element
-					Element image = imagesDoc.createElement("image");
-					images.appendChild(image);
-					image.setAttribute("name", name); //this is the value that indexes the image
-					image.setAttribute("src", src); //this is the value that points to the version to use
-					image.setAttribute("x", String.format("%.3fcm",xcm));
-					image.setAttribute("y", String.format("%.3fcm",ycm));
-					image.setAttribute("w", String.format("%.3fcm",wcm));
-					image.setAttribute("h", String.format("%.3fcm",hcm));
-
-					//Now copy the selected image to the Pictures directory
-					File inFile = new File(docDir, src);
-					File outFile = new File(pictures, src);
-					FileUtil.copy(inFile, outFile);
 				}
 			}
 		}
@@ -328,6 +294,62 @@ public class MircDocument {
 		//Delete the temp directory and return the file.
 		FileUtil.deleteAll(dir);
 		return odpFile;
+	}
+
+	//Append an image. Constructing the parameters that allow it
+	//to be scaled to the slide. Copy the image to the pictures directory.
+	private void appendImg(Element images, Element img, String name, File pictures) {
+		String src = img.getAttribute("src");
+		int w = StringUtil.getInt(img.getAttribute("w"));
+		int h = StringUtil.getInt(img.getAttribute("h"));
+
+		if ((w != 0) && (h != 0)) {
+
+			//Now figure out how to place and scale the image on the slide.
+			//This has to be a lot easier done in Java than in XSL.
+			float slideWidth = 28;
+			float slideHeight = 21;
+			float marginX = 1;
+			float marginY = 1;
+			float areaWidth = slideWidth - 2*marginX;
+			float areaHeight = slideHeight - 2*marginY;
+			float areaAspectRatio = areaHeight / areaWidth;;
+			float imageAspectRatio = (float)h / (float)w;
+
+			float xcm, ycm, wcm, hcm;
+
+			if (areaAspectRatio < imageAspectRatio) {
+				//fit the image to the height of the area
+				float scale = areaHeight / (float)h;
+				ycm = marginY;
+				hcm = areaHeight;
+				wcm = (float)w * scale;
+				xcm = marginX + (areaWidth - wcm)/2;
+			}
+			else {
+				//fit the image to the width of the area
+				xcm = marginX;
+				wcm = areaWidth;
+				float scale = areaWidth / (float)w;
+				hcm = (float)h * scale;
+				ycm = marginY + (areaHeight - hcm)/2;
+			}
+
+			//Okay, now create the element
+			Element image = images.getOwnerDocument().createElement("image");
+			images.appendChild(image);
+			image.setAttribute("name", name); //this is the value that indexes the image
+			image.setAttribute("src", src); //this is the value that points to the version to use
+			image.setAttribute("x", String.format("%.3fcm",xcm));
+			image.setAttribute("y", String.format("%.3fcm",ycm));
+			image.setAttribute("w", String.format("%.3fcm",wcm));
+			image.setAttribute("h", String.format("%.3fcm",hcm));
+
+			//Now copy the selected image to the Pictures directory
+			File inFile = new File(docDir, src);
+			File outFile = new File(pictures, src);
+			FileUtil.copy(inFile, outFile);
+		}
 	}
 
 	/**

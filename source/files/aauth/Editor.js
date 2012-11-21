@@ -2531,6 +2531,12 @@ function startWWWLEditor() {
 	}
 }
 function loadWWWLEditor(source) {
+	//Make sure there is a dcm image
+	var orig = source.getAttribute("original-format");
+	var isDCM = orig && (orig.lastIndexOf(".dcm") == orig.length-4)
+	if (!isDCM) return;
+
+	//Okay, it's DICOM, load the editor
 	removeImgInfo();
 	var wwwlEditorDiv = document.createElement("DIV");
 	wwwlEditorDiv.id = "wwwlEditorDiv";
@@ -2687,7 +2693,10 @@ function displayParams(div, params) {
 	var table = document.createElement("TABLE");
 	var tbody = document.createElement("TBODY");
 	addWWWLRow(tbody, "Modality", params.Modality);
+	addWWWLRow(tbody, "BitsAllocated", params.BitsAllocated);
 	addWWWLRow(tbody, "BitsStored", params.BitsStored);
+	addWWWLRow(tbody, "HighBit", params.HighBit);
+	addWWWLRow(tbody, "PixelRepresentation", params.PixelRepresentation);
 	addWWWLRow(tbody, "RescaleSlope", params.RescaleSlope);
 	addWWWLRow(tbody, "RescaleIntercept", params.RescaleIntercept);
 	addWWWLRow(tbody, "WindowCenter", params.WindowCenter);
@@ -2785,7 +2794,10 @@ function getDCMParams(source) {
 		if (xml) {
 			xml = xml.firstChild;
 			p.Modality = xml.getAttribute("Modality");
+			p.BitsAllocated = getParamAsInt( xml.getAttribute("BitsAllocated"), 16 );
 			p.BitsStored = getParamAsInt( xml.getAttribute("BitsStored"), 12 );
+			p.HighBit = getParamAsInt( xml.getAttribute("HighBit"), 11 );
+			p.PixelRepresentation = getParamAsInt( xml.getAttribute("PixelRepresentation"), 0 );
 			p.RescaleSlope = getParamAsFloat( xml.getAttribute("RescaleSlope"), 1 );
 			p.RescaleIntercept = getParamAsFloat( xml.getAttribute("RescaleIntercept"), 0 );
 			p.WindowCenter = getParamAsInt( xml.getAttribute("WindowCenter"), 1000 );
