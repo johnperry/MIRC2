@@ -277,7 +277,7 @@ public class StorageService extends Servlet {
 					md.setFile(file);
 
 					//Get the PPT file
-					File odpFile = md.getPresentation();
+					File odpFile = md.getPresentation(userIsOwner(doc, req));
 					res.write(odpFile);
 					res.setContentType(odpFile);
 					res.setContentDisposition(odpFile);
@@ -285,7 +285,7 @@ public class StorageService extends Servlet {
 					//fail because the browser won't be able to store the file;
 
 					res.send();
-					odpFile.delete(); //Enable this after debugging is done **********************************
+					odpFile.delete();
 					AccessLog.logAccess(req, doc);
 					return;
 				}
@@ -791,6 +791,8 @@ public class StorageService extends Servlet {
 
 		Path path = req.getParsedPath();
 
+		boolean isDraft = doc.getDocumentElement().getAttribute("temp").equals("yes");
+
 		//Set the parameter for today's date
 		String today = StringUtil.getDate("").replaceAll("-","");
 
@@ -836,10 +838,10 @@ public class StorageService extends Servlet {
 			editurl = "/aauth" + docIndexEntry;
 			addurl = "/addimg" + docIndexEntry;
 			sorturl = "/sort" + docIndexEntry;
-			if (!doc.getDocumentElement().getAttribute("draftpath").equals("")) {
+			if (!isDraft && !doc.getDocumentElement().getAttribute("draftpath").equals("")) {
 				reverturl = "/revert" + docIndexEntry;
 			}
-			if (req.userHasRole("publisher")) {
+			if (!isDraft && req.userHasRole("publisher")) {
 				publishurl = "/publish" + docIndexEntry;
 			}
 		}

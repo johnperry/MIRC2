@@ -39,6 +39,7 @@
 				office:version="1.2"
 				grddl:transformation="http://docs.oasis-open.org/office/1.2/xslt/odf2rdf.xsl" >
 
+<xsl:param name="userIsOwner"/>
 <xsl:param name="images"/>
 
 <xsl:template match="/MIRCdocument">
@@ -90,7 +91,7 @@
 	<office:body>
 		<office:presentation>
 			<xsl:apply-templates select="title"/>
-			<xsl:apply-templates select="section/p
+			<xsl:apply-templates select="section[not(@visible='no') and not(@visible='owner')]/p
 											| section/image
 												| image-section/image"/>
 		</office:presentation>

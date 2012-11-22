@@ -760,7 +760,7 @@ function makeLinks(includeNextPrev) {
 	div.appendChild( makeLink(displayCN, "/mirc/images/film-projector.gif", "Display the selected cases in the Case Navigator") );
 	if (user.isLoggedIn && prefs.myrsna) {
 		var myr = makeLink(sendToMyRSNA, "/mirc/images/myrsna.png", "Export the selected local cases to myRSNA Files");
-		myr.style.marginLeft = "20px";
+		//myr.style.marginLeft = "20px";
 		div.appendChild( myr );
 	}
 	return div;

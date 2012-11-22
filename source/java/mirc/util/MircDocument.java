@@ -215,7 +215,7 @@ public class MircDocument {
 	 * presentation (ODP) file
 	 * @throws Exception if any error occurs..
 	 */
-	public File getPresentation() throws Exception {
+	public File getPresentation(boolean userIsOwner) throws Exception {
 		//Make a directory in which to play
 		File dir = FileUtil.createTempDirectory(docDir);
 
@@ -283,7 +283,10 @@ public class MircDocument {
 		//Process the Document and create the slides file
 		File contentFile = new File(dir, "content.xml");
 		xsl = XmlUtil.getDocument( FileUtil.getStream( "/odp/content.xsl" ) );
-		Object[] params = { "images", imagesDoc };
+		Object[] params = {
+			"images", imagesDoc,
+			"userIsOwner", (userIsOwner ? "yes" : "no")
+		};
 		Document content = XmlUtil.getTransformedDocument( doc, xsl, params );
 		FileUtil.setText(contentFile, XmlUtil.toString(content));
 
