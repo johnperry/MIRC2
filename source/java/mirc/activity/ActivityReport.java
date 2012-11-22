@@ -182,19 +182,32 @@ public class ActivityReport extends Servlet {
 			res.send();
 		}
 
-		else if ((path.length() == 2) && path.element(1).equals("documents")) {
+		else if ((path.length() >= 2) && path.element(1).equals("documents")) {
 
 			//Require authentication as an admin user
 			if (!req.userHasRole("admin")) { res.redirect("/query"); return; }
 
 			String date = req.getParameter("date");
 			String ssid = req.getParameter("ssid");
+
+			String format = path.element(2);
 			try {
 				LibraryActivity libact = ActivityDB.getInstance().get(date).getLibraryActivity(ssid);
 				Document doc = libact.getDocumentsXML();
-				Document xsl = XmlUtil.getDocument( FileUtil.getStream( "/activity/DocumentDisplayReport.xsl" ) );
-				res.write( XmlUtil.getTransformedText(doc, xsl, null) );
-				res.setContentType("html");
+
+				if (format.equals("xml")) {
+					res.setContentType("xml");
+					res.write(XmlUtil.toString(doc));
+				}
+				else {
+					Document xsl = XmlUtil.getDocument( FileUtil.getStream( "/activity/DocumentDisplayReport.xsl" ) );
+					String[] params = {
+						"date", date,
+						"ssid", ssid
+					};
+					res.write( XmlUtil.getTransformedText(doc, xsl, params) );
+					res.setContentType("html");
+				}
 			}
 			catch (Exception unable) {
 				res.write("Unable to list the documents report.");
