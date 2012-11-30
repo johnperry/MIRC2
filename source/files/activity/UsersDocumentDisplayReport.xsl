@@ -2,6 +2,9 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
 <xsl:output method="html" encoding="utf-8"/>
 
+<xsl:param name="date"/>
+<xsl:param name="ssid"/>
+
 <xsl:variable name="prefs" select="/UsersDocumentDisplayList/Preferences/User"/>
 
 <xsl:template match="/UsersDocumentDisplayList">
@@ -31,6 +34,11 @@
 						<xsl:sort select="@n" order="descending" data-type="number"/>
 					</xsl:apply-templates>
 				</table>
+				<br/>
+				<p>
+					<input type="button" value="Format this report as XML"
+						onclick="window.open('/activity/users/xml?date={$date}&amp;ssid={$ssid}', '_self');"/>
+				</p>
 			</center>
 		</body>
 	</html>

@@ -133,22 +133,36 @@ public class ActivityReport extends Servlet {
 			res.send();
 		}
 
-		else if ((path.length() == 2) && path.element(1).equals("users")) {
+		else if ((path.length() >= 2) && path.element(1).equals("users")) {
 
 			//Require authentication as an admin user
 			if (!req.userHasRole("admin")) { res.redirect("/query"); return; }
 
 			String date = req.getParameter("date");
 			String ssid = req.getParameter("ssid");
+
+			String format = path.element(2);
 			try {
 				LibraryActivity libact = ActivityDB.getInstance().get(date).getLibraryActivity(ssid);
 				Document doc = libact.getUsersDocumentDisplayXML();
 				Element prefs = Preferences.getInstance().get("*", true);
 				prefs = (Element)doc.importNode(prefs, true);
 				doc.getDocumentElement().appendChild(prefs);
-				Document xsl = XmlUtil.getDocument( FileUtil.getStream( "/activity/UsersDocumentDisplayReport.xsl" ) );
-				res.write( XmlUtil.getTransformedText(doc, xsl, null) );
-				res.setContentType("html");
+
+				if (format.equals("xml")) {
+					Document xsl = XmlUtil.getDocument( FileUtil.getStream( "/activity/UsersDocumentDisplayReportToXML.xsl" ) );
+					res.write( XmlUtil.getTransformedText(doc, xsl, null) );
+					res.setContentType("xml");
+				}
+				else {
+					Document xsl = XmlUtil.getDocument( FileUtil.getStream( "/activity/UsersDocumentDisplayReport.xsl" ) );
+					String[] params = {
+						"date", date,
+						"ssid", ssid
+					};
+					res.write( XmlUtil.getTransformedText(doc, xsl, params) );
+					res.setContentType("html");
+				}
 			}
 			catch (Exception unable) {
 				res.write("Unable to list the users.");
