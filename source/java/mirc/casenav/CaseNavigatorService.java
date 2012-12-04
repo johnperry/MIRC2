@@ -87,7 +87,6 @@ public class CaseNavigatorService extends Servlet {
 
 			if (ok) {
 				Document xsl = XmlUtil.getDocument( FileUtil.getStream( "/query/CaseNavigatorResult.xsl" ) );
-
 				String[] cnrParms = {
 							"suppressHome", suppressHome,
 							"homeURL", "/query",

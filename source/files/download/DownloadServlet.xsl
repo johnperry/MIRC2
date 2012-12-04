@@ -46,12 +46,7 @@
 					<xsl:for-each select="file">
 						<tr>
 							<td>
-								<xsl:if test="@name = 'TFS-installer.jar'">
-									<a href="http://www2.rsna.org/timssnet/mirc/download.cfm"><xsl:value-of select="@name"/></a>
-								</xsl:if>
-								<xsl:if test="@name != 'TFS-installer.jar'">
-									<a href="/download/{@name}"><xsl:value-of select="@name"/></a>
-								</xsl:if>
+								<a href="/download/{@name}"><xsl:value-of select="@name"/></a>
 							</td>
 							<td>
 								<xsl:if test="@desc">

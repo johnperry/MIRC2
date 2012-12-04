@@ -382,10 +382,21 @@ public class StorageService extends Servlet {
 			}
 
 			//Read is authorized. See if the user wants to suppress
-			//transformation and just get the original XML. This is only
-			//allowed if the user is authorized to export the document.
-			if ((req.getParameter("xsl") != null) && userIsAuthorizedTo("export", doc, req)) {
-				res.write(file);
+			//transformation and just get the original XML. This feature
+			//is implemented for apps that perform their own rendering on
+			//phones and tablets.
+			if (req.getParameter("xsl") != null) {
+				//If the user is the owner, send the document without
+				//filtering; otherwise, remove the owner-only parts.
+				if (userIsOwner(doc, req)) res.write(file);
+				else {
+					String xslResource = "/storage/MIRCdocumentFilter.xsl";
+					Document xsl = XmlUtil.getDocument( FileUtil.getStream( xslResource ) );
+					Object[] params = new Object[] {
+						"today", StringUtil.getDate("").replaceAll("-","")
+					};
+					res.write( XmlUtil.getTransformedText( doc, xsl, params ) );
+				}
 				res.setContentType("xml");
 				res.disableCaching();
 				res.send();
