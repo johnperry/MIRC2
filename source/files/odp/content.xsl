@@ -41,6 +41,7 @@
 
 <xsl:param name="userIsOwner"/>
 <xsl:param name="images"/>
+<xsl:param name="isDraft" select="/MIRCdocument/@temp"/>
 
 <xsl:template match="/MIRCdocument">
 	<office:document-content
@@ -104,7 +105,10 @@
 		<draw:frame presentation:style-name="pr1" draw:text-style-name="P1" draw:layer="layout" svg:width="25.199cm" svg:height="17.935cm" svg:x="1.4cm" svg:y="0.837cm" presentation:class="subtitle" presentation:user-transformed="true">
 			<draw:text-box>
 				<text:p>
-					<text:span text:style-name="T1"><xsl:value-of select="normalize-space(.)"/></text:span>
+					<text:span text:style-name="T1">
+						<xsl:if test="$isDraft='yes'">Draft Title Suppressed</xsl:if>
+						<xsl:if test="not($isDraft='yes')"><xsl:value-of select="normalize-space(.)"/></xsl:if>
+					</text:span>
 				</text:p>
 				<xsl:apply-templates select="../author/name"/>
 			</draw:text-box>

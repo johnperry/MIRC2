@@ -407,7 +407,30 @@ public class MircDocument {
 	 * Set the publication request.
 	 */
 	public void setPublicationRequest() {
-		doc.getDocumentElement().setAttribute("pubreq", "yes");
+		Element root = doc.getDocumentElement();
+		root.setAttribute("pubreq", "yes");
+		//Make sure a publisher can view and edit the document
+		Element auth = XmlUtil.getFirstNamedChild(root, "authorization");
+		if (auth == null) {
+			auth = doc.createElement("authorization");
+			root.appendChild(auth);
+		}
+		Element read = XmlUtil.getFirstNamedChild(auth, "read");
+		if (read == null) {
+			read = doc.createElement("read");
+			auth.appendChild(read);
+		}
+		if (read.getTextContent().trim().equals("")) {
+			read.setTextContent("publisher");
+		}
+		Element update = XmlUtil.getFirstNamedChild(auth, "update");
+		if (update == null) {
+			update = doc.createElement("update");
+			auth.appendChild(update);
+		}
+		if (update.getTextContent().trim().equals("")) {
+			update.setTextContent("publisher");
+		}
 	}
 
 	/**
