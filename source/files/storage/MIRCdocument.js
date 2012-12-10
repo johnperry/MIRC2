@@ -116,8 +116,8 @@ function deleteDocumentHandler() {
 	var req = new AJAX();
 	req.GET(deleteURL, req.timeStamp(), null);
 	if (req.success()) {
-		alert("The document was deleted.");
-		history.go(-2);
+		window.opener="dummy"
+		window.close();
 	}
 	else alert("The attempt to delete the files failed.");
 }
@@ -646,11 +646,10 @@ function fetchModality(myEvent) {
 			openURL(imagePath,"_self");
 		else if (myEvent.shiftKey) {
 			//shift key redisplays the current image
-			//this removes the DICOM viewer applet, if loaded
 			displayImage();
 		}
 		else {
-			displayImage();
+			openURL(imagePath,"_self");
 			/* //Disable the DICOM viewer for now
 			//no modifiers: request the DICOM viewer applet
 			var place = document.getElementById('rimagecenter');
