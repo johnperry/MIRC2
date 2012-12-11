@@ -25,15 +25,14 @@
 
 			<center>
 				<p class="note">
-					The MIRC Committee recently changed the name of the teaching file system
-					from MIRC to TFS.
+					The table below provides access to teaching file and clinical trial
+					tools developed under the RSNA MIRC project.
 				</p>
 				<p class="note">
-					To allow the RSNA to track the usage of TFS, downloads of the
-					TFS&#8209;installer.jar file will take you to the main RSNA site. On that site,
-					you must log in to access the TFS software. If you do not have an account, you
-					can create one on the site, even if you are not an RSNA member. All other software
-					can be downloaded directly from the table below.
+					The MIRC Committee has changed the name of the teaching file system
+					from MIRC to TFS. To obtain the latest version for installing a new
+					site or upgrading a previous one, click the TFS&#8209;installer.jar
+					link in this table.
 				</p>
 				<br/>
 				<table border="1">
