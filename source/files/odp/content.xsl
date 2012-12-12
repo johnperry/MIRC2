@@ -113,7 +113,14 @@
 				<xsl:apply-templates select="../author/name"/>
 			</draw:text-box>
 		</draw:frame>
-		<draw:frame draw:style-name="gr1" draw:text-style-name="P1" draw:layer="layout" svg:width="12.000cm" svg:height="0.963cm" svg:x="16.000cm" svg:y="19.746cm">
+		<draw:frame draw:style-name="gr1" draw:text-style-name="P1" draw:layer="layout" svg:width="16.000cm" svg:height="0.963cm" svg:x="0.700cm" svg:y="19.746cm">
+			<draw:text-box>
+				<text:p>
+					<text:span text:style-name="T1">Be sure to remove PHI from this presentation</text:span>
+				</text:p>
+			</draw:text-box>
+		</draw:frame>
+		<draw:frame draw:style-name="gr1" draw:text-style-name="P1" draw:layer="layout" svg:width="12.000cm" svg:height="0.963cm" svg:x="17.000cm" svg:y="19.746cm">
 			<draw:text-box>
 				<text:p>
 					<text:span text:style-name="T1">RSNA MIRC Teaching File System</text:span>
