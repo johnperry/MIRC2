@@ -1008,7 +1008,7 @@
 					<td rowspan="3" class="pmlabel">Update:</td>
 					<td>
 						<input type="radio" name="update" value="public">
-							<xsl:if test="contains($update-field,'*') and not($draft='yes')">">
+							<xsl:if test="contains($update-field,'*') and not($draft='yes')">
 								<xsl:attribute name="checked">
 									<xsl:text>true</xsl:text>
 								</xsl:attribute>

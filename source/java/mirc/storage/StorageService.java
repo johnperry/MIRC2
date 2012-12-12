@@ -685,6 +685,9 @@ public class StorageService extends Servlet {
 			if (docXML.getDocumentElement().getAttribute("pubreq").equals("yes")
 					&& req.userHasRole("publisher")) return true;
 
+			//Update access is restricted to authenticated users with the author role.
+			if (action.equals("update") && !req.userHasRole("author")) return false;
+
 			//For non-owners or non-authenticated users, the rule is that if an action
 			//authorization does not exist in the document, read and export actions are
 			//authorized, but update actions are not.
