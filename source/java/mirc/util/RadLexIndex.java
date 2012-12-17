@@ -17,6 +17,7 @@ import jdbm.helper.FastIterator;
 import jdbm.helper.Tuple;
 import jdbm.helper.TupleBrowser;
 import org.apache.log4j.Logger;
+import org.rsna.util.Cache;
 import org.rsna.util.FileUtil;
 import org.rsna.util.JdbmUtil;
 import org.rsna.util.XmlUtil;
@@ -34,7 +35,7 @@ public class RadLexIndex {
 	private static RecordManager recman = null;
 	private static final String indexName = "RadLexIndex";
 	private static final String xmlName = "radlex.xml";
-	private static final String xmlResource = "/mirc/"+xmlName;
+	private static final String xmlResource = "mirc/"+xmlName;
 	private static final String radlexTreeName = "radlex";
 	private static BTree index = null;
 	private static boolean busy = false;
@@ -167,10 +168,14 @@ public class RadLexIndex {
 			index = JdbmUtil.getBTree(recman, radlexTreeName);
 
 			//Parse the XML file
-			File xmlFile = new File(dir, xmlName);
-			logger.info("...RadLex index file: "+xmlFile);
-			logger.info("...RadLex index resource: "+xmlResource);
-			Document radlex = XmlUtil.getDocument( FileUtil.getStream( xmlFile, xmlResource ) );
+			File xmlFile = Cache.getInstance().getFile(xmlResource);
+			InputStream is = FileUtil.getStream( xmlFile, xmlResource );
+			if (is == null) {
+				logger.warn("Unable to get InputStream for "+xmlResource);
+				logger.warn("...RadLex XML resource: "+xmlResource);
+				logger.warn("...RadLex XML file: "+xmlFile);
+			}
+			Document radlex = XmlUtil.getDocument( is );
 
 			//Put the terms in the index
 			Element root = radlex.getDocumentElement();

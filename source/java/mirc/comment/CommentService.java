@@ -25,7 +25,8 @@ import org.rsna.util.XmlUtil;
 import org.w3c.dom.*;
 
 /**
- * A servlet to return a summary of documents produced by authors.
+ * A servlet to insert comment threads and individual comments
+ * in MIRCdocuments.
  */
 public class CommentService extends Servlet {
 
@@ -44,10 +45,9 @@ public class CommentService extends Servlet {
 	}
 
 	/**
-	 * The servlet method that responds to an HTTP POST.
-	 * <p>
-	 * Return content depending on the parameters, which are the same as
-	 * the query parameters specified for a GET.
+	 * Insert a new comment thread or comment into a MIRCdocument,
+	 * save it, and redirect the client to the MIRCdocument
+	 * again. This method requires the user to have the author role.
 	 */
 	public void doPost( HttpRequest req, HttpResponse res ) throws Exception {
 
@@ -74,11 +74,11 @@ public class CommentService extends Servlet {
 					String title = req.getParameter("threadtitle", "").trim();
 					Element el = getTarget(doc, "threadblock", id);
 
-					logger.info("newthread:");
-					logger.info("... id: "+id);
-					logger.info("... title: "+title);
-					if (el == null) logger.info("... could not find target");
-					else logger.info("... found target");
+					logger.debug("newthread:");
+					logger.debug("... id: "+id);
+					logger.debug("... title: "+title);
+					if (el == null) logger.debug("... could not find target");
+					else logger.debug("... found target");
 
 					if (el != null) {
 						Element thread = doc.createElement("thread");
@@ -96,15 +96,15 @@ public class CommentService extends Servlet {
 					String id = req.getParameter("threadID", "").trim();
 					String text = req.getParameter("posttext", "").trim();
 
-					logger.info("newpost:");
-					logger.info("... id: "+id);
-					logger.info("... text: "+text);
+					logger.debug("newpost:");
+					logger.debug("... id: "+id);
+					logger.debug("... text: "+text);
 
 					if (!text.equals("")) {
 						Element el = getTarget(doc, "thread", id);
 
-						if (el == null) logger.info("... could not find target");
-						else logger.info("... found target");
+						if (el == null) logger.debug("... could not find target");
+						else logger.debug("... found target");
 
 						if (el != null) {
 							Element post = doc.createElement("post");

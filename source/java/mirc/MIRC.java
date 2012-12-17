@@ -129,12 +129,14 @@ public class MIRC extends AbstractPlugin {
 		users.addRole("publisher");
 		users.addRole("author");
 		users.addRole("update");
+		users.addRole("department");
 
 		//Make sure the admin has the MIRC roles
 		User admin = users.getUser("admin");
 		if (admin != null) {
 			admin.addRole("author");
 			admin.addRole("publisher");
+			admin.addRole("department");
 
 			//Set a person name for the admin user
 			//if it doesn't already have one.
@@ -152,6 +154,8 @@ public class MIRC extends AbstractPlugin {
 				}
 			}
 		}
+
+		logger.info("MIRC Plugin started");
 
 		//Install the defined roles
 		mc.setDefinedRoles();
@@ -178,7 +182,6 @@ public class MIRC extends AbstractPlugin {
 		//Start the Activity Summary Report Submitter
 		new SummarySubmitter().start();
 
-		logger.info("MIRC Plugin started");
 	}
 
 	/**

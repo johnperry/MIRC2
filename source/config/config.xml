@@ -38,11 +38,6 @@
             port="1082"
             quarantine="quarantines/DicomService/DicomImportService"
             root="roots/DicomService/DicomImportService"/>
-        <DicomAnonymizer
-            class="org.rsna.ctp.stdstages.DicomAnonymizer"
-            name="DicomAnonymizer - ForcePatientID"
-            root="roots/DicomService/ForcePatientID"
-            script="scripts/ForcePatientID.script"/>
         <DicomDecompressor
             name="DicomDecompressor"
             class="org.rsna.ctp.stdstages.DicomDecompressor"
@@ -54,6 +49,11 @@
             root="roots/DicomService/DicomPixelAnonymizer"
             script="scripts/DicomPixelAnonymizer.script"
             quarantine="quarantines/DicomService/DicomPixelAnonymizer"/>
+        <DicomAnonymizer
+            class="org.rsna.ctp.stdstages.DicomAnonymizer"
+            name="DicomAnonymizer - ForcePatientID"
+            root="roots/DicomService/ForcePatientID"
+            script="scripts/ForcePatientID.script"/>
         <MircDocumentStorageService
             class="mirc.stages.MircDocumentStorageService"
             name="MircDocumentStorageService"
