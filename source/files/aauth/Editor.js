@@ -2545,6 +2545,8 @@ function loadWWWLEditor(source) {
 	var pImage = document.createElement("P");
 	var src = dirpath + source.getAttribute("base-image");
 	var img = document.createElement("IMG");
+	img.style.width = 512;
+	img.style.height = "auto";
 	img.id = "wwwlIMG";
 	img.src = src;
 	img.onmousedown = startWWWLDrag;
@@ -2691,6 +2693,8 @@ function displayParams(div, params) {
 	var p = document.createElement("P");
 	p.style.marginLeft = 10;
 	var table = document.createElement("TABLE");
+	table.style.marginTop = 50;
+	table.style.marginBottom = 50;
 	var tbody = document.createElement("TBODY");
 	addWWWLRow(tbody, "Modality", params.Modality);
 	addWWWLRow(tbody, "BitsAllocated", params.BitsAllocated);
@@ -2709,11 +2713,13 @@ function addWWWLRow(tbody, name, value) {
 	var tr = document.createElement("TR");
 	var td = document.createElement("TD");
 	td.appendChild(document.createTextNode(name));
-	td.style.background = "white";
+	td.style.background = "black";
+	td.style.color = "white";
 	tr.appendChild(td);
 	td = document.createElement("TD");
 	td.appendChild(document.createTextNode(value));
-	td.style.background = "white";
+	td.style.background = "black";
+	td.style.color = "white";
 	tr.appendChild(td);
 	tbody.appendChild(tr);
 }
@@ -2751,8 +2757,8 @@ function startWWWLDrag(evt) {
 		if (!evt) evt = window.event;
 		var deltaY = evt.clientY - startY;
 		var wl = startWL + deltaY; //- is north
-		if (wl > max) { wl = max; startY = evt.clientY; startWL = max; }
-		if (wl < min) { wl = min; startY = evt.clientY; startWL = min; }
+		//if (wl > max) { wl = max; startY = evt.clientY; startWL = max; }
+		//if (wl < min) { wl = min; startY = evt.clientY; startWL = min; }
 		wlInput.value = wl;
 
 		var deltaX = evt.clientX - startX;
