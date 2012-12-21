@@ -1439,7 +1439,7 @@ public class MircDocument {
 
 		//See if there are any min-* attributes.
 		//minWidth is the minimum size JPEG to be created for any base image.
-		int minWidth = StringUtil.getInt( insertionPoint.getAttribute("min-width"), 512 ); //Force minimum sized of 512 wide
+		int minWidth = StringUtil.getInt( insertionPoint.getAttribute("min-width"), 0 );
 
 		//Get the image size;
 		int imageWidth = dicomObject.getColumns();
