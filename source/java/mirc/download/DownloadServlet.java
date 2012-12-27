@@ -216,36 +216,43 @@ public class DownloadServlet extends Servlet {
 			File[] files = dir.listFiles();
 			Arrays.sort(files);
 			for (File file : files) {
-				Element fileElement = doc.createElement("file");
-				filesElement.appendChild(fileElement);
 				String name = file.getName();
 				String nameLC = name.toLowerCase();
-				fileElement.setAttribute("name", name);
-				String lm = StringUtil.getDateTime( file.lastModified(), " at " );
-				fileElement.setAttribute("lastModified", lm);
-				fileElement.setAttribute("size", Long.toString( file.length() ));
-				if (nameLC.endsWith(".jar")) {
-					Hashtable<String,String> manifest = JarUtil.getManifestAttributes(file);
-					if (manifest != null) {
-						String build = getJarBuild(manifest);
-						fileElement.setAttribute("build", build);
-						String desc = manifest.get("Description");
-						if (desc != null) fileElement.setAttribute("desc", desc);
-					}
-				}
-				else if (nameLC.endsWith(".zip")) {
-					try {
-						ZipObject zobj = new ZipObject(file);
-						Document manifest = zobj.getManifestDocument();
+				if (!nameLC.endsWith(".txt")) {
+					Element fileElement = doc.createElement("file");
+					filesElement.appendChild(fileElement);
+					fileElement.setAttribute("name", name);
+					String lm = StringUtil.getDateTime( file.lastModified(), " at " );
+					fileElement.setAttribute("lastModified", lm);
+					fileElement.setAttribute("size", Long.toString( file.length() ));
+					String desc = null;
+					if (nameLC.endsWith(".jar")) {
+						Hashtable<String,String> manifest = JarUtil.getManifestAttributes(file);
 						if (manifest != null) {
-							String build = getZipBuild(manifest);
+							String build = getJarBuild(manifest);
 							fileElement.setAttribute("build", build);
-							Element root = manifest.getDocumentElement();
-							String desc = root.getAttribute("description").trim();
-							if (!desc.equals("")) fileElement.setAttribute("desc", desc);
+							desc = manifest.get("Description");
+							if (desc != null) desc = desc.trim();
 						}
 					}
-					catch (Exception skip) { }
+					else if (nameLC.endsWith(".zip")) {
+						try {
+							ZipObject zobj = new ZipObject(file);
+							Document manifest = zobj.getManifestDocument();
+							if (manifest != null) {
+								String build = getZipBuild(manifest);
+								fileElement.setAttribute("build", build);
+								Element root = manifest.getDocumentElement();
+								desc = root.getAttribute("description").trim();
+							}
+						}
+						catch (Exception skip) { }
+					}
+					if ((desc == null) || desc.equals("")) {
+						File text = new File(dir, name+".txt");
+						if (text.exists()) desc = FileUtil.getText(text).trim();
+					}
+					if ((desc != null) && !desc.trim().equals("")) fileElement.setAttribute("desc", desc);
 				}
 			}
 			Document xsl = XmlUtil.getDocument( FileUtil.getStream( "/download/DownloadServlet.xsl" ) );
