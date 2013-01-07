@@ -157,8 +157,8 @@ public class Index {
 		}
 	}
 
-	private void openDatabase(String ssid) throws Exception {
-		fields.put( ssid, new IndexDatabase(recman, ssid, unfragmented.get(ssid)) );
+	private void openDatabase(String name) throws Exception {
+		fields.put( name, new IndexDatabase(recman, name, unfragmented.get(name)) );
 	}
 
 	/**

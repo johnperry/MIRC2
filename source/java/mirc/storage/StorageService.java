@@ -279,7 +279,7 @@ public class StorageService extends Servlet {
 					//Get the PPT file
 					File odpFile = md.getPresentation(userIsOwner(doc, req));
 					res.write(odpFile);
-					res.setContentType(odpFile);
+					res.setContentType("pptx");
 					res.setContentDisposition(odpFile);
 					//NOTE: Do not disable caching; otherwise, the download will
 					//fail because the browser won't be able to store the file;
