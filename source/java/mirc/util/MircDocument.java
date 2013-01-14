@@ -291,7 +291,7 @@ public class MircDocument {
 		FileUtil.setText(contentFile, XmlUtil.toString(content));
 
 		//Now zip it all up. Note that we suppress the name of the dir.
-		//If we didn't, neither OO nor PPT will open the file.
+		//If we didn't, neither OO nor PPT would open the file.
 		FileUtil.zipDirectory(dir, odpFile, true);
 
 		//Delete the temp directory and return the file.

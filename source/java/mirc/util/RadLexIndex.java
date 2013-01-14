@@ -145,13 +145,9 @@ public class RadLexIndex {
 		return null;
 	}
 
-	/**
-	 * Create the RadLex index JDBM files from the radlex.xml file.
-	 * @param dir the directory in which to create the RadLex index.
-	 * This must be the same directory in which the radlex.xml file
-	 * is located.
-	 */
-	public static synchronized void createIndex(File dir) {
+	// Create the RadLex index JDBM files from the radlex.xml file.
+	// dir is the directory in which to create the RadLex index.
+	private static synchronized void createIndex(File dir) {
 
 		logger.info("RadLex index rebuild started");
 		File indexFile = new File(dir, indexName);

@@ -148,22 +148,6 @@ public class AuthorSummary extends Servlet {
 		IndexEntry[] mies = index.query("");
 		index.sortByPubDate(mies);
 
-		//Now process the entries in accordance with the request
-		/*
-		  <IndexSummary>
-			<StorageService>{$ssname}</StorageService>
-			<Context>{$context}</Context>
-			<StartDate>{$date1}</StartDate>
-			<EndDate>{$date2}</EndDate>
-			<IndexedDocs>{$totaldocs}</IndexedDocs>
-			<DocsInRange>{$totalmatches}</DocsInRange>
-			<UnownedDocs>{count($unowneddocs)}</UnownedDocs>
-			{for $x in $ownertable return $x}
-			{if ((($user="*") or ($user="")) and count($unowneddocs) > 0) then
-			  <Unowned>{for $q in $unownedtable return $q}</Unowned> else ()}
-		  </IndexSummary>
-		*/
-
 		//Construct the XML document containing the results.
 		//Note: this has the same schema as the object which used to be
 		//created by the XQuery of the eXist database in T35 and earlier.
@@ -205,7 +189,7 @@ public class AuthorSummary extends Servlet {
 			return;
 		}
 
-		//Make an array or parameters for the transformations
+		//Not XML, make an array of parameters for the transformations
 		Object[] params = {
 					"ui",			ui,
 					"ssid",			ssid,

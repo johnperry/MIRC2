@@ -383,7 +383,7 @@ public class SubmitService extends Servlet {
 		while (zipEntries.hasMoreElements()) {
 			ZipEntry entry = (ZipEntry)zipEntries.nextElement();
 			if (!entry.isDirectory()) {
-				//Eliminate the path inUIion.
+				//Eliminate the path.
 				String name = entry.getName().replace("\\", "/");
 				name = name.substring(name.lastIndexOf("/")+1);
 				//Store the entry;
