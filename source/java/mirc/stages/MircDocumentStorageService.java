@@ -60,7 +60,7 @@ public class MircDocumentStorageService extends AbstractPipelineStage implements
 
 		//Get the name of the template to use.
 		//No path information is allowed.
-		templateName = element.getAttribute("template").trim();
+		templateName = element.getAttribute("templateName").trim();
 		if (templateName.equals("")) templateName = defaultTemplateName;
 		else templateName = new File(templateName).getName();
 	}
