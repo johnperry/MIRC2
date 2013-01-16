@@ -5,7 +5,7 @@
         name="MIRC Site"
         root="mircsite"/>
     <Pipeline name="File Service Pipeline">
-        <ImportService
+        <DicomImportService
             calledAETTag="00120010"
             class="org.rsna.ctp.stdstages.DicomImportService"
             logConnections="rejected"
@@ -13,7 +13,7 @@
             port="1081"
             quarantine="quarantines/FileService/DicomImportService"
             root="roots/FileService/DicomImportService"/>
-        <Anonymizer
+        <DicomAnonymizer
             class="org.rsna.ctp.stdstages.DicomAnonymizer"
             id="FileServiceAnonymizer"
             lookupTable="scripts/lookup-table.properties"
@@ -21,7 +21,7 @@
             quarantine="quarantines/FileService/DicomAnonymizer"
             root="roots/FileService/DicomAnonymizer"
             script="scripts/MircFileServiceAnonymizer.script"/>
-        <StorageService
+        <MircFileStorageService
             class="mirc.stages.MircFileStorageService"
             fsNameTag="00120010"
             name="MircFileStorageService"
@@ -39,29 +39,30 @@
             quarantine="quarantines/DicomService/DicomImportService"
             root="roots/DicomService/DicomImportService"/>
         <DicomDecompressor
-            name="DicomDecompressor"
             class="org.rsna.ctp.stdstages.DicomDecompressor"
-            root="roots/DicomService/DicomDecompressor"
-            quarantine="quarantines/DicomService/DicomDecompressor"/>
+            name="DicomDecompressor"
+            quarantine="quarantines/DicomService/DicomDecompressor"
+            root="roots/DicomService/DicomDecompressor"/>
         <DicomPixelAnonymizer
-            name="DicomPixelAnonymizer"
             class="org.rsna.ctp.stdstages.DicomPixelAnonymizer"
+            name="DicomPixelAnonymizer"
+            quarantine="quarantines/DicomService/DicomPixelAnonymizer"
             root="roots/DicomService/DicomPixelAnonymizer"
-            script="scripts/DicomPixelAnonymizer.script"
-            quarantine="quarantines/DicomService/DicomPixelAnonymizer"/>
+            script="scripts/DicomPixelAnonymizer.script"/>
         <DicomAnonymizer
             class="org.rsna.ctp.stdstages.DicomAnonymizer"
             name="DicomAnonymizer - ForcePatientID"
             root="roots/DicomService/ForcePatientID"
             script="scripts/ForcePatientID.script"/>
         <MircDocumentStorageService
+            caseTag="PatientID"
             class="mirc.stages.MircDocumentStorageService"
             name="MircDocumentStorageService"
             quarantine="quarantines/DicomService/MircDocumentStorageService"
             root="roots/DicomService/MircDocumentStorageService"
+            templateName="DicomServiceTemplate.xml"
             ssid="ss1"
-            ssidTag="00120010"
-            caseTag="PatientID"/>
+            ssidTag="00120010"/>
         <DicomAnonymizer
             class="org.rsna.ctp.stdstages.DicomAnonymizer"
             lookupTable="scripts/lookup-table.properties"
@@ -71,7 +72,7 @@
             script="scripts/DicomServiceAnonymizer.script"/>
     </Pipeline>
     <Pipeline name="TCE Service Pipeline">
-        <ImportService
+        <DicomImportService
             calledAETTag="00120010"
             class="org.rsna.ctp.stdstages.DicomImportService"
             logConnections="rejected"
@@ -79,19 +80,19 @@
             port="1083"
             quarantine="quarantines/TCEService/DicomImportService"
             root="roots/TCEService/DicomImportService"/>
-        <ImportService
+        <HttpImportService
             class="org.rsna.ctp.stdstages.HttpImportService"
             logConnections="rejected"
             name="HttpImportService"
             port="1084"
             quarantine="quarantines/TCEService/HttpImportService"
             root="roots/TCEService/HttpImportService"/>
-        <StorageService
+        <TCEStorageService
+            anonymize="yes"
             class="mirc.stages.TCEStorageService"
             name="TCEStorageService"
             quarantine="quarantines/TCEService/TCEStorageService"
             root="roots/TCEService/TCEStorageService"
-            anonymize="yes"
             script="scripts/TCEServiceAnonymizer.script"
             ssid="ss1"
             ssidTag="00120010"/>
