@@ -6,6 +6,7 @@
 	<property name="source" value="${basedir}/source"/>
 	<property name="java" value="${source}/java"/>
 	<property name="files" value="${source}/files"/>
+	<property name="resources" value="${source}/resources"/>
 	<property name="ctp" value="../CTP"/>
 	<property name="libraries" value="${basedir}/libraries"/>
 	<property name="products" value="${basedir}/products"/>
@@ -56,6 +57,7 @@
 
 		<copy overwrite="true" todir="${build}">
 			<fileset dir="${files}"/>
+			<fileset dir="${resources}"/>
 		</copy>
 
 		<jar jarfile="${build}/CTP/libraries/MIRC.jar">

@@ -193,6 +193,7 @@ public class MircDocument {
 		if (titleEl != null) {
 			String title = titleEl.getTextContent().trim();
 			title = title.replaceAll("\\s+", "_");
+			title = title.replaceAll("/", "-");
 			if (title.length() > 0) name = title + "_" + name;
 		}
 		name += ext;
