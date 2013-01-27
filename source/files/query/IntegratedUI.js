@@ -151,7 +151,19 @@ function showAdvancedQueryPopup() {
 	div.style.display = "block";
 	var title = "Advanced Search";
 	var closebox = "/icons/closebox.gif";
-	showDialog(aqPopupID, 800, 335, title, closebox, null, div, null, null);
+	showDialog(aqPopupID, 800, 345, title, closebox, null, div, null, null);
+}
+
+function setBreedList() {
+	var ptSpecies = document.getElementById("pt-species");
+	var ptBreed = document.getElementById("pt-breed");
+	ptBreed.options.length = 0;
+	var choice = ptSpecies.selectedIndex;
+	var breedlist = breeds[choice];
+	ptBreed.options[0] = new Option("","");
+	for (var i=0; i<breedlist.length; i++) {
+		 ptBreed.options[i+1] = new Option(breedlist[i], breedlist[i]);
+	}
 }
 
 function bclick(next_page_Id, theEvent) {
