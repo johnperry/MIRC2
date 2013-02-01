@@ -676,9 +676,20 @@ public class StorageService extends Servlet {
 			//The owner is authorized to do anything.
 			if (userIsOwner(docXML, req)) return true;
 
-			//For the delete action, only the owner or admin is ever authorized.
-			//Therefore, if the action is delete, return false now.
-			if (action.equals("delete")) return false;
+			//For the delete action, only the owner or admin is authorized,
+			//unless the document is a draft document and has no owner.
+			if (action.equals("delete")) {
+				if (req.userHasRole("author")) {
+					Element root = docXML.getDocumentElement();
+					if (root.getAttribute("temp").equals("yes")) {
+						Element auth = XmlUtil.getFirstNamedChild(root, "authorization");
+						if (auth == null) return true;
+						Element ownerElement = XmlUtil.getFirstNamedChild(auth, "owner");
+						if (ownerElement.getTextContent().trim().equals("")) return true;
+					}
+				}
+				return false;
+			}
 
 			//The read access has a special case: if the document has a publish
 			//request and the user is a publisher, the user can read the document.
@@ -835,7 +846,10 @@ public class StorageService extends Servlet {
 		//Set the parameter indicating whether the user is an admin
 		String userisadmin = (req.userHasRole("admin") ? "yes" : "no");
 
-		//Set the parameter indicating whether the user is an admin
+		//Set the parameter indicating whether the user is a publisher
+		String userispublisher = (req.userHasRole("publisher") ? "yes" : "no");
+
+		//Set the parameter indicating whether the user is an author
 		String userisauthor = (req.userHasRole("author") ? "yes" : "no");
 
 		//Set up the links for:
@@ -907,6 +921,7 @@ public class StorageService extends Servlet {
 			"user-has-myrsna-acct",	userhasmyrsnaacct,
 			"user-is-owner",		userisowner,
 			"user-is-admin",		userisadmin,
+			"user-is-publisher",	userispublisher,
 			"user-can-post",		userisauthor,
 
 			"edit-url",				editurl,

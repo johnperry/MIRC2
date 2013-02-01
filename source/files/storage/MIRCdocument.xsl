@@ -9,6 +9,7 @@
 <xsl:param name="user-has-myrsna-acct"/>
 <xsl:param name="user-is-owner"/>
 <xsl:param name="user-is-admin"/>
+<xsl:param name="user-is-publisher"/>
 <xsl:param name="user-can-post"/>
 
 <xsl:param name="edit-url"/>
@@ -573,7 +574,7 @@
 </xsl:template>
 
 <xsl:template name="caseoftheday-button">
-	<xsl:if test="$user-is-admin = 'yes'">
+	<xsl:if test="($user-is-admin='yes') or ($user-is-publisher='yes')">
 		<tr>
 			<td>
 				<input type="button"

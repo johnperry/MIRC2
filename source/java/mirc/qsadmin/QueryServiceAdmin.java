@@ -97,22 +97,27 @@ public class QueryServiceAdmin extends Servlet {
 	public void doPost(HttpRequest req, HttpResponse res) throws Exception {
 
 		res.disableCaching();
-		if (!req.userHasRole("admin")) { res.redirect("/query"); return; }
 
 		MircConfig mc = MircConfig.getInstance();
+		Path path = req.getParsedPath();
 
 		//See if this is a case of the day submission
-		Path path = req.getParsedPath();
-		if ((path.length() == 2) && path.element(1).equals("setcod")) {
-			String title = req.getParameter("title", "");
-			String link = req.getParameter("link", "");
-			String image = req.getParameter("image", "");
-			mc.setNews(title, image, link);
-			res.setContentType("txt");
-			res.write("OK");
-			res.send();
-			return;
+		//This can be done by an admin OR a publisher.
+		if (req.userHasRole("admin") || req.userHasRole("publisher")) {
+			if ((path.length() == 2) && path.element(1).equals("setcod")) {
+				String title = req.getParameter("title", "");
+				String link = req.getParameter("link", "");
+				String image = req.getParameter("image", "");
+				mc.setNews(title, image, link);
+				res.setContentType("txt");
+				res.write("OK");
+				res.send();
+				return;
+			}
 		}
+
+		//Everything else requires the admin role.
+		if (!req.userHasRole("admin")) { res.redirect("/query"); return; }
 
 		String oldLocalAddress = mc.getLocalAddress();
 
