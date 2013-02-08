@@ -61,7 +61,16 @@ public class MircServlet extends Servlet {
 
 		MircConfig mc = MircConfig.getInstance();
 
-		if (function.equals("roles")) {
+		if (function.equals("cod")) {
+			Element news = mc.getNews();
+			Element url = XmlUtil.getFirstNamedChild(news, "url");
+			if (url != null) {
+				res.redirect(url.getTextContent().trim());
+			}
+			else res.redirect("/query");
+			return;
+		}
+		else if (function.equals("roles")) {
 			res.disableCaching();
 			String[] defRoles = mc.getDefinedRoles();
 			if (path.element(2).equals("xml")) {
