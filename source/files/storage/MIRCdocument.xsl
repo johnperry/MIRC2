@@ -671,22 +671,50 @@
 					<xsl:with-param name="text" select="normalize-space(href)"/>
 				</xsl:call-template>
 			</xsl:attribute>
+			<xsl:apply-templates select="@*[not(name()='href')]"/>
+			<xsl:apply-templates select="*[not(name()='href')] | text()"/>
 		</xsl:if>
-		<xsl:apply-templates select="*[not(name()='href')] | @* | text()"/>
+		<xsl:if test="not(href)">
+			<xsl:apply-templates select="@*"/>
+			<xsl:apply-templates select="* | text()"/>
+		</xsl:if>
 	</xsl:element>
 </xsl:template>
 
 <xsl:template match="iframe">
-	<iframe>
-		<xsl:if test="src">
-			<xsl:attribute name="src">
-				<xsl:call-template name="escape">
-					<xsl:with-param name="text" select="normalize-space(src)"/>
-				</xsl:call-template>
-			</xsl:attribute>
-		</xsl:if>
-		<xsl:apply-templates select="*[not(name()='src')] | @* | text()"/>
-	</iframe>
+	<xsl:element name="iframe">
+		<xsl:choose>
+			<xsl:when test="$display='page'">
+				<xsl:if test="src">
+					<xsl:attribute name="src">
+						<xsl:call-template name="escape">
+							<xsl:with-param name="text" select="normalize-space(src)"/>
+						</xsl:call-template>
+					</xsl:attribute>
+					<xsl:apply-templates select="@*[not(name()='src')]"/>
+					<xsl:apply-templates select="*[not(name()='src')] | text()"/>
+				</xsl:if>
+				<xsl:if test="not(src)">
+					<xsl:apply-templates select="@*"/>
+					<xsl:apply-templates select="* | text()"/>
+				</xsl:if>
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:apply-templates select="@*[not(name()='src')]"/>
+				<xsl:attribute name="src"></xsl:attribute>
+				<xsl:if test="src">
+					<xsl:attribute name="longdesc">
+						<xsl:call-template name="escape">
+							<xsl:with-param name="text" select="normalize-space(src)"/>
+						</xsl:call-template>
+					</xsl:attribute>
+				</xsl:if>
+				<xsl:if test="not(src)">
+					<xsl:attribute name="longdesc"><xsl:value-of select="@src"/></xsl:attribute>
+				</xsl:if>
+			</xsl:otherwise>
+		</xsl:choose>
+	</xsl:element>
 </xsl:template>
 
 <xsl:template name="escape">
