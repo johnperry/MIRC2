@@ -230,6 +230,15 @@ div.hide {visibility:hidden; display:none;}
 	border:			thin solid #eeeeee;
 }
 
+.s6 {
+	font-size:		xx-small;
+	font-family:		Verdana, Arial, Helvetica, sans-serif;
+	font-weight:		bold;
+	text-align:		top;
+	vertical-align:		top;
+	align:			top;
+}
+
 .w300 {
 	width:			300;
 }
@@ -408,6 +417,17 @@ table.quiz td.ansr {
 table.quiz button.quiz {
 }
 /*------------- End of Quiz --------------*/
+
+/*------------- Scored Question ---------------*/
+xp.p6 textarea {
+	border:			thin solid #eeeeee;
+	margin-left:		0;
+	margin-right:		0;
+	width:			60%;
+	height:			75px;
+}
+
+/*---------- End of Scored Question -----------*/
 
 /*------------- SVG editor ---------------*/
 .svgToolPalette {

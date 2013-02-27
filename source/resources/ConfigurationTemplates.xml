@@ -5,7 +5,7 @@
 		<Plugin>
 			<attr name="name" required="yes" default="MIRC"/>
 			<attr name="class" required="yes" default="mirc.MIRC" editable="no"/>
-			<attr name="root" default="mircsite" required="yes"/>
+			<attr name="root" required="yes" default="mircsite"/>
 		</Plugin>
 
 		<StorageService>
@@ -15,7 +15,7 @@
 			<attr name="fsNameTag" required="no" default="">
 				<helptext>DICOM tag to use to obtain the username for storage in the file cabinets</helptext>
 			</attr>
-			<attr name="quarantine" required="no" default="quarantines/FileService/MircFileStorageService"/>
+			<attr name="quarantine" required="yes" default="quarantines/FileService/MircFileStorageService"/>
 		</StorageService>
 
 		<StorageService>
@@ -28,18 +28,21 @@
 			<attr name="templateName" required="no" default="">
 				<helptext>File name of template for creating new MIRCdocuments</helptext>
 			</attr>
-			<attr name="quarantine" required="no" default="quarantines/DicomService/MircDocumentStorageService"/>
+			<attr name="quarantine" required="yes" default="quarantines/DicomService/MircDocumentStorageService"/>
 		</StorageService>
 
 		<StorageService>
 			<attr name="name" required="yes" default="TCEStorageService"/>
 			<attr name="class" required="yes" default="mirc.stages.TCEStorageService" editable="no"/>
 			<attr name="root" required="yes" default="roots/TCEService/TCEStorageService"/>
-			<attr name="anonymize" required="no" default="no" options="yes|no">
+			<attr name="anonymize" required="yes" default="no" options="yes|no">
 				<helptext>Anonymize received DICOM objects</helptext>
 			</attr>
 			<attr name="script" required="no" default="scripts/TCEServiceAnonymizer.script">
 				<helptext>File name of DicomAnonymizer script</helptext>
+			</attr>
+			<attr name="lookupTable" required="no" default="scripts/TCEServiceAnonymizerLookupTable.properties">
+				<helptext>File name of DicomAnonymizer lookup table</helptext>
 			</attr>
 			<attr name="ssid" required="no" default="ss1">
 				<helptext>Default target library ID</helptext>
@@ -47,7 +50,7 @@
 			<attr name="ssidTag" required="no" default="00120010">
 				<helptext>DICOM tag from which to obtain the target library ID</helptext>
 			</attr>
-			<attr name="quarantine" required="no" default="quarantines/TCEService/TCEStorageService"/>
+			<attr name="quarantine" required="yes" default="quarantines/TCEService/TCEStorageService"/>
 		</StorageService>
 
 	</Components>
@@ -55,7 +58,7 @@
 	<StandardPipelines>
 
 		<Pipeline name="TFS File Service">
-			<ImportService
+			<DicomImportService
 				calledAETTag="00120010"
 				class="org.rsna.ctp.stdstages.DicomImportService"
 				logConnections="rejected"
@@ -64,14 +67,14 @@
 				quarantine="quarantines/FileService/DicomImportService"
 				root="roots/FileService/DicomImportService"
 				suppressDuplicates="no"/>
-			<Anonymizer
+			<DicomAnonymizer
 				class="org.rsna.ctp.stdstages.DicomAnonymizer"
 				lookupTable="scripts/lookup-table.properties"
 				name="File Service DicomAnonymizer"
 				quarantine="quarantines/FileService/DicomAnonymizer"
 				root="roots/FileService/DicomAnonymizer"
 				script="scripts/FileService/MircFileServiceAnonymizer.script"/>
-			<StorageService
+			<MircFileStorageService
 				class="mirc.stages.MircFileStorageService"
 				fsNameTag="00120010"
 				name="MircFileStorageService"
@@ -80,7 +83,7 @@
 		</Pipeline>
 
 		<Pipeline name="TFS DICOM Service">
-			<ImportService
+			<DicomImportService
 				calledAETTag="00120010"
 				callingAETTag="00120020"
 				class="org.rsna.ctp.stdstages.DicomImportService"
@@ -114,13 +117,13 @@
 				quarantine="quarantines/DicomService/ForcePatientID"
 				root="roots/DicomService/ForcePatientID"
 				script="scripts/ForcePatientID.script"/>
-			<StorageService
+			<MircDocumentStorageService
 				caseTag="PatientID"
 				class="mirc.stages.MircDocumentStorageService"
 				name="MircDocumentStorageService"
 				quarantine="quarantines/DicomService/MircDocumentStorageService"
 				root="roots/DicomService/MircDocumentStorageService"/>
-			<Anonymizer
+			<DicomAnonymizer
 				class="org.rsna.ctp.stdstages.DicomAnonymizer"
 				lookupTable="scripts/lookup-table.properties"
 				name="DICOM Service DicomAnonymizer"
@@ -130,7 +133,7 @@
 		</Pipeline>
 
 		<Pipeline name="TFS TCE Service">
-			<ImportService
+			<DicomImportService
 				calledAETTag="00120010"
 				class="org.rsna.ctp.stdstages.DicomImportService"
 				logConnections="rejected"
@@ -139,7 +142,7 @@
 				quarantine="quarantines/TCEService/DicomImportService"
 				root="roots/TCEService/DicomImportService"
 				suppressDuplicates="no"/>
-			<ImportService
+			<HttpImportService
 				acceptDicomObjects="yes"
 				acceptFileObjects="yes"
 				acceptXmlObjects="yes"
@@ -153,13 +156,14 @@
 				root="roots/TCEService/HttpImportService"
 				ssl="no"
 				zip="no"/>
-			<StorageService
+			<TCEStorageService
 				anonymize="yes"
 				class="mirc.stages.TCEStorageService"
 				name="TCEStorageService"
 				quarantine="quarantines/TCEService/TCEStorageService"
 				root="roots/TCEService/TCEStorageService"
 				script="scripts/TCEServiceAnonymizer.script"
+				lookupTable="scripts/TCEServiceAnonymizerLookupTable.properties"
 				ssid="ss1"
 				ssidTag="00120010"/>
 		</Pipeline>

@@ -509,6 +509,7 @@
 					<xsl:call-template name="myrsna-button"/>
 					<xsl:call-template name="addimages-button"/>
 					<xsl:call-template name="sortimages-button"/>
+					<xsl:call-template name="score-button"/>
 					<xsl:call-template name="revert-button"/>
 					<xsl:call-template name="delete-button"/>
 				</table>
@@ -647,6 +648,17 @@
 			<td>
 				<input type="button" value="Publish" title="Publish this document"
 					onclick="openURL('{$publish-url}','_self');"/>
+			</td>
+		</tr>
+	</xsl:if>
+</xsl:template>
+
+<xsl:template name="score-button">
+	<xsl:if test="($user-is-owner='yes') and (//ScoredQuestion)">
+		<tr>
+			<td>
+				<input type="button" value="Score Questions" title="Assign scores to questions"
+					onclick="assignScores();"/>
 			</td>
 		</tr>
 	</xsl:if>
@@ -1056,6 +1068,12 @@
 		<td><xsl:value-of select="date"/></td>
 		<td><xsl:value-of select="desc"/></td>
 	</tr>
+</xsl:template>
+
+<xsl:template match="ScoredQuestion">
+	<p class="ScoredQuestion" id="{@id}">
+		<xsl:apply-templates/>
+	</p>
 </xsl:template>
 
 <xsl:template match="quiz">

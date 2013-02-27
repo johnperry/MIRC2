@@ -438,3 +438,17 @@ textarea.posttext {
 }
 /*--------- End of thread styles ----------*/
 
+/*--------- ScoredQuestion styles ----------*/
+p.ScoredQuestion {
+	padding: 10px;
+	border:thin solid #2977b9;
+}
+input.sqText {
+	width: 100%;
+}
+input.sqButton {
+	margin-top: 7px;
+	width: 50px;
+}
+
+/*--------- End of ScoredQuestion styles ----------*/

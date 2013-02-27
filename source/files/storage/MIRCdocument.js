@@ -71,6 +71,7 @@ function mirc_onload() {
 	setWheelDriver();
 	window.focus();
 	if (imageSection) IMAGES.load();
+	setupScoredQuiz();
 }
 
 function splitHandler() {
@@ -1095,4 +1096,71 @@ function newPostHandler() {
 	form.submit();
 }
 
+//ScoredQuestion functions
+function setupScoredQuiz() {
+	var sqPs = document.getElementsByTagName("P");
+	for (var k=0; k<sqPs.length; k++) {
+		var sqP = sqPs[k];
+		if (sqP.className == "ScoredQuestion") {
+			var qid = sqP.id;
+			var req = new AJAX();
+			req.GET("/quiz/"+qid, req.timeStamp(), null);
+			if (req.success()) {
+				sqP.appendChild(document.createElement("BR"));
 
+				var xml = req.responseXML();
+				var root = xml ? xml.firstChild : null;
+				if (root) {
+					var score = root.getAttribute("score");
+					score = score ? score : "";
+					var value = root.getAttribute("value");
+					value = value ? value : "";
+					if (root.getAttribute("isClosed") == "true") {
+						sqP.appendChild(document.createTextNode(value));
+						sqP.appendChild(document.createElement("BR"));
+						sqP.appendChild(document.createTextNode("Score: "+score));
+					}
+					else {
+						var p = document.createElement("P");
+						p.className = "center";
+						var input = document.createElement("INPUT");
+						input.type = "text";
+						input.value = value;
+						input.qid = qid;
+						input.className = "sqText";
+						p.appendChild(input);
+						p.appendChild(document.createElement("BR"));
+						var button = document.createElement("INPUT");
+						button.type = "button";
+						button.onclick = submitScoredQuestionAnswer;
+						button.value = "Submit";
+						button.className = "sqButton";
+						button.inputNode = input;
+						p.appendChild(button);
+						sqP.appendChild(p);
+					}
+				}
+			}
+		}
+	}
+}
+function submitScoredQuestionAnswer(theEvent) {
+	var source = getSource(getEvent(theEvent));
+	var input = source.inputNode;
+	var text = input.value;
+	var qid = input.qid;
+	var req = new AJAX();
+	req.POST("/quiz/"+qid, "value="+encodeURIComponent(text)+"&"+req.timeStamp(), scoreResult);
+}
+function scoreResult(req) {
+	if (req.success()) {
+		var xml = req.responseXML();
+		var root = xml ? xml.firstChild : null;
+		if (root) alert(root.tagName);
+		else alert("root is null");
+	}
+}
+function assignScores() {
+	var url = "/quizmgr"+docIndexEntry;
+	openURL(url, "_blank");
+}

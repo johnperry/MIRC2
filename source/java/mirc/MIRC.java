@@ -27,6 +27,7 @@ import mirc.prefs.*;
 import mirc.publish.*;
 import mirc.qsadmin.*;
 import mirc.query.*;
+import mirc.quiz.*;
 import mirc.radlex.*;
 import mirc.reset.*;
 import mirc.revert.*;
@@ -90,6 +91,9 @@ public class MIRC extends AbstractPlugin {
 		//Load the DownloadDB
 		DownloadDB.load( root );
 
+		//Load the ScoredQuizDB
+		ScoredQuizDB.load( root );
+
 		//Load the ActivityDB
 		ActivityDB.load( root );
 
@@ -123,6 +127,8 @@ public class MIRC extends AbstractPlugin {
 		selector.addServlet("download", DownloadServlet.class);
 		selector.addServlet("comment", CommentService.class);
 		selector.addServlet("myrsna", MyRSNAServlet.class);
+		selector.addServlet("quiz", QuizServlet.class);
+		selector.addServlet("quizmgr", QuizManagerServlet.class);
 
 		//Install the standard roles
 		Users users = Users.getInstance();

@@ -320,6 +320,7 @@ function setToolEnables() {
 			setToolEnable("insertiframe-button",true);
 			setToolEnable("insertpatient-button",true);
 			setToolEnable("insertquiz-button",true);
+			setToolEnable("insertscoredquestion-button",true);
 			setToolEnable("insertcommentblock-button",true);
 			setToolEnable("removeobject-button",itemIsSelected);
 			setToolEnable("promoteobject-button",itemIsSelected);
@@ -335,6 +336,7 @@ function setToolEnables() {
 			setToolEnable("insertimage-button",isPaletteImageSelected());
 			setToolEnable("insertpatient-button",false);
 			setToolEnable("insertquiz-button",false);
+			setToolEnable("insertscoredquestion-button",false);
 			setToolEnable("insertcommentblock-button",false);
 			setToolEnable("removeobject-button",imageIsSelected);
 			setToolEnable("promoteobject-button",imageIsSelected);
@@ -389,6 +391,7 @@ function setAllItemTools(enable) {
 	setToolEnable("insertiframe-button",enable);
 	setToolEnable("insertpatient-button",enable);
 	setToolEnable("insertquiz-button",enable);
+	setToolEnable("insertscoredquestion-button",enable);
 	setToolEnable("insertcommentblock-button",enable);
 	setToolEnable("removeobject-button",enable);
 	setToolEnable("promoteobject-button",enable);
@@ -1215,6 +1218,13 @@ function getItemText(item) {
 		}
 		return text + "</quiz>\n";
 
+	case "scoredquestion":
+		var text = "<ScoredQuestion id=\""+item.id+"\">\n";
+		if (textareaList.length) {
+			text += getTAText(textareaList[0]) + "\n";
+		}
+		return text + "</ScoredQuestion>\n";
+
 	case "commentblock":
 		var title = imgList[0].title;
 		if (title == "New Comment Block") {
@@ -1914,6 +1924,15 @@ function objectInsertQuizClicked() {
 	if (typeValueLC == "document-section") quizObjectInsert(section);
 }
 
+function objectInsertScoredQuestionClicked() {
+	var section = getCurrentSection();
+	if (section == null) return;
+	var type = section.getAttributeNode("type");
+	if (type == null) return;
+	var typeValueLC = type.value.toLowerCase();
+	if (typeValueLC == "document-section") scoredQuestionObjectInsert(section);
+}
+
 function objectInsertCommentBlockClicked() {
 	var section = getCurrentSection();
 	if (section == null) return;
@@ -2123,6 +2142,26 @@ function commentBlockObjectInsert(section) {
 	newP.appendChild(img);
 	parent.appendChild(newP);
 	newP.scrollIntoView(false);
+}
+
+function scoredQuestionObjectInsert(section) {
+	var divs = section.getElementsByTagName("DIV");
+	var parent = divs[0];
+
+	var newSQ = document.createElement("P");
+	newSQ.className = "p4";
+	newSQ.setAttribute("item-type","scoredquestion");
+	newSQ.id = (new Date()).getTime();
+	var label = document.createElement("SPAN");
+	label.className = "s6";
+	label.appendChild(document.createTextNode("Scored Question: "));
+	newSQ.appendChild(label);
+	var newTextArea = document.createElement("TEXTAREA");
+	newTextArea.className = "sectionP";
+	newTextArea.onclick = setCurrentObject;
+	newSQ.appendChild(newTextArea);
+	parent.appendChild(newSQ);
+	newSQ.scrollIntoView(false);
 }
 
 function quizObjectInsert(section) {

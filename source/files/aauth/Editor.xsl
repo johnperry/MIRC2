@@ -208,6 +208,12 @@
 				<xsl:with-param name="id">insertquiz-button</xsl:with-param>
 			</xsl:call-template>
 			<xsl:call-template name="tool">
+				<xsl:with-param name="title">Insert a scored question</xsl:with-param>
+				<xsl:with-param name="onclick">objectInsertScoredQuestionClicked();</xsl:with-param>
+				<xsl:with-param name="src">/aauth/buttons/insertscoredquestion.png</xsl:with-param>
+				<xsl:with-param name="id">insertscoredquestion-button</xsl:with-param>
+			</xsl:call-template>
+			<xsl:call-template name="tool">
 				<xsl:with-param name="title">Insert a comment block</xsl:with-param>
 				<xsl:with-param name="onclick">objectInsertCommentBlockClicked();</xsl:with-param>
 				<xsl:with-param name="src">/aauth/buttons/insertcommentblock.png</xsl:with-param>
@@ -1371,6 +1377,17 @@
 				</td>
 			</tr>
 		</table>
+	</p>
+</xsl:template>
+
+<xsl:template match="ScoredQuestion">
+	<p class="p4" item-type="scoredquestion" id="{@id}">
+		<span class="s6">Scored Question: </span>
+		<xsl:call-template name="textarea-content">
+			<xsl:with-param name="node" select="."/>
+			<xsl:with-param name="class">sectionP</xsl:with-param>
+			<xsl:with-param name="min-rows">3</xsl:with-param>
+		</xsl:call-template>
 	</p>
 </xsl:template>
 
