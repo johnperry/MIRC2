@@ -1155,6 +1155,7 @@
 		var codImage = '<xsl:value-of select="//image/@src"/>';
 		var category = "<xsl:value-of select="$category"/>";
 		var author = "<xsl:value-of select="$author"/>";
+		var userIsOwner = "<xsl:value-of select="$user-is-owner"/>";
 
 		var display = '<xsl:value-of select="$display"/>';
 		var inputType = '<xsl:value-of select="$input-type"/>';

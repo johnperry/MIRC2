@@ -102,9 +102,12 @@ public class QuizManagerServlet extends Servlet {
 			root.appendChild( doc.importNode(XmlUtil.getFirstNamedChild(mdRoot, "title"), true) );
 			NodeList nl = mdRoot.getElementsByTagName("ScoredQuestion");
 			for (int i=0; i<nl.getLength(); i++) {
-				Element sq = (Element)doc.importNode(nl.item(i), true);
-				root.appendChild(sq);
-				String id = sq.getAttribute("id");
+				Element docSQ = (Element)nl.item(i);
+				Element sumSQ = doc.createElement("ScoredQuestion");
+				sumSQ.setAttribute("id", docSQ.getAttribute("id"));
+				sumSQ.setTextContent( docSQ.getTextContent() );
+				root.appendChild(sumSQ);
+				String id = sumSQ.getAttribute("id");
 				Question q = db.get(id);
 				String[] respondentIDs = q.getRespondentIDs();
 				for (String rid : respondentIDs) {
@@ -114,7 +117,7 @@ public class QuizManagerServlet extends Servlet {
 					ansEl.setAttribute("name", prefs.get(rid,true).getAttribute("name"));
 					ansEl.setAttribute("score", Integer.toString(ans.getScore()));
 					ansEl.setTextContent(ans.getValue());
-					sq.appendChild(ansEl);
+					sumSQ.appendChild(ansEl);
 				}
 			}
 			Document xsl = XmlUtil.getDocument( FileUtil.getStream( "/quizmgr/ScoredQuiz.xsl" ) );
@@ -177,6 +180,7 @@ public class QuizManagerServlet extends Servlet {
 					if (answer != null) {
 						answer.setScore(score);
 						question.put(userID, answer);
+						question.setClosed(true);
 					}
 				}
 				aNode = aNode.getNextSibling();

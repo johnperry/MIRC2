@@ -45,3 +45,17 @@ function sendScores(url) {
 
 	form.submit();
 }
+
+function adjustScores(theEvent) {
+	var source = getSource(getEvent(theEvent));
+	var score = source.value;
+	var answer = trim(source.parentNode.previousSibling.firstChild.nodeValue);
+	var tbody = source.parentNode.parentNode.parentNode;
+	var trs = tbody.getElementsByTagName("TR");
+	for (var k=1; k<trs.length; k++) { //skip the heading row
+		var tr = trs[k];
+		var tds = tr.getElementsByTagName("TD");
+		trAnswer = trim(tds[2].firstChild.nodeValue);
+		if (trAnswer == answer) tds[3].firstChild.value = score;
+	}
+}

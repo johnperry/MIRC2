@@ -770,9 +770,15 @@ function makeLinks(includeNextPrev) {
 	}
 	div.appendChild( makeUnknownsLink() );
 	div.appendChild( makeLink(displayCN, "/mirc/images/film-projector.gif", "Display the selected cases in the Case Navigator") );
+
+	if (user.isLoggedIn && user.hasRole("admin")) {
+		var myr = makeLink(getQuizSummary, "/mirc/images/quizsummary.png", "Quiz summary for the selected local cases");
+		div.appendChild( myr );
+	}
+
 	if (user.isLoggedIn && prefs.myrsna) {
 		var myr = makeLink(sendToMyRSNA, "/mirc/images/myrsna.png", "Export the selected local cases to myRSNA Files");
-		//myr.style.marginLeft = "20px";
+		myr.style.marginLeft = "5px";
 		div.appendChild( myr );
 	}
 	return div;
@@ -1000,6 +1006,29 @@ function displayCN() {
 		}
 		if (urls != "") {
 			window.open("/casenav?suppressHome=yes&urls="+encodeURIComponent(urls), "shared");
+		}
+	}
+}
+
+function getQuizSummary() {
+	if (scrollableTable) {
+		var tbody = scrollableTable.tbody;
+		var cbs = tbody.getElementsByTagName("INPUT");
+		var urls = "";
+		var count = 0;
+		for (var i=0; i<cbs.length; i++) {
+			var cb = cbs[i];
+			if ((cb.type == "checkbox") && cb.checked) {
+				var td = cb.parentNode.nextSibling;
+				var a = td.getElementsByTagName("A")[0];
+				var url = a.getAttribute("href");
+				if (urls != "") urls += "|";
+				urls += url;
+				count++;
+			}
+		}
+		if (count > 0) {
+			window.open("/quizsummary?suppressHome=yes&urls="+encodeURIComponent(urls), "shared");
 		}
 	}
 }

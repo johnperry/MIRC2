@@ -129,6 +129,8 @@ public class MIRC extends AbstractPlugin {
 		selector.addServlet("myrsna", MyRSNAServlet.class);
 		selector.addServlet("quiz", QuizServlet.class);
 		selector.addServlet("quizmgr", QuizManagerServlet.class);
+		selector.addServlet("quizsummary", QuizSummaryServlet.class);
+		selector.addServlet("quizanswers", QuizAnswerSummaryServlet.class);
 
 		//Install the standard roles
 		Users users = Users.getInstance();

@@ -51,6 +51,7 @@ function setConfEnables() {
 		insertConfImgControl(ctrls, normalTitles, "/mirc/images/toggletitles.png", "Display titles as knowns", !showNormalTitles);
 		insertConfImgControl(ctrls, unknownTitles, "/mirc/images/toggletitles.png", "Display titles as unknowns", showNormalTitles);
 		insertConfImgControl(ctrls, displayCN, "/mirc/images/film-projector.gif", "Display the selected cases in the Case Navigator", (nSelected > 0));
+		insertConfImgControl(ctrls, getQuizSummary, "/mirc/images/quizsummary.png", "Quiz summary for the selected local cases", user.isLoggedIn && user.hasRole("admin"));
 		/*
 		insertConfButtonControl(ctrls, newConference, "New Conference", "Create a new conference in the current conference", user.isLoggedIn && currentConfTreeNode);
 		insertConfButtonControl(ctrls, renameConference, "Rename Conference", "Rename the current conference", user.isLoggedIn && currentConfTreeNode && !root);

@@ -51,7 +51,17 @@ public class Question implements Serializable {
 	}
 
 	/**
-	 * Get the respondent IDs for all respondents to this quiz.
+	 * Set the status for this question.
+	 * @param isClosed true if no further answers are to be
+	 * accepted for this question; false otherwise.
+	 */
+	public void setClosed(boolean isClosed) {
+		this.isClosed = isClosed;
+		ScoredQuizDB.getInstance().put(this);
+	}
+
+	/**
+	 * Get the respondent IDs for all respondents to this question.
 	 */
 	public String[] getRespondentIDs() {
 		return answers.keySet().toArray(new String[answers.size()]);

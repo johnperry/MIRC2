@@ -1115,34 +1115,54 @@ function setupScoredQuiz() {
 					score = score ? score : "";
 					var value = root.getAttribute("value");
 					value = value ? value : "";
-					if (root.getAttribute("isClosed") == "true") {
-						sqP.appendChild(document.createTextNode(value));
-						sqP.appendChild(document.createElement("BR"));
-						sqP.appendChild(document.createTextNode("Score: "+score));
-					}
-					else {
+					if (userIsOwner == "yes") {
 						var p = document.createElement("P");
 						p.className = "center";
-						var input = document.createElement("INPUT");
-						input.type = "text";
-						input.value = value;
-						input.qid = qid;
-						input.className = "sqText";
-						p.appendChild(input);
-						p.appendChild(document.createElement("BR"));
 						var button = document.createElement("INPUT");
 						button.type = "button";
-						button.onclick = submitScoredQuestionAnswer;
-						button.value = "Submit";
-						button.className = "sqButton";
-						button.inputNode = input;
+						button.onclick = getAnswerSummary;
+						button.value = "Get Answer Summary";
+						button.qid = qid;
 						p.appendChild(button);
 						sqP.appendChild(p);
+					}
+					else {
+						if (root.getAttribute("isClosed") == "true") {
+							sqP.appendChild(document.createTextNode(value));
+							sqP.appendChild(document.createElement("BR"));
+							sqP.appendChild(document.createTextNode("Score: "+score));
+						}
+						else {
+							var p = document.createElement("P");
+							p.className = "center";
+							var input = document.createElement("INPUT");
+							input.type = "text";
+							input.value = value;
+							input.qid = qid;
+							input.className = "sqText";
+							p.appendChild(input);
+							p.appendChild(document.createElement("BR"));
+							var button = document.createElement("INPUT");
+							button.type = "button";
+							button.onclick = submitScoredQuestionAnswer;
+							button.value = "Submit";
+							button.className = "sqButton";
+							button.inputNode = input;
+							p.appendChild(button);
+							sqP.appendChild(p);
+						}
 					}
 				}
 			}
 		}
 	}
+}
+
+function getAnswerSummary(theEvent) {
+	var source = getSource(getEvent(theEvent));
+	var qid = source.qid;
+	var url = "/quizanswers"+docIndexEntry+"?qid="+qid;
+	openURL(url, "_blank");
 }
 function submitScoredQuestionAnswer(theEvent) {
 	var source = getSource(getEvent(theEvent));

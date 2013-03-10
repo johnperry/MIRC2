@@ -87,24 +87,17 @@ public class QuizServlet extends Servlet {
 	 * Handle an answer submission.
 	 */
 	public void doPost(HttpRequest req, HttpResponse res ) throws Exception {
-
-		logger.info("POST:\n"+req.toString());
 		res.setContentType("xml");
 
 		//Require authentication
 		if (req.isFromAuthenticatedUser()) {
 			String username = req.getUser().getUsername();
-			logger.info("username = "+username);
 			Path path = req.getParsedPath();
-
 			ScoredQuizDB db = ScoredQuizDB.getInstance();
 			String questionID = path.element(1);
-			logger.info("questionID = "+questionID);
 			Question question = db.get(questionID);
 			if (!question.isClosed()) {
-				logger.info("question is not closed");
 				String value = req.getParameter("value");
-				logger.info("value = "+value);
 				question.put(username, new Answer(value));
 				db.put(question);
 				res.write("<OK/>");

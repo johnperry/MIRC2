@@ -19,10 +19,6 @@ h2 {
 	font-size: medium;
 }
 
-table {
-	width: 90%;
-}
-	
 th {
 	background-color: #2977b9;
 	padding:5px;
@@ -52,6 +48,7 @@ td.answer {
 
 td.score {
 	width: 5%;
+	text-align: right;
 }
 
 td.score input {

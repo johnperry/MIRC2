@@ -469,9 +469,6 @@ public class QueryService extends Servlet {
 			}
 		}
 		if (queryUID.length() != 0) anchorString += "&queryUID=" + queryUID;
-
-		logger.warn("AnchorURL: "+anchorString);
-
 		return anchorString;
 	}
 
