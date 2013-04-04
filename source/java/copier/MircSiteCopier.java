@@ -279,11 +279,12 @@ public class MircSiteCopier extends JFrame {
 							String[] roles = tcUser.getAttribute("roles").replaceAll("\\s","").split(",");
 
 							for (String role : roles) {
+								role = role.trim();
 								if (role.contains("admin")) ctpUser.addRole("admin");
 								else if (role.contains("author")) ctpUser.addRole("author");
 								else if (role.contains("publisher")) ctpUser.addRole("publisher");
 								else if (role.contains("manager")) ; //ignore
-								else if (!role.contains("-")) {
+								else if (!role.contains("-") && !role.equals("")) {
 									ctpUser.addRole(role);
 									if (!extraRoles.contains(role)) {
 										extraRoles.add(role);
