@@ -3,13 +3,20 @@ function sendScores(url) {
 	var xml = "<Scores>";
 
 	var ps = document.getElementsByTagName("P");
+	var tables = document.getElementsByTagName("TABLE");
+	if (ps.length != tables.length) {
+		alert(ps.length + " paragraph elements found\n"
+			 +tables.length + " table elements found");
+	}
+
 	for (var i=0; i<ps.length; i++) {
 		var p = ps[i];
 		var qid = p.getElementsByTagName("INPUT")[0].value;
 		xml += "<Question id=\""+qid+"\">";
 
-		var table = p.nextSibling;
+		var table = tables[i];
 		var trs = table.getElementsByTagName("TR");
+
 		for (var k=1; k<trs.length; k++) {
 			var tr = trs[k];
 			var tds = tr.getElementsByTagName("TD");
