@@ -16,6 +16,7 @@ import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.LinkedList;
+import java.util.Locale;
 import java.util.Properties;
 import java.util.Set;
 import java.util.zip.ZipEntry;
@@ -194,6 +195,8 @@ public class MircDocument {
 			String title = titleEl.getTextContent().trim();
 			title = title.replaceAll("\\s+", "_");
 			title = title.replaceAll("/", "-");
+			title = title.replaceAll("\\\\", "-");
+			title = title.replaceAll(":", "-");
 			if (title.length() > 0) name = title + "_" + name;
 		}
 		name += ext;
@@ -344,10 +347,10 @@ public class MircDocument {
 			images.appendChild(image);
 			image.setAttribute("name", name); //this is the value that indexes the image
 			image.setAttribute("src", src); //this is the value that points to the version to use
-			image.setAttribute("x", String.format("%.3fcm",xcm));
-			image.setAttribute("y", String.format("%.3fcm",ycm));
-			image.setAttribute("w", String.format("%.3fcm",wcm));
-			image.setAttribute("h", String.format("%.3fcm",hcm));
+			image.setAttribute("x", String.format(Locale.US, "%.3fcm", xcm));
+			image.setAttribute("y", String.format(Locale.US, "%.3fcm", ycm));
+			image.setAttribute("w", String.format(Locale.US, "%.3fcm", wcm));
+			image.setAttribute("h", String.format(Locale.US, "%.3fcm", hcm));
 
 			//Now copy the selected image to the Pictures directory
 			File inFile = new File(docDir, src);

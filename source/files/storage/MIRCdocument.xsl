@@ -1138,10 +1138,11 @@
 </xsl:template>
 
 <xsl:template name="script-init">
+	<xsl:variable name="quot">"</xsl:variable>
 	<script>
 		<xsl:variable name="remove">"'</xsl:variable>
-		<xsl:variable name="title"><xsl:value-of select="$processed-known-title"/></xsl:variable>
-		<xsl:variable name="alttitle"><xsl:value-of select="$processed-unknown-title"/></xsl:variable>
+		<xsl:variable name="title"><xsl:value-of select='translate($processed-known-title,$quot,"")'/></xsl:variable>
+		<xsl:variable name="alttitle"><xsl:value-of select='translate($processed-unknown-title,$quot,"")'/></xsl:variable>
 		<xsl:variable name="category"><xsl:value-of select="$cat"/></xsl:variable>
 		<xsl:variable name="author"><xsl:value-of select="normalize-space(/MIRCdocument/author/name)"/></xsl:variable>
 
