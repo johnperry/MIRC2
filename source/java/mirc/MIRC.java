@@ -18,6 +18,7 @@ import mirc.bauth.*;
 import mirc.casenav.*;
 import mirc.comment.*;
 import mirc.confs.*;
+import mirc.delete.*;
 import mirc.download.*;
 import mirc.files.*;
 import mirc.fsadmin.*;
@@ -106,6 +107,7 @@ public class MIRC extends AbstractPlugin {
 		selector.addServlet("qsadmin", QueryServiceAdmin.class);
 		selector.addServlet("casenav", CaseNavigatorService.class);
 		selector.addServlet("confs", ConferenceService.class);
+		selector.addServlet("delete", DeleteService.class);
 		selector.addServlet("files", FileService.class);
 		selector.addServlet("fsadmin", FileServiceAdmin.class);
 		selector.addServlet("challenge", ChallengeServlet.class);
