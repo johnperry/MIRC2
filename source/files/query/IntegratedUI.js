@@ -770,9 +770,10 @@ function makeLinks(includeNextPrev) {
 	}
 	div.appendChild( makeUnknownsLink() );
 	div.appendChild( makeLink(displayCN, "/mirc/images/film-projector.gif", "Display the selected cases in the Case Navigator") );
+	div.appendChild( makeLink(getPresentation, "/mirc/images/presentation.png", "Export the selected local cases as a presentation") );
 
 	if (user.isLoggedIn && user.hasRole("admin")) {
-		var myr = makeLink(getQuizSummary, "/mirc/images/quizsummary.png", "Quiz summary for the selected local cases");
+		var myr = makeLink(getQuizSummary, "/mirc/images/quizsummary.png", "Display the quiz summary for the selected local cases");
 		div.appendChild( myr );
 	}
 
@@ -1015,6 +1016,17 @@ function getSelectedURLs() {
 		}
 	}
 	return selected;
+}
+
+function getPresentation() {
+	var selected = getSelectedURLs();
+	if (selected.count > 5) {
+		if (!confirm("You have selected "+selected.count+" documents\nto include in the presentation.\n"
+				   + "Are you sure you want to proceed?")) return;
+	}
+	if (selected.count > 0) {
+		window.open("/presentation?urls="+encodeURIComponent(selected.urls), "_self");
+	}
 }
 
 function displayCN() {

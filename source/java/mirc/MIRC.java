@@ -25,6 +25,7 @@ import mirc.fsadmin.*;
 import mirc.login.*;
 import mirc.myrsna.*;
 import mirc.prefs.*;
+import mirc.presentation.*;
 import mirc.publish.*;
 import mirc.qsadmin.*;
 import mirc.query.*;
@@ -133,6 +134,7 @@ public class MIRC extends AbstractPlugin {
 		selector.addServlet("quizmgr", QuizManagerServlet.class);
 		selector.addServlet("quizsummary", QuizSummaryServlet.class);
 		selector.addServlet("quizanswers", QuizAnswerSummaryServlet.class);
+		selector.addServlet("presentation", PresentationService.class);
 
 		//Install the standard roles
 		Users users = Users.getInstance();

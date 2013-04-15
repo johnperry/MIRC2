@@ -39,11 +39,11 @@
 				office:version="1.2"
 				grddl:transformation="http://docs.oasis-open.org/office/1.2/xslt/odf2rdf.xsl" >
 
-<xsl:param name="userIsOwner"/>
+<xsl:param name="username"/>
 <xsl:param name="images"/>
 <xsl:param name="isDraft" select="/MIRCdocument/@temp"/>
 
-<xsl:template match="/MIRCdocument">
+<xsl:template match="/MIRCdocuments">
 	<office:document-content
 				xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 				xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0"
@@ -91,12 +91,16 @@
 <xsl:template name="body">
 	<office:body>
 		<office:presentation>
-			<xsl:apply-templates select="title"/>
-			<xsl:apply-templates select="section[not(@visible='no') and not(@visible='owner')]/p
-											| section/image
-												| image-section/image"/>
+			<xsl:apply-templates select="MIRCdocument"/>
 		</office:presentation>
 	</office:body>
+</xsl:template>
+
+<xsl:template match="MIRCdocument">
+	<xsl:apply-templates select="title"/>
+	<xsl:apply-templates select="section[not(@visible='no') and not(@visible='owner')]/p
+									| section/image
+										| image-section/image"/>
 </xsl:template>
 
 <xsl:template match="title">
@@ -156,8 +160,9 @@
 
 <xsl:template match="image">
 	<xsl:variable name="n"><xsl:number level="any"/></xsl:variable>
+	<xsl:variable name="id" select="@id"/>
 	<xsl:variable name="src" select="@src"/>
-	<xsl:variable name="img" select="$images/images/image[@name=$src]"/>
+	<xsl:variable name="img" select="$images/images/image[@id=$id]"/>
 	<xsl:if test="$img">
 		<draw:page draw:style-name="dp1" draw:id="Image-{$n}" draw:name="Image-{$n}" draw:master-page-name="Default">
 			<draw:frame
@@ -193,8 +198,9 @@
 
 <xsl:template match="alternative-image[@role='annotation']">
 	<xsl:param name="n"/>
+	<xsl:variable name="id" select="@id"/>
 	<xsl:variable name="src" select="@src"/>
-	<xsl:variable name="img" select="$images/images/image[@name=$src]"/>
+	<xsl:variable name="img" select="$images/images/image[@id=$id]"/>
 	<xsl:if test="$img">
 		<draw:page draw:style-name="dp1" draw:id="Annotation-{$n}" draw:name="Annotation-{$n}" draw:master-page-name="Default">
 			<draw:frame
