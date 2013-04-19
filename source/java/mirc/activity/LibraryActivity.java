@@ -40,6 +40,7 @@ public class LibraryActivity implements Serializable {
 		"tce",
 		"dcm",
 		"myrsna",
+		"slides",
 		"storage"
 	};
 

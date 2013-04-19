@@ -287,6 +287,8 @@ public class StorageService extends Servlet {
 					res.send();
 					odpFile.delete();
 					AccessLog.logAccess(req, doc);
+					String ssid = path.element(1);
+					ActivityDB.getInstance().increment(ssid, "slides", username);
 					return;
 				}
 				else {

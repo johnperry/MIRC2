@@ -73,13 +73,14 @@
 			<th rowspan="3">Library</th>
 			<th rowspan="3">ID</th>
 			<th rowspan="3">Documents<br/>Stored</th>
-			<th colspan="10">
+			<th colspan="11">
 				Activity During <xsl:value-of select="$rearrangedDate"/>
 			</th>
 		</tr>
 		<tr>
 			<th colspan="6">New Documents Created</th>
 			<th rowspan="2">MyRSNA<br/>Uploads</th>
+			<th rowspan="2">Slides<br/>Exports</th>
 			<th rowspan="2">Document<br/>Display<br/>Requests</th>
 			<th rowspan="2">Documents<br/>Displayed</th>
 			<th rowspan="2">Active<br/>Users</th>
@@ -137,6 +138,10 @@
 		</xsl:call-template>
 
 		<xsl:call-template name="suppress-zero">
+			<xsl:with-param name="n" select="@slides"/>
+		</xsl:call-template>
+
+		<xsl:call-template name="suppress-zero">
 			<xsl:with-param name="n" select="@storage"/>
 		</xsl:call-template>
 
@@ -160,6 +165,7 @@
 		<td class="t"><xsl:value-of select="sum($libs/@dcm)"/></td>
 		<td class="t"><xsl:value-of select="sum($libs/@tce)"/></td>
 		<td class="t"><xsl:value-of select="sum($libs/@myrsna)"/></td>
+		<td class="t"><xsl:value-of select="sum($libs/@slides)"/></td>
 		<td class="t"><xsl:value-of select="sum($libs/@storage)"/></td>
 		<td class="t"><xsl:value-of select="sum($libs/@docsDisplayed)"/></td>
 		<td class="t"><xsl:value-of select="@activeUsers"/></td>

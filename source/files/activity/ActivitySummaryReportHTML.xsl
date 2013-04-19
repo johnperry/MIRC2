@@ -58,6 +58,7 @@
 		<tr>
 			<th colspan="6">New Documents Created</th>
 			<th rowspan="2">MyRSNA<br/>Uploads</th>
+			<th rowspan="2">Slides<br/>Exports</th>
 			<th rowspan="2">Document<br/>Display<br/>Requests</th>
 			<th rowspan="2">Documents<br/>Displayed</th>
 			<th rowspan="2">Active<br/>Users</th>
@@ -112,6 +113,10 @@
 
 		<xsl:call-template name="suppress-zero">
 			<xsl:with-param name="n" select="@myrsna"/>
+		</xsl:call-template>
+
+		<xsl:call-template name="suppress-zero">
+			<xsl:with-param name="n" select="@slides"/>
 		</xsl:call-template>
 
 		<xsl:call-template name="suppress-zero">

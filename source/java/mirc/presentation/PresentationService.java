@@ -16,6 +16,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import mirc.activity.ActivityDB;
 import mirc.MircConfig;
 import mirc.ssadmin.StorageServiceAdmin;
 import mirc.storage.AccessLog;
@@ -75,6 +76,7 @@ public class PresentationService extends Servlet {
 			MircConfig mc = MircConfig.getInstance();
 			File mircRoot = mc.getRootDirectory();
 			User user = req.getUser();
+			String username = (user != null) ? user.getUsername() : null;
 
 			//Make a directory in which to play
 			File dir = mc.createTempDirectory();
@@ -102,12 +104,15 @@ public class PresentationService extends Servlet {
 					int k = url.indexOf("/storage/");
 					if (k != -1) {
 						url = url.substring(k+1);
+						Path path = new Path(url);
+						String ssid = path.element(1);
 						url.replace("/", File.separator);
 						File mdFile = new File(mircRoot, url);
 						MircDocument md = new MircDocument(mdFile);
 						if (md.authorizes("export", user)) {
 							addMircDocument(md, images, mds, pictures);
 							AccessLog.logAccess(req, md.getXML());
+							ActivityDB.getInstance().increment(ssid, "slides", username);
 						}
 					}
 				}

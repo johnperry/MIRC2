@@ -543,7 +543,7 @@ function processQueryResults(req) {
 					var md = mds[i];
 					appendDocument(scrollableTable.tbody, md);
 				}
-				selectAll();
+				deselectAll(); //for library queries, start with nothing selected
 				scrollableTable.rationalize();
 				resizeScrollableTable();
 				scrollableTable.bodyTable.parentNode.onresize = resizeScrollableTable;

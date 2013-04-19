@@ -27,6 +27,7 @@
 		<xsl:value-of select="@dcm"/><xsl:text>,</xsl:text>
 		<xsl:value-of select="@tce"/><xsl:text>,</xsl:text>
 		<xsl:value-of select="@myrsna"/><xsl:text>
+		<xsl:value-of select="@slides"/><xsl:text>
 </xsl:text>
 	</xsl:for-each>
 </xsl:for-each>
@@ -34,7 +35,7 @@
 
 
 <xsl:template name="headings">
-Site ID,URL,IP,Site Name,Version,Admin email,Accounts,Report Date,Active Users,Libraries,Total Docs,Docs Displayed,Display Reqs,Adv Auth,Basic Auth,Submit,Zip,DICOM,TCE,MyRSNA
+Site ID,URL,IP,Site Name,Version,Admin email,Accounts,Report Date,Active Users,Libraries,Total Docs,Docs Displayed,Display Reqs,Adv Auth,Basic Auth,Submit,Zip,DICOM,TCE,MyRSNA,Slides
 </xsl:template>
 
 </xsl:stylesheet>

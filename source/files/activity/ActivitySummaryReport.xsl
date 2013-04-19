@@ -28,6 +28,7 @@
 		dcm="{sum($libs/@dcm)}"
 		tce="{sum($libs/@tce)}"
 		myrsna="{sum($libs/@myrsna)}"
+		slides="{sum($libs/@slides)}"
 		storage="{sum($libs/@storage)}"
 		docsDisplayed="{sum($libs/@docsDisplayed)}"
 		activeUsers="{@activeUsers}" />
