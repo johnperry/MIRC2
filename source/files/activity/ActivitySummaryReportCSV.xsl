@@ -26,7 +26,7 @@
 		<xsl:value-of select="@zip"/><xsl:text>,</xsl:text>
 		<xsl:value-of select="@dcm"/><xsl:text>,</xsl:text>
 		<xsl:value-of select="@tce"/><xsl:text>,</xsl:text>
-		<xsl:value-of select="@myrsna"/><xsl:text>
+		<xsl:value-of select="@myrsna"/><xsl:text>,</xsl:text>
 		<xsl:value-of select="@slides"/><xsl:text>
 </xsl:text>
 	</xsl:for-each>
