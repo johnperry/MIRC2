@@ -288,6 +288,36 @@ public class ConferenceService extends Servlet {
 			return;
 		}
 
+		if (function.equals("copyagendaitem")) {
+			//This a request to copy an agenda item from one conference to another,
+			//leaving the original agenda item in the source conference.
+			String sourceID = req.getParameter("sourceID");
+			String targetID = req.getParameter("targetID");
+			Conferences confs = Conferences.getInstance();
+			Conference sourceConf = confs.getConference(sourceID);
+			Conference targetConf = confs.getConference(targetID);
+
+			//Get the list of agenda items.
+			String list = req.getParameter("list");
+			String[] urls = list.split("\\|");
+			//Do everything we can, and ignore errors.
+			for (int i=0; i<urls.length; i++) {
+				String url = urls[i];
+				AgendaItem aItem = sourceConf.getAgendaItem(url);
+				if (aItem != null) {
+					aItem = aItem.clone();
+					targetConf.appendAgendaItem(aItem);
+				}
+			}
+			boolean ok = confs.setConference(targetConf);
+			String result = ok ? "<ok/>" : "<notok/>";
+			res.disableCaching();
+			res.setContentType("xml");
+			res.write( result );
+			res.send();
+			return;
+		}
+
 		if (function.equals("deleteagendaitems")) {
 			//This a request to delete a list of agenda items
 			//from a conference. Note: only an error code is

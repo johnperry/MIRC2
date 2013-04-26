@@ -59,6 +59,23 @@ public class Conference implements Serializable {
 	}
 
 	/**
+	 * Get an AgendaItem.
+	 * @param itemURL the URL of the AgendaItem to remove.
+	 * @return the removed AgendaItem, or null if no item
+	 * could be found with the specified URL.
+	 */
+	public AgendaItem getAgendaItem(String itemURL) {
+		ListIterator<AgendaItem> it = agenda.listIterator();
+		while (it.hasNext()) {
+			AgendaItem aItem = it.next();
+			if (aItem.url.equals(itemURL)) {
+				return aItem;
+			}
+		}
+		return null;
+	}
+
+	/**
 	 * Remove an AgendaItem from the agenda.
 	 * @param removeURL the URL of the AgendaItem to remove.
 	 * @return the removed AgendaItem, or null if no item

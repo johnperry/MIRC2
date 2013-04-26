@@ -573,7 +573,7 @@ function dragAgendaItem(dragableDiv, event) {
 			lastTreeNode = confTreeManager.getTreeForCoords(evt.clientX, evt.clientY + scrollTop);
 			if (lastTreeNode) {
 				var namespan = lastTreeNode.namespan;
-				namespan.style.color = "white";
+				namespan.style.color = "green";
 			}
 		}
 
@@ -611,7 +611,7 @@ function dragAgendaItem(dragableDiv, event) {
 		var pos = findObject(left);
 		var list = getSelectedAIs();
 		if ((list != "") && (evt.clientX < pos.w)) {
-			//This is a move to another conference (maybe)
+			//This is a copy to another conference (maybe)
 			var sourcePath = currentConfTreeNode.getPath();;
 			var destTree = confTreeManager.getTreeForCoords(evt.clientX, evt.clientY + scrollTop);
 			if (destTree) {
@@ -624,10 +624,10 @@ function dragAgendaItem(dragableDiv, event) {
 									+"&list="+encodeURIComponent(list)
 										+"&"+req.timeStamp();
 
-					req.GET("/confs/transferAgendaItem", qs, null);
+					req.GET("/confs/copyAgendaItem", qs, null);
 					if (req.success()) showCurrentConferenceContents();
 					else {
-						alert("The attempt to transfer the agenda item failed.");
+						alert("The attempt to copy the agenda item failed.");
 						window.open("/query", "_self");
 					}
 				}

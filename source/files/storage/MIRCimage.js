@@ -151,6 +151,11 @@ function IMAGESET() {
 	this.cFlag = false;
 	this.annotationDisplayed = false;
 	this.annotationIsSVG = false;
+	this.study = "";
+	this.series = "";
+	this.acquisition = "";
+	this.instance = "";
+	this.date = "";
 }
 
 IMAGESET.prototype.addIMAGE = function(type, src, w, h) {

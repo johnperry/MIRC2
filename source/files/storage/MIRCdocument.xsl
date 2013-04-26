@@ -1232,6 +1232,13 @@
 						</xsl:if>
 					</xsl:if>
 				</xsl:if>
+				<xsl:if test="order-by">
+					temp.study = '<xsl:value-of select="order-by/@study"/>';
+					temp.series = '<xsl:value-of select="order-by/@series"/>';
+					temp.acquisition = '<xsl:value-of select="order-by/@acquisition"/>';
+					temp.instance = '<xsl:value-of select="order-by/@instance"/>';
+					temp.date = '<xsl:value-of select="order-by/@date"/>';
+				</xsl:if>
 				IMAGES.addIMAGESET(temp);
 			</xsl:for-each>
 		</xsl:if>

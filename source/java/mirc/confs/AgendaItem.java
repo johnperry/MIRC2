@@ -44,4 +44,12 @@ public class AgendaItem implements Serializable {
 		this.alttitle = alttitle;
 		this.subtitle = subtitle;
 	}
+
+	/**
+	 * Clone this agenda item.
+	 */
+	public AgendaItem clone() {
+		return new AgendaItem(url, title, alturl, alttitle, subtitle);
+	}
+
 }
