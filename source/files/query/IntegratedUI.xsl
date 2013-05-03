@@ -249,6 +249,7 @@
 <xsl:template name="params">
 	<script>
 		var sitename = "<xsl:value-of select="$sitename"/>";
+		var email = "<xsl:value-of select="@email"/>";
 		var mode = "<xsl:value-of select="@mode"/>";
 		var version = "<xsl:value-of select="@version"/>";
 		var rsnaVersion = "<xsl:value-of select="@rsnaVersion"/>";

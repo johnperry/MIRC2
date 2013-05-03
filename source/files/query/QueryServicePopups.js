@@ -208,6 +208,10 @@ function showSessionPopup() {
 			showActivityReportPopup();
 			return;
 		}
+		if ((sitename == "My Teaching Files") || (email == "")) {
+			showSitePopup();
+			return;
+		}
 	}
 
 	var mirc = getCookie("MIRC", cooks);
@@ -330,4 +334,50 @@ function sendSummaryReport() {
 		updatereq.GET("/activity/update", req.timeStamp(), null);
 	}
 	else alert("Unable to obtain the summary report from the local server.");
+}
+
+function showSitePopup() {
+	var id = "sitePopupID";
+	var pop = document.getElementById(id);
+	if (pop) pop.parentNode.removeChild(pop);
+
+	var w = 375;
+	var h = 255;
+
+	var div = document.createElement("DIV");
+	div.className = "content";
+	var h1 = document.createElement("H1");
+	h1.appendChild(document.createTextNode("Update Site Info"));
+	h1.style.fontSize = "24pt";
+	div.appendChild(h1);
+	div.appendChild(document.createTextNode("\u00A0"));
+	var p = document.createElement("P");
+	p.style.textAlign = "left";
+	p.appendChild(document.createTextNode(
+		"The RSNA requests that all sites choose site " +
+		"names that include the name of the institution " +
+		"and that sites also provide an email address. " +
+		"Click the button below to go to the Query Service " +
+		"Admin page to make any desired changes. "));
+	div.appendChild(p);
+
+	div.appendChild(document.createElement("BR"));
+
+	p = document.createElement("P");
+	var button = document.createElement("INPUT");
+	button.className = "stdbutton";
+	button.style.width = "200px";
+	button.type = "button";
+	button.value = "Query Service Admin Page";
+	button.onclick = gotoQSAdmin;
+	p.appendChild(button);
+	div.appendChild(p);
+
+	var closebox = "/icons/closebox.gif";
+	showDialog(id, w, h, "Update Site Info", closebox, null, div, null, null);
+}
+
+function gotoQSAdmin() {
+	hidePopups();
+	window.open("/qsadmin", "_self");
 }
