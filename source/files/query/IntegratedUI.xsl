@@ -218,6 +218,7 @@
 		<div class="L2"><a href="/system">System Properties</a><br/></div>
 		<div class="L2"><a href="/configuration">CTP Configuration</a><br/></div>
 		<div class="L2"><a href="/status">CTP Status</a><br/></div>
+		<div class="L2"><a href="/quarantines">Quarantines</a><br/></div>
 		<div class="L2"><a href="/logs?home=/query">Log Viewer</a><br/></div>
 		<div class="L2"><a href="/level">Logger Levels</a><br/></div>
 		<div class="L2"><a href="javascript:listCookies();">List Cookies</a><br/></div>
