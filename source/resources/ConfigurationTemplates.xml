@@ -99,24 +99,12 @@
 				quarantine="quarantines/DicomService/DicomDecompressor"
 				root="roots/DicomService/DicomDecompressor"
 				script="scripts/DicomDecompressor.script"/>
-			<ObjectCache
-				class="org.rsna.ctp.stdstages.ObjectCache"
-				collectGarbage="yes"
-				root="roots/DicomService/ObjectCache"
-				name="ObjectCache"/>
 			<DicomPixelAnonymizer
 				class="org.rsna.ctp.stdstages.DicomPixelAnonymizer"
 				name="DicomPixelAnonymizer"
 				quarantine="quarantines/DicomService/DicomPixelAnonymizer"
 				root="roots/DicomService/DicomPixelAnonymizer"
 				script="scripts/dicom-pixel-anonymizer.script"/>
-			<Anonymizer
-				class="org.rsna.ctp.stdstages.DicomAnonymizer"
-				lookupTable="scripts/LookupTable.properties"
-				name="DICOM Service DicomAnonymizer - ForcePatientID"
-				quarantine="quarantines/DicomService/ForcePatientID"
-				root="roots/DicomService/ForcePatientID"
-				script="scripts/ForcePatientID.script"/>
 			<MircDocumentStorageService
 				caseTag="PatientID"
 				class="mirc.stages.MircDocumentStorageService"

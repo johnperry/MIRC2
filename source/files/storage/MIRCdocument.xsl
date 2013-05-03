@@ -1238,6 +1238,8 @@
 					temp.acquisition = '<xsl:value-of select="order-by/@acquisition"/>';
 					temp.instance = '<xsl:value-of select="order-by/@instance"/>';
 					temp.date = '<xsl:value-of select="order-by/@date"/>';
+					temp.studyDesc = '<xsl:value-of select='translate(order-by/@study-desc,$remove,"")'/>';
+					temp.seriesDesc = '<xsl:value-of select='translate(order-by/@series-desc,$remove,"")'/>';
 				</xsl:if>
 				IMAGES.addIMAGESET(temp);
 			</xsl:for-each>

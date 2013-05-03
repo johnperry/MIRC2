@@ -1861,6 +1861,11 @@ public class MircDocument {
 		orderBy.setAttribute("series", dicomObject.getSeriesNumber());
 		orderBy.setAttribute("acquisition", dicomObject.getAcquisitionNumber());
 		orderBy.setAttribute("instance", dicomObject.getInstanceNumber());
+
+		String studyDesc = dicomObject.getStudyDescription().replace("\"", "").replace("\'", "");
+		orderBy.setAttribute("study-desc", studyDesc);
+		String seriesDesc = dicomObject.getSeriesDescription().replace("\"", "").replace("\'", "");
+		orderBy.setAttribute("series-desc", seriesDesc);
 		return orderBy;
 	}
 

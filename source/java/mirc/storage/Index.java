@@ -21,6 +21,7 @@ import mirc.MircConfig;
 import mirc.util.MircDocument;
 import mirc.util.MircImage;
 import org.apache.log4j.Logger;
+import org.rsna.ctp.objects.DicomObject;
 import org.rsna.server.User;
 import org.rsna.util.FileUtil;
 import org.rsna.util.JdbmUtil;
@@ -556,6 +557,7 @@ public class Index {
 						changed |= chg;
 					}
 				}
+				changed |= setImageDesc(dir, image);
 			}
 		}
 		catch (Exception skip) { }
@@ -581,6 +583,38 @@ public class Index {
 								+"src attribute: \""+src+"\"\n"
 								+"image element:\n"
 								+XmlUtil.toPrettyString(img), skip);
+				}
+			}
+		}
+		return false;
+	}
+
+	//Set the desc attributes for one image, if necessary.
+	private boolean setImageDesc(File dir, Element img) {
+		NodeList nl = img.getElementsByTagName("alternative-image");
+		for (int i=0; i<nl.getLength(); i++) {
+			Element altimg = (Element)nl.item(i);
+			if (altimg.getAttribute("role").equals("original-format")) {
+				String src = altimg.getAttribute("src").trim();
+				String srclc = src.toLowerCase();
+				if (!src.equals("") && !srclc.startsWith("http://") && !srclc.startsWith("/") && !srclc.startsWith("\\") && srclc.endsWith(".dcm")) {
+					Element orderBy = XmlUtil.getFirstNamedChild(img, "order-by");
+					if (orderBy == null) {
+						orderBy = img.getOwnerDocument().createElement("order-by");
+						img.appendChild(orderBy);
+					}
+					if (orderBy.getAttribute("study-desc").trim().equals("") || orderBy.getAttribute("series-desc").trim().equals("")) {
+						File imageFile = new File(dir, src);
+						try {
+							DicomObject dicomObject = new DicomObject(imageFile);
+							String studyDesc = dicomObject.getStudyDescription().replace("\"", "").replace("\'", "");
+							orderBy.setAttribute("study-desc", studyDesc);
+							String seriesDesc = dicomObject.getSeriesDescription().replace("\"", "").replace("\'", "");
+							orderBy.setAttribute("series-desc", seriesDesc);
+							return true;
+						}
+						catch (Exception skip) { }
+					}
 				}
 			}
 		}

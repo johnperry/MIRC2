@@ -425,6 +425,7 @@ function highlightToken() {
 
 function displayImage() {
 	if (IMAGES.hasCurrentIMAGESET()) {
+		IMAGES.setIndexForSeries();
 		var place = document.getElementById('rimagecenter');
 		while (place.firstChild != null) place.removeChild(place.firstChild);
 		var imageSet = IMAGES.currentIMAGESET;
@@ -468,11 +469,17 @@ function setCaptions(imageSet) {
 	var capdiv = document.getElementById('captions');
 	while (capdiv.firstChild != null) capdiv.removeChild(capdiv.firstChild);
 
-	if (!imageSet.hasCaption()) {
+	if (!imageSet.hasCaption() && !imageSet.hasStudyDesc() && !imageSet.hasSeriesDesc()) {
 		capdiv.style.display = "none";
 	}
 	else {
 		capdiv.style.display = "block";
+		if (imageSet.hasStudyDesc()) {
+			setCaption(capdiv, imageSet.studyDesc, false);
+		}
+		if (imageSet.hasSeriesDesc()) {
+			setCaption(capdiv, imageSet.seriesDesc, false);
+		}
 		if (imageSet.hasACaption()) {
 			setCaption(capdiv, imageSet.aCaption, false);
 		}
@@ -739,34 +746,9 @@ function wheel(event){
 
 function keyDown(event) {
 	if (!event) event = window.event;
-	var nextImage = IMAGES.currentIndex + 1;
 	var kc = event.keyCode;
-	if (kc == 36) nextImage = 1; //HOME
-	else if (kc == 35) nextImage = IMAGES.length(); //END
-	else if (kc == 38) nextImage--; //UP ARROW
-	else if (kc == 40) nextImage++; //DOWN ARROW
 
-	else if ((kc == 109) || (kc == 189)) { //MINUS
-		IMAGES.autozoom = false;
-		displayImage();
-		return;
-	}
-
-	else if ((kc == 107) || (kc == 187)) { //PLUS or EQUAL
-		IMAGES.autozoom = true;
-		displayImage();
-		return;
-	}
-
-	else if (kc == 37) { //LEFT ARROW
-		if (horizontalSplit) horizontalSplit.moveSlider(-10, displayImage);
-		return;
-	}
-	else if (kc == 39) { //RIGHT ARROW
-		if (horizontalSplit) horizontalSplit.moveSlider(+10, displayImage);
-		return;
-	}
-	else if (kc == 33) { //PAGE UP
+	if (kc == 33) { //PAGE UP
 		if (horizontalSplit) {
 			var slider = horizontalSplit.leftWidth;
 			if (slider > 1) lastSliderPosition = slider;
@@ -775,7 +757,8 @@ function keyDown(event) {
 		}
 		return;
 	}
-	else if (kc == 34) { //PAGE DOWN
+
+	if (kc == 34) { //PAGE DOWN
 		var pos = findObject(document.body);
 		if (horizontalSplit) {
 			var slider = horizontalSplit.leftWidth;
@@ -790,15 +773,42 @@ function keyDown(event) {
 		return;
 	}
 
-	if (kc != 17) {
-		if (!event.ctrlKey) loadImage(nextImage);
-		else loadAnnotation(nextImage);
+	if ((kc == 109) || (kc == 189)) { //MINUS
+		IMAGES.autozoom = false;
+		displayImage();
+		return;
+	}
+
+	if ((kc == 107) || (kc == 187)) { //PLUS or EQUAL
+		IMAGES.autozoom = true;
+		displayImage();
+		return;
+	}
+
+	dehighlightToken();
+	if (kc == 36) IMAGES.firstIMAGESETinSeries(); //HOME
+
+	else if (kc == 35) IMAGES.lastIMAGESETinSeries(); //END
+
+	else if (kc == 38) IMAGES.lastViewedIMAGESETinPrevSeries(); //UP ARROW
+
+	else if (kc == 40) IMAGES.lastViewedIMAGESETinNextSeries(); //DOWN ARROW
+
+	else if (kc == 37) IMAGES.prevIMAGESETinSeries(); //LEFT ARROW
+
+	else if (kc == 39) IMAGES.nextIMAGESETinSeries(); //RIGHT ARROW
+
+	//Decide whether to display the original or the annotation based on the ctrl key.
+	if (kc != 17) { //CTRL
+		if (!event.ctrlKey) loadImage(IMAGES.currentIndex+1);
+		else loadAnnotation(IMAGES.currentIndex+1);
 	}
 	else {	//annotations on current image
 		if (!IMAGES.currentIMAGESET.annotationDisplayed) {
 			displayAnnotation();
 		}
 	}
+	highlightToken();
 }
 function keyUp(event) {
 	if (!event) event = window.event;

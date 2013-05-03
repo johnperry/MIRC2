@@ -1829,6 +1829,12 @@
 			<xsl:attribute name="orderby-date">
 				<xsl:value-of select="order-by/@date"/>
 			</xsl:attribute>
+			<xsl:attribute name="orderby-study-desc">
+				<xsl:value-of select="order-by/@study-desc"/>
+			</xsl:attribute>
+			<xsl:attribute name="orderby-series-desc">
+				<xsl:value-of select="order-by/@series-desc"/>
+			</xsl:attribute>
 		</xsl:if>
 	</img>
 </xsl:template>

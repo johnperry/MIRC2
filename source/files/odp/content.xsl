@@ -176,11 +176,12 @@
 					<text:p />
 				</draw:image>
 			</draw:frame>
-			<xsl:if test="image-caption">
+			<xsl:if test="image-caption or order-by">
 				<draw:frame draw:style-name="gr1" draw:text-style-name="P1" draw:layer="layout" svg:width="26.000cm" svg:height="3.000cm" svg:x="1.000cm" svg:y="0.100cm">
 					<draw:text-box>
 						<xsl:apply-templates select="image-caption[@display='always']"/>
 						<xsl:apply-templates select="image-caption[@display='click']"/>
+						<xsl:apply-templates select="order-by"/>
 					</draw:text-box>
 				</draw:frame>
 			</xsl:if>
@@ -218,9 +219,27 @@
 </xsl:template>
 
 <xsl:template match="image-caption">
-	<text:p>
-		<text:span text:style-name="T1"><xsl:value-of select="normalize-space(.)"/></text:span>
-	</text:p>
+	<xsl:variable name="text" select="normalize-space(.)"/>
+	<xsl:if test="$text">
+		<text:p>
+			<text:span text:style-name="T1"><xsl:value-of select="$text"/></text:span>
+		</text:p>
+	</xsl:if>
+</xsl:template>
+
+<xsl:template match="order-by">
+	<xsl:variable name="study" select="normalize-space(@study-desc)"/>
+	<xsl:if test="$study">
+		<text:p>
+			<text:span text:style-name="T1"><xsl:value-of select="$study"/></text:span>
+		</text:p>
+	</xsl:if>
+	<xsl:variable name="series" select="normalize-space(@series-desc)"/>
+	<xsl:if test="$series">
+		<text:p>
+			<text:span text:style-name="T1"><xsl:value-of select="$series"/></text:span>
+		</text:p>
+	</xsl:if>
 </xsl:template>
 
 <xsl:template name="scripts">

@@ -49,11 +49,6 @@
             quarantine="quarantines/DicomService/DicomPixelAnonymizer"
             root="roots/DicomService/DicomPixelAnonymizer"
             script="scripts/DicomPixelAnonymizer.script"/>
-        <DicomAnonymizer
-            class="org.rsna.ctp.stdstages.DicomAnonymizer"
-            name="DicomAnonymizer - ForcePatientID"
-            root="roots/DicomService/ForcePatientID"
-            script="scripts/ForcePatientID.script"/>
         <MircDocumentStorageService
             caseTag="PatientID"
             class="mirc.stages.MircDocumentStorageService"

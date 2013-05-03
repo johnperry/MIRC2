@@ -1348,6 +1348,8 @@ function orderby(img) {
 	var acquisition = img.getAttribute("orderby-acquisition");
 	var instance = img.getAttribute("orderby-instance");
 	var date = img.getAttribute("orderby-date");
+	var studyDesc = img.getAttribute("orderby-study-desc");
+	var seriesDesc = img.getAttribute("orderby-series-desc");
 	if ((study!=null) && (series!=null) && (acquisition!=null) && (instance!=null)) {
 		var x = "<order-by";
 		x += " study=\"" + study + "\"";
@@ -1355,6 +1357,8 @@ function orderby(img) {
 		x += " acquisition=\"" + acquisition + "\"";
 		x += " instance=\"" + instance + "\"";
 		x += " date=\"" + date + "\"";
+		x += " study-desc=\"" + studyDesc + "\"";
+		x += " series-desc=\"" + seriesDesc + "\"";
 		x += "/>";
 		return x;
 	}
