@@ -443,6 +443,8 @@ function displayImage() {
 		imagenumber.appendChild(document.createTextNode("Image: " + (IMAGES.currentIndex+1)));
 
 
+		enableButton('navpop','inline'); //enable the series panel
+
 		if (imageSet.hasAnnotation()) enableButton('annbtn','inline');
 		else disableButton('annbtn','none');
 
@@ -749,27 +751,12 @@ function keyDown(event) {
 	var kc = event.keyCode;
 
 	if (kc == 33) { //PAGE UP
-		if (horizontalSplit) {
-			var slider = horizontalSplit.leftWidth;
-			if (slider > 1) lastSliderPosition = slider;
-			horizontalSplit.moveSliderTo(1, displayImage);
-			setCookie("maxrightpane", "yes");
-		}
+		pageUP();
 		return;
 	}
 
 	if (kc == 34) { //PAGE DOWN
-		var pos = findObject(document.body);
-		if (horizontalSplit) {
-			var slider = horizontalSplit.leftWidth;
-			if ((lastSliderPosition > 0) && (slider != lastSliderPosition)) {
-				horizontalSplit.moveSliderTo(lastSliderPosition, displayImage);
-			}
-			else {
-				horizontalSplit.moveSliderTo(pos.w - imagePaneWidth - 7, displayImage);
-			}
-			setCookie("maxrightpane", "no");
-		}
+		pageDOWN();
 		return;
 	}
 
@@ -814,6 +801,29 @@ function keyUp(event) {
 	if (!event) event = window.event;
 	if (event.keyCode == 17) {
 		if (IMAGES.currentIMAGESET.annotationDisplayed) displayImage();
+	}
+}
+
+function pageUP() {
+	if (horizontalSplit) {
+		var slider = horizontalSplit.leftWidth;
+		if (slider > 1) lastSliderPosition = slider;
+		horizontalSplit.moveSliderTo(1, displayImage);
+		setCookie("maxrightpane", "yes");
+	}
+}
+
+function pageDOWN() {
+	var pos = findObject(document.body);
+	if (horizontalSplit) {
+		var slider = horizontalSplit.leftWidth;
+		if ((lastSliderPosition > 0) && (slider != lastSliderPosition)) {
+			horizontalSplit.moveSliderTo(lastSliderPosition, displayImage);
+		}
+		else {
+			horizontalSplit.moveSliderTo(pos.w - imagePaneWidth - 7, displayImage);
+		}
+		setCookie("maxrightpane", "no");
 	}
 }
 
@@ -1194,3 +1204,85 @@ function assignScores() {
 	var url = "/quizmgr"+docIndexEntry;
 	openURL(url, "_blank");
 }
+
+function showNavPopup() {
+	var id = "navpopup";
+	var w = 126;
+	var h = 150;
+	var div = document.getElementById(id);
+	if (div != null) div.parentNode.removeChild(div);
+
+	div = document.createElement("DIV");
+	div.appendChild(getNavImg("/icons/go-first.png", goFirstHandler));
+	div.appendChild(getNavImg("/icons/go-up.png", goUpHandler));
+	div.appendChild(getNavImg("/icons/go-last.png", goLastHandler));
+	div.appendChild(document.createElement("BR"));
+	div.appendChild(getNavImg("/icons/go-previous.png", goPreviousHandler));
+	div.appendChild(getNavImg("/icons/go-down.png", goDownHandler));
+	div.appendChild(getNavImg("/icons/go-next.png", goNextHandler));
+	div.appendChild(document.createElement("BR"));
+	div.appendChild(getNavImg("/icons/go-top.png", goTopHandler, "15px"));
+	div.appendChild(getNavImg("/icons/go-bottom.png", goBottomHandler, "5px"));
+
+	showDialog(id, w, h, "Series", "/icons/closebox.gif", null, div, null, null);
+
+	var bodyPos = findObject(document.body);
+	var pop = document.getElementById(id);
+	pop.style.left = "2px";
+	pop.style.top = (bodyPos.h - h - 2) + "px";
+}
+
+function getNavImg(url, handler, marginLeft) {
+	var img = document.createElement("IMG");
+	img.src = url;
+	img.style.width = "36px";
+	img.style.height = "36px";
+	img.style.padding = "3px";
+	if (marginLeft) img.style.marginLeft = marginLeft;
+	img.onclick = handler;
+	return img;
+}
+
+function goFirstHandler() {
+	dehighlightToken();
+	IMAGES.firstIMAGESETinSeries();
+	loadImage(IMAGES.currentIndex+1)
+	highlightToken();
+}
+function goUpHandler() {
+	dehighlightToken();
+	IMAGES.lastViewedIMAGESETinPrevSeries();
+	loadImage(IMAGES.currentIndex+1)
+	highlightToken();
+}
+function goLastHandler() {
+	dehighlightToken();
+	IMAGES.lastIMAGESETinSeries();
+	loadImage(IMAGES.currentIndex+1)
+	highlightToken();
+}
+function goPreviousHandler() {
+	dehighlightToken();
+	IMAGES.prevIMAGESETinSeries();
+	loadImage(IMAGES.currentIndex+1)
+	highlightToken();
+}
+function goDownHandler() {
+	dehighlightToken();
+	IMAGES.lastViewedIMAGESETinNextSeries();
+	loadImage(IMAGES.currentIndex+1)
+	highlightToken();
+}
+function goNextHandler() {
+	dehighlightToken();
+	IMAGES.nextIMAGESETinSeries();
+	loadImage(IMAGES.currentIndex+1)
+	highlightToken();
+}
+function goTopHandler() {
+	pageUP();
+}
+function goBottomHandler() {
+	pageDOWN();
+}
+
