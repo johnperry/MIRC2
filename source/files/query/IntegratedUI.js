@@ -48,6 +48,7 @@ function loaded() {
 	setVisibility("AuthorTools", user.hasRole("author"));
 	setVisibility("FileCabinets", user.isLoggedIn);
 	setVisibility("ApprovalQueue", user.hasRole("publisher"));
+	setVisibility("Special", user.hasRole("admin"));
 	setVisibility("Admin", user.hasRole("admin"));
 	setVisibility("CaseOfTheDay", (codURL != ""));
 
@@ -336,6 +337,7 @@ function deselectAll() {
 	deselectCollection("AllDocuments");
 	deselectCollection("DraftDocuments");
 	deselectCollection("ApprovalQueue");
+	deselectCollection("Special");
 	deselectLink("Download");
 	if (confTreeManager) confTreeManager.closePaths();
 	if (fileTreeManager) fileTreeManager.closePaths();
@@ -423,6 +425,19 @@ function queryAllTemp() {
 function queryTemp() {
 	doQuery(getBaseQuery() + "&temp=yes");
 	selectCollection(queryTemp, "DraftDocuments");
+}
+
+function specialNew() {
+	firstResult = 1;
+	special();
+}
+
+function special() {
+	if (user.isLoggedIn) {
+		doQuery(getBaseQuery() + "&special=yes");
+		selectCollection(special, "Special");
+	}
+	else queryAll();
 }
 
 function approvalQueueNew() {
@@ -543,7 +558,6 @@ function processQueryResults(req) {
 					var md = mds[i];
 					appendDocument(scrollableTable.tbody, md);
 				}
-				deselectAll(); //for library queries, start with nothing selected
 				scrollableTable.rationalize();
 				resizeScrollableTable();
 				scrollableTable.bodyTable.parentNode.onresize = resizeScrollableTable;

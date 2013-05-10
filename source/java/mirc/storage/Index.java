@@ -23,6 +23,7 @@ import mirc.util.MircImage;
 import org.apache.log4j.Logger;
 import org.rsna.ctp.objects.DicomObject;
 import org.rsna.server.User;
+import org.rsna.server.Users;
 import org.rsna.util.FileUtil;
 import org.rsna.util.JdbmUtil;
 import org.rsna.util.StringUtil;
@@ -329,6 +330,8 @@ public class Index {
 	 */
 	public IndexEntry[] query(Query mq, boolean isOpen, User user) {
 
+		if (mq.isSpecialQuery) return query(mq, user);
+
 		if (mq.isBlankQuery && !mq.containsNonFreetextQueries) {
 
 			//Handle this case separately because it can be very fast.
@@ -376,6 +379,33 @@ public class Index {
 		//Now remove temp documents if necessary
 		if (!mq.isTempQuery) removeTempDocs(set);
 
+		return set.toArray( new IndexEntry[ set.size() ] );
+	}
+
+	//Do a special query to find all the non-public documents
+	//that do not have publication requests for users who are
+	//authors but not publishers.
+	private IndexEntry[] query(Query mq, User user) {
+		HashSet<Integer> ids = null;
+		Users users = Users.getInstance();
+		String[] usernames = users.getUsernames();
+		IndexDatabase accessDB = fields.get("access");
+		IndexDatabase pubreqDB = fields.get("pubreq");
+		IndexDatabase ownerDB = fields.get("owner");
+		HashSet<Integer> accessSet = accessDB.getIDsForQueryString("public");
+		HashSet<Integer> pubreqSet = pubreqDB.getIDsForQueryString("yes");
+		for (String username : usernames) {
+			User u = users.getUser(username);
+			if ((u != null) && u.hasRole("author") && !u.hasRole("publisher")) {
+				HashSet<Integer> temp = ownerDB.getIDsForQueryString(u.getUsername());
+				ids = IndexDatabase.union(ids, temp);
+			}
+		}
+		ids.removeAll(accessSet);
+		ids.removeAll(pubreqSet);
+		HashSet<IndexEntry> set = getMIESet(ids);
+		boolean isAdmin = (user != null) && user.hasRole("admin");
+		if (!isAdmin) set = filterOnAccess(set, user);
 		return set.toArray( new IndexEntry[ set.size() ] );
 	}
 

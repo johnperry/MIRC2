@@ -19,6 +19,7 @@ public class Query extends Hashtable<String, String> {
 
 	static final Logger logger = Logger.getLogger(Query.class);
 
+	public boolean isSpecialQuery = false;
 	public boolean isBlankQuery = true;
 	public boolean isTempQuery = false;
 	public boolean containsNonFreetextQueries = false;
@@ -86,6 +87,7 @@ public class Query extends Hashtable<String, String> {
 		}
 		String freetext = sb.toString().replaceAll("\\s+", " ").trim();
 		isBlankQuery = freetext.equals("");
+		isSpecialQuery = root.getAttribute("special").trim().equals("yes");
 		this.put("freetext", freetext);
 		setAgeRange(root);
 		//log();

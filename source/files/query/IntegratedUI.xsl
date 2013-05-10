@@ -133,6 +133,7 @@
 			<br/>
 		</div>
 		<div class="L2" id="ApprovalQueue"><a href="javascript:approvalQueueNew();">Case Approval Queue</a><br/></div>
+		<div class="L2" id="Special"><a href="javascript:specialNew();">Resident Non-Public</a><br/></div>
 
 		<div id="Conferences">
 			<div class="MenuBar" id="confMenuBar">;</div>

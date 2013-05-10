@@ -21,7 +21,7 @@
 </xsl:template>
 
 <xsl:template name="queryattributes" >
-	<xsl:for-each select="firstresult|maxresults|unknown|bgcolor|display|icons|orderby" >
+	<xsl:for-each select="firstresult|maxresults|unknown|bgcolor|display|icons|orderby|special" >
 		<xsl:attribute name="{local-name()}" >
 			<xsl:value-of select="."/>
 		</xsl:attribute>
