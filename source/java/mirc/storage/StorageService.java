@@ -166,11 +166,12 @@ public class StorageService extends Servlet {
 			else if (req.getParameter("jpeg") != null) {
 				//This is a request for a JPEG image with window leveling.
 				try {
-					int frame = StringUtil.getInt( req.getParameter("frame"), 0);
+					int frame = StringUtil.getInt( req.getParameter("frame"), -1);
 					int q = StringUtil.getInt( req.getParameter("q"), -1 );
 					int ww = StringUtil.getInt( req.getParameter("ww") );
 					int wl = StringUtil.getInt( req.getParameter("wl") );
 					DicomObject dob = new DicomObject(file);
+					if (frame == -1) frame = dob.getNumberOfFrames() / 2;
 					String name = file.getName();
 					name = name.substring(0, name.lastIndexOf(".")) + "["+/*wl+","+ww+"*/"WWWL].jpeg";
 					File windowedFile = new File(file.getParentFile(), name);
@@ -188,7 +189,7 @@ public class StorageService extends Servlet {
 				//This is done in a background thread because it could take
 				//time to update all the images if it's a series request.
 				try {
-					int frame = StringUtil.getInt( req.getParameter("frame"), 0);
+					int frame = StringUtil.getInt( req.getParameter("frame"), -1);
 					int q = StringUtil.getInt( req.getParameter("q"), -1 );
 					int ww = StringUtil.getInt( req.getParameter("ww") );
 					int wl = StringUtil.getInt( req.getParameter("wl") );

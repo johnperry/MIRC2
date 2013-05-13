@@ -1381,6 +1381,7 @@ public class MircDocument {
 
 	private void saveWWWLImage(DicomObject dob, Element el, int frame, int q, int wl, int ww) throws Exception {
 		if (el == null) return;
+		if (frame == -1) frame = dob.getNumberOfFrames() / 2;
 		String tag = el.getTagName();
 		String attr = el.getAttribute("role");
 		if (tag.equals("image") || (tag.equals("alternative-image") && (attr.equals("icon") || attr.equals("original-dimensions")))) {
@@ -1448,12 +1449,15 @@ public class MircDocument {
 		//Get the image size;
 		int imageWidth = dicomObject.getColumns();
 
+		//Choose the frame
+		int frame = dicomObject.getNumberOfFrames() / 2;
+
 		//Make the JPEG images
 		String name = dicomObject.getFile().getName();
 		String nameNoExt = name.substring(0, name.lastIndexOf("."));
-		Dimension d_base = dicomObject.saveAsJPEG(new File(docDir, nameNoExt+"_base.jpeg"), 0, maxWidth, minWidth, jpegQuality);
-		Dimension d_icon = dicomObject.saveAsJPEG(new File(docDir, nameNoExt+"_icon.jpeg"), 0, 64, 0, -1);
-		Dimension d_icon96 = dicomObject.saveAsJPEG(new File(docDir, nameNoExt+"_icon96.jpeg"), 0, 96, 0, -1); //for the author service
+		Dimension d_base = dicomObject.saveAsJPEG(new File(docDir, nameNoExt+"_base.jpeg"), frame, maxWidth, minWidth, jpegQuality);
+		Dimension d_icon = dicomObject.saveAsJPEG(new File(docDir, nameNoExt+"_icon.jpeg"), frame, 64, 0, -1);
+		Dimension d_icon96 = dicomObject.saveAsJPEG(new File(docDir, nameNoExt+"_icon96.jpeg"), frame, 96, 0, -1); //for the author service
 
 		//If we are to update the document, make the image element and put it just before the insert-megasave element.
 		if (modifyDoc) {
@@ -1470,7 +1474,7 @@ public class MircDocument {
 			image.appendChild(icon);
 
 			if (imageWidth > maxWidth) {
-				Dimension d_full = dicomObject.saveAsJPEG(new File(docDir, nameNoExt+"_full.jpeg"), 0, imageWidth, 0, jpegQuality);
+				Dimension d_full = dicomObject.saveAsJPEG(new File(docDir, nameNoExt+"_full.jpeg"), frame, imageWidth, 0, jpegQuality);
 				Element full  = doc.createElement("alternative-image");
 				full.setAttribute("src", nameNoExt+"_full.jpeg");
 				full.setAttribute("role", "original-dimensions");
@@ -1517,12 +1521,15 @@ public class MircDocument {
 		int maxWidth = StringUtil.getInt( insertionPoint.getAttribute("width"), imageWidth );
 		int minWidth = StringUtil.getInt( insertionPoint.getAttribute("min-width"), 0 );
 
+		//Choose the frame
+		int frame = dicomObject.getNumberOfFrames() / 2;
+
 		//Make the JPEG images
 		String name = dicomObject.getFile().getName();
 		String nameNoExt = name.substring(0,name.lastIndexOf("."));
-		Dimension d_base = dicomObject.saveAsJPEG(new File(docDir,nameNoExt+"_base.jpeg"), 0, maxWidth, minWidth, jpegQuality);
-		Dimension d_icon = dicomObject.saveAsJPEG(new File(docDir,nameNoExt+"_icon.jpeg"), 0, 64, 0, -1);
-		Dimension d_icon96 = dicomObject.saveAsJPEG(new File(docDir,nameNoExt+"_icon96.jpeg"), 0, 96, 0, -1); //for the author service
+		Dimension d_base = dicomObject.saveAsJPEG(new File(docDir,nameNoExt+"_base.jpeg"), frame, maxWidth, minWidth, jpegQuality);
+		Dimension d_icon = dicomObject.saveAsJPEG(new File(docDir,nameNoExt+"_icon.jpeg"), frame, 64, 0, -1);
+		Dimension d_icon96 = dicomObject.saveAsJPEG(new File(docDir,nameNoExt+"_icon96.jpeg"), frame, 96, 0, -1); //for the author service
 
 		//If we are to update the document, make the image element and put it just before the insert-image element.
 		if (modifyDoc) {
@@ -1538,7 +1545,7 @@ public class MircDocument {
 			image.appendChild(base);
 
 			if (imageWidth > maxWidth) {
-				dicomObject.saveAsJPEG(new File(docDir,nameNoExt+"_full.jpeg"), 0, imageWidth, 0, jpegQuality);
+				dicomObject.saveAsJPEG(new File(docDir,nameNoExt+"_full.jpeg"), frame, imageWidth, 0, jpegQuality);
 			}
 
 			parent.insertBefore( image, insertionPoint );
@@ -1663,19 +1670,24 @@ public class MircDocument {
 		String nameNoExt = name.substring(0, name.lastIndexOf("."));
 		String ext = name.substring( name.lastIndexOf(".") + 1 );
 
-		Dimension d_icon = mircImage.saveAsJPEG(new File(docDir,nameNoExt+"_icon.jpeg"), 0, 64, 0, -1);
-		Dimension d_icon96 = mircImage.saveAsJPEG(new File(docDir,nameNoExt+"_icon96.jpeg"), 0, 96, 0, -1); //for the author service
+		//Choose the frame
+		int frame = 0;
+		if (mircImage.isDicomImage()) frame = mircImage.getDicomObject().getNumberOfFrames() / 2;
+
+		Dimension d_icon = mircImage.saveAsJPEG(new File(docDir,nameNoExt+"_icon.jpeg"), frame, 64, 0, -1);
+		Dimension d_icon96 = mircImage.saveAsJPEG(new File(docDir,nameNoExt+"_icon96.jpeg"), frame, 96, 0, -1); //for the author service
 
 		//Make the image element and put it just before the insert-image element.
 		Element image = doc.createElement("image");
 		if (mircImage.isDicomImage()) {
+
 			//It's a DICOM image; make the root image point to the original
 			image.setAttribute("href", name);
 			image.setAttribute("w", Integer.toString(imageWidth));
 			image.setAttribute("h", Integer.toString(imageHeight));
 
  			//Make the child point to the base image.
-			Dimension d_base = mircImage.saveAsJPEG(new File(docDir,nameNoExt+"_base.jpeg"), 0, maxWidth, minWidth, jpegQuality);
+			Dimension d_base = mircImage.saveAsJPEG(new File(docDir,nameNoExt+"_base.jpeg"), frame, maxWidth, minWidth, jpegQuality);
 			Element base = doc.createElement("image");
 			base.setAttribute("src", nameNoExt+"_base.jpeg");
 			base.setAttribute("w", Integer.toString(d_base.width));
@@ -1700,7 +1712,7 @@ public class MircDocument {
 			image.setAttribute("h", Integer.toString(imageHeight));
 
  			//Make the child point to the base image.
-			Dimension d_base = mircImage.saveAsJPEG(new File(docDir,nameNoExt+"_base.jpeg"), 0, maxWidth, minWidth, jpegQuality);
+			Dimension d_base = mircImage.saveAsJPEG(new File(docDir,nameNoExt+"_base.jpeg"), frame, maxWidth, minWidth, jpegQuality);
 			Element base = doc.createElement("image");
 			base.setAttribute("src", nameNoExt+"_base.jpeg");
 			base.setAttribute("w", Integer.toString(d_base.width));
