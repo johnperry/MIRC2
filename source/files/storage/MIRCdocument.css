@@ -106,6 +106,7 @@ body.tab h1 {
 	text-align:center;
 	}
 body.tab p {
+	margin: 5;
 	margin-left:5%;
 	}
 body.tab p.center {

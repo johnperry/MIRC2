@@ -926,6 +926,7 @@ public class StorageService extends Servlet {
 			"user-is-admin",		userisadmin,
 			"user-is-publisher",	userispublisher,
 			"user-can-post",		userisauthor,
+			"mobile-device",		(req.isFromMobileDevice() ? "yes" : "no"),
 
 			"edit-url",				editurl,
 			"revert-url",			reverturl,

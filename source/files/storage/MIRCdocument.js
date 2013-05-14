@@ -520,22 +520,26 @@ function showClickableCaption() {
 }
 
 function disableButton(id, display) {
-	var b = document.getElementById(id)
-	b.disabled = true;
-	b.style.backgroundColor = 'gray';
-	b.style.fontWeight = 'bold';
-	b.style.visibility = 'hidden';
-	b.style.display = display;
+	var b = document.getElementById(id);
+	if (b) {
+		b.disabled = true;
+		b.style.backgroundColor = 'gray';
+		b.style.fontWeight = 'bold';
+		b.style.visibility = 'hidden';
+		b.style.display = display;
+	}
 }
 
 function enableButton(id, display) {
-	var b = document.getElementById(id)
-	b.disabled = false;
-	b.style.backgroundColor = '#2977b9';
-	b.style.color = 'white';
-	b.style.fontWeight = 'bold';
-	b.style.visibility = 'visible';
-	b.style.display = display;
+	var b = document.getElementById(id);
+	if (b) {
+		b.disabled = false;
+		b.style.backgroundColor = '#2977b9';
+		b.style.color = 'white';
+		b.style.fontWeight = 'bold';
+		b.style.visibility = 'visible';
+		b.style.display = display;
+	}
 }
 
 function displayAnnotation() {

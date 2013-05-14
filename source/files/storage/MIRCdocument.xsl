@@ -11,6 +11,7 @@
 <xsl:param name="user-is-admin"/>
 <xsl:param name="user-is-publisher"/>
 <xsl:param name="user-can-post"/>
+<xsl:param name="mobile-device"/>
 
 <xsl:param name="edit-url"/>
 <xsl:param name="revert-url"/>
@@ -225,7 +226,9 @@
 				<input id="nextimg" type="button" value="&gt;&gt;&gt;" disabled="true" onclick="nextImage()"/>
 			</span>
 			<span id="selbuttons" class="selbuttons">
-				<input id="navpop" type="button" value="Series Panel" disabled="true" onclick="showNavPopup()"/>
+				<xsl:if test="$mobile-device = 'yes'">
+					<input id="navpop" type="button" value="Series Panel" disabled="true" onclick="showNavPopup()"/>
+				</xsl:if>
 				<input id="annbtn" type="button" value="Annotations" disabled="true" onclick="displayAnnotation()"/>
 				<input id="orgbtn" type="button" value="Original Size" disabled="true" onclick="fetchOriginal()"/>
 				<input id="dcmbtn" type="button" value="Original Format" disabled="true" onclick="fetchModality(event)"/>
