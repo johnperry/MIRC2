@@ -586,13 +586,15 @@
 			name field.
 		</p>
 		<xsl:variable name="authors" select="author[ (name!='') and not(contains(name, '(draft)')) ]"/>
-		<xsl:for-each select="$authors">
-			<xsl:call-template name="author">
-				<xsl:with-param name="author-name" select="name"/>
-				<xsl:with-param name="author-affiliation" select="affiliation"/>
-				<xsl:with-param name="author-contact" select="contact"/>
-			</xsl:call-template>
-		</xsl:for-each>
+		<xsl:if test="$authors and not($draft='yes')">
+			<xsl:for-each select="$authors">
+				<xsl:call-template name="author">
+					<xsl:with-param name="author-name" select="name"/>
+					<xsl:with-param name="author-affiliation" select="affiliation"/>
+					<xsl:with-param name="author-contact" select="contact"/>
+				</xsl:call-template>
+			</xsl:for-each>
+		</xsl:if>
 		<xsl:if test="not($authors) or ($draft='yes')">
 			<xsl:call-template name="author">
 				<xsl:with-param name="author-name" select="$prefs/User/@name"/>
