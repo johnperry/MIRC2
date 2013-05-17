@@ -96,7 +96,7 @@ public class DownloadDB {
 				recman.commit();
 			}
 		}
-		catch (Exception skip) { logger.warn("unable to insert into downloads",skip); }
+		catch (Exception skip) { logger.warn("Unable to insert into downloads",skip); }
 	}
 
 	/**
