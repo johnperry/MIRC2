@@ -97,9 +97,9 @@ function saveImages(fileurl) {
 }
 
 //export button zip extension handler
-function exportZipFile(url,target, myEvent) {
+function exportZipFile(url, target, myEvent) {
 	if (getEvent(myEvent).altKey) url += "&ext=mrz";
-	openURL(url,target);
+	openURL(url, target);
 }
 
 var deleteURL = "";

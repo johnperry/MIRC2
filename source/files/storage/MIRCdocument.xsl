@@ -21,6 +21,7 @@
 <xsl:param name="delete-url"/>
 <xsl:param name="ppt-export-url"/>
 <xsl:param name="zip-export-url"/>
+<xsl:param name="dicom-export-url"/>
 <xsl:param name="filecabinet-url"/>
 <xsl:param name="post-url"/>
 
@@ -510,6 +511,7 @@
 					<xsl:call-template name="zip-export-button"/>
 					<xsl:call-template name="export-to-button"/>
 					<xsl:call-template name="saveimages-button"/>
+					<xsl:call-template name="exportdicom-button"/>
 					<xsl:call-template name="myrsna-button"/>
 					<xsl:call-template name="addimages-button"/>
 					<xsl:call-template name="sortimages-button"/>
@@ -553,6 +555,17 @@
 				<input type="button" value="Export to File Cabinet"
 						title="Save the images in this document to my File Cabinet"
 						onclick="saveImages('{$filecabinet-url}');"/>
+			</td>
+		</tr>
+	</xsl:if>
+</xsl:template>
+
+<xsl:template name="exportdicom-button">
+	<xsl:if test="string-length($dicom-export-url)!=0">
+		<tr>
+			<td>
+				<input type="button" value="Export DICOM Files" title="Export the DICOM files in a zip file"
+					onclick="exportZipFile('{$dicom-export-url}','_self',event);"/>
 			</td>
 		</tr>
 	</xsl:if>

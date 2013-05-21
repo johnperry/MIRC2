@@ -300,7 +300,7 @@ public class StorageService extends Servlet {
 				}
 			}
 
-			//It's not a PPT export. See if this is a zip export request.
+			//See if this is a zip export request.
 			String zipParameter = req.getParameter("zip");
 			if (zipParameter != null) {
 
@@ -371,7 +371,69 @@ public class StorageService extends Servlet {
 				}
 			}
 
-			//It's not a zip export, check whether read is authorized.
+			//See if this is a DICOM export request.
+			String dicomParameter = req.getParameter("dicom");
+			if (dicomParameter != null) {
+
+				//Check whether export is authorized.
+				if (userIsAuthorizedTo("export", doc, req)) {
+
+					//Export is authorized; make the file for the zip file
+					String extParameter = req.getParameter("ext", "").trim();
+					File zipFile = MircDocument.getFileForZip(doc, file, extParameter);
+
+					//Make a directory to hold the copied DICOM files
+					MircConfig mc = MircConfig.getInstance();
+					File temp = mc.createTempDirectory();
+					String name = zipFile.getName();
+					name = name.substring(0, name.lastIndexOf(".zip"));
+					File zipDir = new File(temp, name);
+					zipDir.mkdirs();
+
+					//The getFileForZip method puts the file in the MIRCdocument's
+					//directory. In this case, it would be better to put it in the
+					//temp directory. Let's also add "_DICOM" to the name so the
+					//user won't inadvertently write over the export of the
+					//full MIRCdocument.
+					zipFile = new File(temp, name+"_DICOM.zip");
+
+					//Get all the DICOM files referenced by the document.
+					NodeList nl = rootElement.getElementsByTagName("alternative-image");
+					for (int k=0; k<nl.getLength(); k++) {
+						Element alt = (Element)nl.item(k);
+						if (alt.getAttribute("role").equals("original-format")) {
+							String src = alt.getAttribute("src");
+							if (src.toLowerCase().endsWith(".dcm")) {
+								Element orderBy = XmlUtil.getFirstNamedChild(alt.getParentNode(), "order-by");
+								File dobFile = new File( file.getParentFile(), src);
+								String study = orderBy.getAttribute("study");
+								String series = orderBy.getAttribute("series");
+								String acquisition = orderBy.getAttribute("acquisition");
+								String instance = orderBy.getAttribute("instance");
+								String newName = study + "_" + series + "_" + acquisition + "_" + instance + ".dcm";
+								FileUtil.copy(dobFile, new File(zipDir, newName));
+							}
+						}
+					}
+
+					//Now zip it, return the zip file, and clean up
+					FileUtil.zipDirectory(zipDir, zipFile);
+					res.write(zipFile);
+					res.setContentType("zip");
+					res.setContentDisposition(zipFile);
+					res.send();
+					FileUtil.deleteAll(temp);
+					return;
+				}
+				else {
+					//Export is not authorized.
+					res.setResponseCode( res.forbidden );
+					res.send();
+					return;
+				}
+			}
+
+			//It's not an export, check whether read is authorized.
 			if (!userIsAuthorizedTo("read", doc, req)) {
 				String qs = req.getQueryString();
 				if (!qs.equals("")) qs = "?" + qs;
@@ -887,10 +949,12 @@ public class StorageService extends Servlet {
 		String pptexporturl = "";
 		String zipexporturl = "";
 		String filecabineturl = "";
+		String dicomexporturl = "";
 		if (canExport) {
 			pptexporturl = docPath + "?ppt";
 			zipexporturl = docPath + "?zip";
 			filecabineturl = "/files/save" + docPath;
+			if (hasDicomImages(doc)) dicomexporturl = docPath + "?dicom";
 		}
 
 		//Set the parameter that identifies this as a preview, in which case
@@ -936,6 +1000,7 @@ public class StorageService extends Servlet {
 			"delete-url",			deleteurl,
 			"ppt-export-url",		pptexporturl,
 			"zip-export-url",		zipexporturl,
+			"dicom-export-url",		dicomexporturl,
 			"filecabinet-url",		filecabineturl,
 
 			"preview",				preview,
@@ -951,6 +1016,16 @@ public class StorageService extends Servlet {
 			"base-date",			Long.toString(baseDate)
 		};
 		return params;
+	}
+
+	private boolean hasDicomImages(Document doc) {
+		NodeList nl = doc.getDocumentElement().getElementsByTagName("alternative-image");
+		for (int k=0; k<nl.getLength(); k++) {
+			Element alt = (Element)nl.item(k);
+			if (alt.getAttribute("role").equals("original-format")
+					&& alt.getAttribute("src").endsWith(".dcm")) return true;
+		}
+		return false;
 	}
 
 	//Get the earliest study date in the order-by elements
