@@ -460,6 +460,11 @@ function displayImage() {
 		if (!IMAGES.lastIsCurrent()) enableButton('nextimg','inline');
 		else disableButton('nextimg','inline');
 
+		enableButton("prevseries", "inline");
+		enableButton("prevseriesimg", "inline");
+		enableButton("nextseries", "inline");
+		enableButton("nextseriesimg", "inline");
+
 		imageSet.annotationDisplayed = false;
 
 		return true;
@@ -939,6 +944,24 @@ function exportHandler() {
 	if (req.success()) {
 		alert(req.responseText());
 	}
+}
+
+function showSeriesHelpPopup() {
+	var id = "seriesHelpPopupID";
+	var pop = document.getElementById(id);
+	if (pop) pop.parentNode.removeChild(pop);
+
+	var div = document.createElement("DIV");
+	div.className = "content";
+	var w = 475;
+	var h = 525;
+	var iframe = document.createElement("IFRAME");
+	iframe.style.width = w - 30;
+	iframe.style.height = h - 55;
+	iframe.src = "/storage/SeriesHelp.html";
+	div.appendChild(iframe);
+	var closebox = "/icons/closebox.gif";
+	showDialog(id, w, h, "Series Navigation Help", closebox, null, div, null, null);
 }
 
 

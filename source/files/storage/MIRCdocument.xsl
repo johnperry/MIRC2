@@ -220,11 +220,20 @@
 	<div id="rightside" class="rightside">
 		<div id="rbuttons" class="rbuttons">
 			<span id="imagenav" class="imagenav">
-				<input id="previmg" type="button" value="&lt;&lt;&lt;" disabled="true" onclick="prevImage()"/>
-				&#160;
-				<span id="imagenumber" class="imagenumber"></span>
-				&#160;
-				<input id="nextimg" type="button" value="&gt;&gt;&gt;" disabled="true" onclick="nextImage()"/>
+				<span style="background:#2977b9;">
+					<input id="previmg" type="button" value="&lt;&lt;&lt;" disabled="true" onclick="prevImage()"/>
+					&#160;
+					<span id="imagenumber" class="imagenumber"></span>
+					&#160;
+					<input id="nextimg" type="button" value="&gt;&gt;&gt;" disabled="true" onclick="nextImage()"/>
+				</span>
+				<span style="background:#2977b9;margin-left:20;">
+					<input id="prevseries" type="button" value="&lt;&lt;&lt;" onclick="goUpHandler()" title="Previous Series"/>
+					<input id="prevseriesimg" type="button" value="&lt;&lt;" onclick="goPreviousHandler()" title="Previous Image in Series"/>
+					&#160;Series&#160;
+					<input id="nextseriesimg" type="button" value="&gt;&gt;" onclick="goNextHandler()" title="Next Image in Series"/>
+					<input id="nextseries" type="button" value="&gt;&gt;&gt;" onclick="goDownHandler()" title="Next Series"/>
+				</span>
 			</span>
 			<span id="selbuttons" class="selbuttons">
 				<xsl:if test="$mobile-device = 'yes'">
@@ -233,6 +242,7 @@
 				<input id="annbtn" type="button" value="Annotations" disabled="true" onclick="displayAnnotation()"/>
 				<input id="orgbtn" type="button" value="Original Size" disabled="true" onclick="fetchOriginal()"/>
 				<input id="dcmbtn" type="button" value="Original Format" disabled="true" onclick="fetchModality(event)"/>
+				<img src="/icons/help.png" onclick="showSeriesHelpPopup()" title="Show Series Navigation Help"/>
 			</span>
 		</div>
 		<div id="captions" class="captions"/>

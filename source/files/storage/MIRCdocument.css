@@ -28,7 +28,7 @@ p.imagecount {
 	font-weight:bold;
 	font-family:sans-serif;
 	font-size:10pt;
-}	
+}
 
 /******* document footer styles *******/
 table.footer {
@@ -64,41 +64,41 @@ body.page p {
 	}
 body.page p.center {
 	text-align:center;
-	margin-left:0; 
+	margin-left:0;
 	}
 body.page p.authorname {
-	margin-left:0; 
+	margin-left:0;
 	text-align:center;
 	font-weight:bold;
 	}
 body.page p.authorinfo {
 	text-align:center;
-	margin-left:0; 
-	margin-top:0; 
+	margin-left:0;
+	margin-top:0;
 	margin-bottom:0;
 	}
 body.page hr.docfooter {
 	text-align:center;
 	margin-top:20;
-	width:60%; 
+	width:60%;
 	}
 body.page p.centeredcaption {
 	text-align:center;
-	margin:0; 
+	margin:0;
 	}
 
 /************ tab styles ************/
 body.tab {
 	font-size:13pt;
 	font-family:arial;
-	margin:0; 
-	border:0; 
-	padding:0; 
-	padding-bottom:0; 
+	margin:0;
+	border:0;
+	padding:0;
+	padding-bottom:0;
 	overflow:hidden;
 	}
 body.tab div.maindiv {
-	border:1px #2977b9 solid; 
+	border:1px #2977b9 solid;
 	overflow:auto;
 	}
 body.tab h1 {
@@ -110,45 +110,45 @@ body.tab p {
 	margin-left:5%;
 	}
 body.tab p.center {
-	margin-left:0; 
+	margin-left:0;
 	text-align:center;
 	}
 body.tab p.authorname {
-	margin-left:0; 
+	margin-left:0;
 	text-align:center;
 	font-weight:bold;
 	}
 body.tab p.authorinfo {
-	margin-left:0; 
+	margin-left:0;
 	text-align:center;
-	margin-top:0; 
+	margin-top:0;
 	margin-bottom:0;
 	}
 body.tab hr.docfooter {
 	text-align:center;
 	margin-top:20;
-	width:60%; 
+	width:60%;
 	}
 
 /************ mstf styles ************/
 body.mstf {
 	font-size:13pt;
 	font-family:arial;
-	margin:0; 
-	border:0; 
-	padding:0; 
-	padding-bottom:0; 
+	margin:0;
+	border:0;
+	padding:0;
+	padding-bottom:0;
 	overflow:hidden;
 	}
 body.mstf div.maindiv {
-	padding:0; 
-	margin:0; 
+	padding:0;
+	margin:0;
 	overflow:hidden;
 	}
 body.mstf h1 {
 	font-size:12pt;
-	font-family:sans-serif; 
-	margin:5; 
+	font-family:sans-serif;
+	margin:5;
 	margin-left:0;
 	}
 body.mstf p {
@@ -158,14 +158,14 @@ body.mstf p {
 	}
 body.mstf p.center {
 	text-align:center;
-	margin-left:0; 
+	margin-left:0;
 	}
 body.mstf p.authorname {
 	margin-left:0;
 	}
 body.mstf p.authorinfo {
-	margin-left:0; 
-	margin-top:0; 
+	margin-left:0;
+	margin-top:0;
 	margin-bottom:0
 	}
 body.mstf hr.docfooter {
@@ -241,9 +241,9 @@ table.mdtable td {
 	}
 .leftside {
 	position:absolute;
-	border:0; 
-	margin:0; 
-	padding:0; 
+	border:0;
+	margin:0;
+	padding:0;
 	overflow:hidden;
 	}
 .tokenbuttonSEL {
@@ -284,11 +284,11 @@ table.mdtable td {
 	cursor:row-resize;
 	}
 .rightside {
-	border:1px #2977b9 solid; 
-	background:black; 
-	position:absolute; 
-	margin:0; 
-	padding:0; 
+	border:1px #2977b9 solid;
+	background:black;
+	position:absolute;
+	margin:0;
+	padding:0;
 	overflow:hidden;
 	}
 .rbuttons {
@@ -322,6 +322,13 @@ table.mdtable td {
 	font-size:small;
 	color:white;
 	margin-right:17px;
+	}
+.selbuttons img {
+	height:24;
+	margin:0;
+	padding:0;
+	margin-left:4;
+	vertical-align:-4;
 	}
 .rimage {
 	border:0;
@@ -419,7 +426,7 @@ h3.thread {
 	font-size:10pt;
 	cursor: pointer;
 }
-	
+
 h4.post {
 	margin: 0 0 10 0;
 	font-weight:normal;
