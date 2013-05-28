@@ -288,7 +288,22 @@
 		</input>
 
 		<xsl:for-each select="section | image-section">
-			<input type="button" class="deselectedTab" onclick="tabClicked(event);">
+			<input type="button" class="deselectedTab">
+				<xsl:choose>
+					<xsl:when test="($draft='yes') and (name(.)='image-section')">
+						<xsl:attribute name="onclick">
+							<xsl:text>tabClicked(event);</xsl:text>
+							<xsl:text>alert('Image section changes are not saved in draft documents.\n</xsl:text>
+							<xsl:text>To make changes in this section, first save the document.');</xsl:text>
+						</xsl:attribute>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:attribute name="onclick">
+							<xsl:text>tabClicked(event);</xsl:text>
+						</xsl:attribute>
+					</xsl:otherwise>
+				</xsl:choose>
+
 				<xsl:attribute name="value">
 					<xsl:choose>
 						<xsl:when test="not(string-length(normalize-space(@heading)) = 0)">

@@ -388,7 +388,10 @@ public class StorageService extends Servlet {
 					String name = zipFile.getName();
 					name = name.substring(0, name.lastIndexOf(".zip"));
 					File zipDir = new File(temp, name);
-					zipDir.mkdirs();
+					File dcmDir = new File(zipDir, "DCM");
+					File jpgDir = new File(zipDir, "JPG");
+					dcmDir.mkdirs();
+					jpgDir.mkdirs();
 
 					//The getFileForZip method puts the file in the MIRCdocument's
 					//directory. In this case, it would be better to put it in the
@@ -410,8 +413,22 @@ public class StorageService extends Servlet {
 								String series = orderBy.getAttribute("series");
 								String acquisition = orderBy.getAttribute("acquisition");
 								String instance = orderBy.getAttribute("instance");
-								String newName = study + "_" + series + "_" + acquisition + "_" + instance + ".dcm";
-								FileUtil.copy(dobFile, new File(zipDir, newName));
+								String newName = study + "_" + series + "_" + acquisition + "_" + instance;
+								FileUtil.copy(dobFile, new File(dcmDir, newName + ".dcm"));
+
+								//Now get the corresponding JPEG image
+								Element parent = (Element)alt.getParentNode();
+								NodeList altnl = parent.getElementsByTagName("alternative-image");
+								Element jpeg = parent; //use the image element if there is no original-dimensions version
+								for (int i=0; i<altnl.getLength(); i++) {
+									Element e = (Element)altnl.item(i);
+									if (e.getAttribute("role").equals("original-dimensions")) {
+										jpeg = e;
+										break;
+									}
+								}
+								File jpegFile = new File( file.getParentFile(), jpeg.getAttribute("src") );
+								FileUtil.copy( jpegFile, new File(jpgDir, newName + ".jpg"));
 							}
 						}
 					}

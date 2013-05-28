@@ -510,11 +510,45 @@ public class AuthorService extends Servlet {
 							//Now we can update the document using docFile pointing to the new location.
 							md.setFile( docFile );
 
+							//Okay, now we have a minor diversion. Apparently, residents sometimes start sending
+							//images from the PACS and then immediately open the MIRCdocument in the editor before
+							//all the images have arrived. When they save the edited document, the references to
+							//all the images that arrived after the MIRCdocument was opened in the editor are lost.
+							//There is no easy solution to this problem other than discipline on the part of the
+							//users. Since that is not in the realm of possibility, the next best approach is to
+							//discard any changes the user made to the images and keep what is in the document
+							//at the time the save occurs. Since this is a highly questionable solution, we will
+							//simply comment out the old image handling code so it will be easy to re-enable.
+
+							//******************* Old code ********************
+							/*
 							//Insert any files referenced in the file cabinets
 							insertFiles(md, user, jpegQuality);
 
 							//Fix the SVG references and create the SVG files
 							updateAnnotationFiles(md, jpegQuality);
+							*/
+							//**************** End of old code ****************
+
+							//******************* New code ********************
+							//Get the image-section from the original document. Note that this
+							//was parsed when we entered the doPost method, so it is current.
+							Element oldImageSection = XmlUtil.getFirstNamedChild(oldmd.getXML().getDocumentElement(), "image-section");
+							if (oldImageSection != null) {
+								Document newDoc = md.getXML();
+								Element newRoot = newDoc.getDocumentElement();
+								Element newImageSection = XmlUtil.getFirstNamedChild(newRoot, "image-section");
+								if (newImageSection != null) {
+									oldImageSection = (Element)newDoc.importNode(oldImageSection, true);
+									//Note that in the following instruction, the old/new designations
+									//appear to be reversed. The code is correct. Remember that we are
+									//replacing the newImageSection with the oldImageSection.
+									newRoot.replaceChild(oldImageSection, newImageSection);
+								}
+							}
+							//Okay, we're done.
+							//I need a shower.
+							//**************** End of new code ****************
 
 							//See if there is a conflict between the read authorization and the user's roles.
 							md.setPublicationRequest(canPublish);
