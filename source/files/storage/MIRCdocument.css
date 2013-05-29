@@ -314,6 +314,9 @@ table.mdtable td {
 	font-size:small;
 	color:white;
 	}
+.imagenav input {
+	width: 33px;
+}
 .selbuttons {
 	float:right;
 	text-align:right;

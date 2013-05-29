@@ -220,19 +220,16 @@
 	<div id="rightside" class="rightside">
 		<div id="rbuttons" class="rbuttons">
 			<span id="imagenav" class="imagenav">
-				<span style="background:#2977b9;">
-					<input id="previmg" type="button" value="&lt;&lt;&lt;" disabled="true" onclick="prevImage()"/>
+				<span>
+					<input id="previmg" type="button" value="&lt;&lt;&lt;" disabled="true" onclick="prevImage()" title="Previous Image in Document"/>
+					<input id="prevseries" type="button" value="&lt;&lt;" onclick="goUpHandler()" title="Previous Series"/>
+					<input id="prevseriesimg" type="button" value="&lt;" onclick="goPreviousHandler()" title="Previous Image in Series"/>
 					&#160;
 					<span id="imagenumber" class="imagenumber"></span>
 					&#160;
-					<input id="nextimg" type="button" value="&gt;&gt;&gt;" disabled="true" onclick="nextImage()"/>
-				</span>
-				<span style="background:#2977b9;margin-left:20;">
-					<input id="prevseries" type="button" value="&lt;&lt;&lt;" onclick="goUpHandler()" title="Previous Series"/>
-					<input id="prevseriesimg" type="button" value="&lt;&lt;" onclick="goPreviousHandler()" title="Previous Image in Series"/>
-					&#160;Series&#160;
-					<input id="nextseriesimg" type="button" value="&gt;&gt;" onclick="goNextHandler()" title="Next Image in Series"/>
-					<input id="nextseries" type="button" value="&gt;&gt;&gt;" onclick="goDownHandler()" title="Next Series"/>
+					<input id="nextseriesimg" type="button" value="&gt;" onclick="goNextHandler()" title="Next Image in Series"/>
+					<input id="nextseries" type="button" value="&gt;&gt;" onclick="goDownHandler()" title="Next Series"/>
+					<input id="nextimg" type="button" value="&gt;&gt;&gt;" disabled="true" onclick="nextImage()" title="Next Image in Document"/>
 				</span>
 			</span>
 			<span id="selbuttons" class="selbuttons">

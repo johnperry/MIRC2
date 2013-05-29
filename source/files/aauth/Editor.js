@@ -1357,8 +1357,8 @@ function orderby(img) {
 		x += " acquisition=\"" + acquisition + "\"";
 		x += " instance=\"" + instance + "\"";
 		x += " date=\"" + date + "\"";
-		x += " study-desc=\"" + studyDesc + "\"";
-		x += " series-desc=\"" + seriesDesc + "\"";
+		x += " study-desc=\"" + escapeChars(studyDesc) + "\"";
+		x += " series-desc=\"" + escapeChars(seriesDesc) + "\"";
 		x += "/>";
 		return x;
 	}
