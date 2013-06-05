@@ -49,6 +49,8 @@ import org.rsna.util.FileUtil;
 import org.rsna.util.StringUtil;
 import org.rsna.util.XmlUtil;
 
+import org.rsna.video.AVIOutputStream;
+
 /**
   * A class to encapsulate a MIRCdocument.
   */
@@ -1459,6 +1461,9 @@ public class MircDocument {
 		Dimension d_icon = dicomObject.saveAsJPEG(new File(docDir, nameNoExt+"_icon.jpeg"), frame, 64, 0, -1);
 		Dimension d_icon96 = dicomObject.saveAsJPEG(new File(docDir, nameNoExt+"_icon96.jpeg"), frame, 96, 0, -1); //for the author service
 
+		//Make an AVI if possible
+		boolean hasAVI = makeAVI(dicomObject, 2, true);
+
 		//If we are to update the document, make the image element and put it just before the insert-megasave element.
 		if (modifyDoc) {
 			Element image = doc.createElement("image");
@@ -1483,6 +1488,13 @@ public class MircDocument {
 				image.appendChild(full);
 			}
 
+			if (hasAVI) {
+				Element avi  = doc.createElement("alternative-image");
+				avi.setAttribute("src", name+".avi");
+				avi.setAttribute("role", "video");
+				image.appendChild(avi);
+			}
+
 			if (!suppressOriginalFormat) {
 				Element dcm = doc.createElement("alternative-image");
 				dcm.setAttribute("src", name);
@@ -1496,6 +1508,7 @@ public class MircDocument {
 
 			parent.insertBefore( image, insertionPoint );
 		}
+
 	}
 
 	//Handle the insert-image element for DicomObjects.
@@ -1742,6 +1755,67 @@ public class MircDocument {
 
 			parent.insertBefore( caption, insertionPoint );
 		}
+	}
+
+	//*********************************************************************************************
+	//
+	//	Video
+	//
+	//*********************************************************************************************
+
+	/**
+	 * Create an AVI from a multi-frame DicomObject. The AVI is created in the
+	 * directory with the MIRCdocument. It has the same name as the DicomObject,
+	 * plus the .avi extension.
+	 * @param dicomObject the object
+	 * @param minFrames the minimum number of frames to process. DicomObjects with fewer than
+	 * this number of frames are not processed.
+	 * @return true if an AVI was created; false otherwise.
+	 */
+	public boolean makeAVI(DicomObject dicomObject, int minFrames, boolean jpeg) {
+		boolean done = false;
+		int nFrames = dicomObject.getNumberOfFrames();
+		AVIOutputStream out = null;
+
+		if (dicomObject.isImage() && (nFrames > 0) && (nFrames >= minFrames)) {
+			try {
+				File aviFile = new File(docDir, dicomObject.getFile().getName()+".avi");
+				int rows = dicomObject.getRows();
+				int columns = dicomObject.getColumns();
+				int rate = StringUtil.getInt( dicomObject.getElementValue("RecommendedDisplayFrameRate"), 10 );
+
+				if (jpeg) {
+					out = new AVIOutputStream(aviFile, AVIOutputStream.VideoFormat.JPG);
+					out.setVideoDimension(columns, rows);
+					out.setFrameRate(rate);
+					File temp = File.createTempFile("DCM-", ".jpg");
+					for (int frame=0; frame<nFrames; frame++) {
+						dicomObject.saveAsJPEG(temp, frame, columns, columns, -1);
+						out.writeFrame(temp);
+					}
+					temp.delete();
+				}
+				else {
+					out = new AVIOutputStream(aviFile, AVIOutputStream.VideoFormat.RAW);
+					out.setVideoDimension(columns, rows);
+					out.setFrameRate(rate);
+					for (int frame=0; frame<nFrames; frame++) {
+						out.writeFrame(dicomObject.getScaledBufferedImage(frame, columns, columns));
+					}
+				}
+				done = true;
+			}
+			catch (Exception ex) { logger.warn("Unable to create AVI", ex); }
+			finally {
+				if (out != null) {
+					try { out.finish(); }
+					catch (Exception unable) { }
+					try { out.close(); }
+					catch (Exception unable) { }
+				}
+			}
+		}
+		return done;
 	}
 
 	//*********************************************************************************************

@@ -445,6 +445,9 @@ function displayImage() {
 
 		enableButton('navpop','inline'); //enable the series panel
 
+		if (imageSet.hasVideo()) enableButton('vidbtn','inline');
+		else disableButton('vidbtn','none');
+
 		if (imageSet.hasAnnotation()) enableButton('annbtn','inline');
 		else disableButton('annbtn','none');
 
@@ -544,6 +547,12 @@ function enableButton(id, display) {
 		b.style.fontWeight = 'bold';
 		b.style.visibility = 'visible';
 		b.style.display = display;
+	}
+}
+
+function displayVideo() {
+	if (IMAGES.hasCurrentIMAGESET()) {
+		window.open(IMAGES.currentIMAGESET.vImage.src, "_blank");
 	}
 }
 

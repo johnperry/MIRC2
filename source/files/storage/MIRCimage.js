@@ -233,6 +233,7 @@ function IMAGESET() {
 	this.pImage = null;
 	this.sImage = null;
 	this.aImage = null;
+	this.vImage = null;
 	this.osImage = null;
 	this.ofImage = null;
 	this.aCaption = "";
@@ -261,6 +262,10 @@ IMAGESET.prototype.addCAPTION = function(type, caption) {
 	if (caption) {
 		this[type] = caption;
 	}
+}
+
+IMAGESET.prototype.hasVideo = function() {
+	return (this.vImage != null);
 }
 
 IMAGESET.prototype.hasAnnotation = function() {
@@ -293,6 +298,7 @@ IMAGESET.prototype.toString = function(n) {
 	if (this.pImage != null) s += margin + "pImage: " + this.pImage.toString();
 	if (this.sImage != null) s += margin + "sImage: " + this.sImage.toString();
 	if (this.aImage != null) s += margin + "aImage: " + this.aImage.toString();
+	if (this.vImage != null) s += margin + "vImage: " + this.vImage.toString();
 	if (this.osImage != null) s += margin + "osImage: " + this.osImage.toString();
 	if (this.ofImage != null) s += margin + "ofImage: " + this.osImage.toString();
 	if (this.aCaption != "") s += margin + "aCaption: ["+this.aCaption+"]\n";

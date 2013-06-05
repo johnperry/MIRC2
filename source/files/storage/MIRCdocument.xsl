@@ -236,6 +236,7 @@
 				<xsl:if test="$mobile-device = 'yes'">
 					<input id="navpop" type="button" value="Series Panel" disabled="true" onclick="showNavPopup()"/>
 				</xsl:if>
+				<input id="vidbtn" type="button" value="Video" disabled="true" onclick="displayVideo()"/>
 				<input id="annbtn" type="button" value="Annotations" disabled="true" onclick="displayAnnotation()"/>
 				<input id="orgbtn" type="button" value="Original Size" disabled="true" onclick="fetchOriginal()"/>
 				<input id="dcmbtn" type="button" value="Original Format" disabled="true" onclick="fetchModality(event)"/>
@@ -1220,6 +1221,13 @@
 					<xsl:call-template name="addIMAGE">
 						<xsl:with-param name="image" select="$aImage"/>
 						<xsl:with-param name="type">aImage</xsl:with-param>
+					</xsl:call-template>
+				</xsl:if>
+				<xsl:variable name="vImage" select="alternative-image[@role='video']"/>
+				<xsl:if test="$vImage">
+					<xsl:call-template name="addIMAGE">
+						<xsl:with-param name="image" select="$vImage"/>
+						<xsl:with-param name="type">vImage</xsl:with-param>
 					</xsl:call-template>
 				</xsl:if>
 				<xsl:variable name="osImage" select="alternative-image[@role='original-dimensions']"/>

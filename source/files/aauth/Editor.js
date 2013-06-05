@@ -1307,6 +1307,7 @@ function makeImage(img) {
 			+">\n";
 	text += altimage(img,"icon");
 	text += altimage(img,"annotation");
+	text += altimage(img,"video");
 	text += altimage(img,"original-dimensions");
 	text += altimage(img,"original-format");
 	text += imagechild(img,"format");

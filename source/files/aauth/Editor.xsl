@@ -1809,6 +1809,9 @@
 							(../@type='' and not(contains(.,'.svg'))))]"
 			/>
 		</xsl:attribute>
+		<xsl:attribute name="video">
+			<xsl:value-of select="$image/alternative-image/@src[../@role='video']"/>
+		</xsl:attribute>
 		<xsl:attribute name="original-dimensions">
 			<xsl:value-of select="$image/alternative-image/@src[../@role='original-dimensions']"/>
 		</xsl:attribute>
