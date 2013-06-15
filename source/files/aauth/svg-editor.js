@@ -7,6 +7,7 @@ function SVGIsInstalled() {
 	else if ((navigator.mimeTypes != null) &&
 			(navigator.mimeTypes.length > 0) &&
 			(navigator.mimeTypes["image/svg+xml"] != null)) return true;
+	alert("SVG is not installed");
 	return false;
 }
 
@@ -270,28 +271,25 @@ svgToolButtonPressedArray['svgLine'] = "svg-buttons/line-pressed.gif";
 svgToolButtonPressedArray['svgCircle'] = "svg-buttons/circle-pressed.gif";
 svgToolButtonPressedArray['svgText'] = "svg-buttons/text-pressed.gif";
 
-// this function will change the graphic of the button who's ID you've passed in to pressed
-// and the rest of the buttons to popped out
+// Set the graphical representations of the buttons so only one is pressed
 function pressButton(buttonID) {
-	// loop thru all buttons
 	for( var i in svgToolButtonArray ) {
-		// if the button in the loop matches the buttonID we passed in, press it
+		// if the button in the loop matches the buttonID, press it
 		if( buttonID == i ) {
 			document.getElementById(i).setAttribute("src", changeImageSource(svgToolButtonPressedArray[i], document.getElementById(i).getAttribute("src")));
 		// otherwise, pop it out
 		} else {
-			document.getElementById(i).setAttribute("src", changeImageSource(svgToolButtonArray[i], document.getElementById(i).getAttribute("src")));		
+			document.getElementById(i).setAttribute("src", changeImageSource(svgToolButtonArray[i], document.getElementById(i).getAttribute("src")));
 		}
 	}
 }
 
-// this is a little screwy, we can't replace the entire source, because the file path differs from 
-// site to site depending on the name of the users storage service, so we'll have to leave that part in 
-// tact
+// This is a little odd, we can't replace the entire source because the file path differs from
+// site to site depending on the name of the user's storage service, so we'll have to leave that part intact
 function changeImageSource (newImage, oldImage) {
 	var newSource = "";
-	// gotta love javascript....IE urls have an http://server thrown in front of them, so we'll have 
-	// to strip that stuff off, but only in IE.
+	// IE urls contain http://server, so we have
+	// to strip that part off, but only in IE.
 	if( oldImage.indexOf("//") > 0 ) {
 		oldImage = oldImage.substring(oldImage.indexOf("//")+2, oldImage.length);
 	}
