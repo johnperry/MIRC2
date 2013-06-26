@@ -50,6 +50,7 @@ import org.rsna.util.StringUtil;
 import org.rsna.util.XmlUtil;
 
 import org.rsna.video.AVIOutputStream;
+//import org.jcodec.api.SequenceEncoder;
 
 /**
   * A class to encapsulate a MIRCdocument.
@@ -1461,8 +1462,9 @@ public class MircDocument {
 		Dimension d_icon = dicomObject.saveAsJPEG(new File(docDir, nameNoExt+"_icon.jpeg"), frame, 64, 0, -1);
 		Dimension d_icon96 = dicomObject.saveAsJPEG(new File(docDir, nameNoExt+"_icon96.jpeg"), frame, 96, 0, -1); //for the author service
 
-		//Make an AVI if possible
+		//Make videos if possible
 		boolean hasAVI = makeAVI(dicomObject, 2, true);
+		//boolean hasMP4 = makeMP4(dicomObject, 2);
 
 		//If we are to update the document, make the image element and put it just before the insert-megasave element.
 		if (modifyDoc) {
@@ -1489,10 +1491,10 @@ public class MircDocument {
 			}
 
 			if (hasAVI) {
-				Element avi  = doc.createElement("alternative-image");
-				avi.setAttribute("src", name+".avi");
-				avi.setAttribute("role", "video");
-				image.appendChild(avi);
+				Element video  = doc.createElement("alternative-image");
+				video.setAttribute("src", name+".avi");
+				video.setAttribute("role", "video");
+				image.appendChild(video);
 			}
 
 			if (!suppressOriginalFormat) {
@@ -1770,6 +1772,7 @@ public class MircDocument {
 	 * @param dicomObject the object
 	 * @param minFrames the minimum number of frames to process. DicomObjects with fewer than
 	 * this number of frames are not processed.
+	 * @param jpeg true if the output format is to be JPEG; false if it is to be RAW
 	 * @return true if an AVI was created; false otherwise.
 	 */
 	public boolean makeAVI(DicomObject dicomObject, int minFrames, boolean jpeg) {
@@ -1817,6 +1820,46 @@ public class MircDocument {
 		}
 		return done;
 	}
+
+	/**
+	 * Create an MP4 from a multi-frame DicomObject. The MP4 is created in the
+	 * directory with the MIRCdocument. It has the same name as the DicomObject,
+	 * plus the .mp4 extension.
+	 * @param dicomObject the object
+	 * @param minFrames the minimum number of frames to process. DicomObjects with fewer than
+	 * this number of frames are not processed.
+	 * @return true if an MP4 was created; false otherwise.
+	 */
+	/*
+	public boolean makeMP4(DicomObject dicomObject, int minFrames) {
+		boolean done = false;
+		int nFrames = dicomObject.getNumberOfFrames();
+		TFSSequenceEncoder out = null;
+
+		if (dicomObject.isImage() && (nFrames > 0) && (nFrames >= minFrames)) {
+			try {
+				File mp4File = new File(docDir, dicomObject.getFile().getName()+".mp4");
+				int rows = dicomObject.getRows();
+				int columns = dicomObject.getColumns();
+				int rate = StringUtil.getInt( dicomObject.getElementValue("RecommendedDisplayFrameRate"), 10 );
+
+				out = new TFSSequenceEncoder(mp4File, columns, rows,  rate);
+				for (int frame=0; frame<nFrames; frame++) {
+					out.encodeImage(dicomObject.getScaledBufferedImage(frame, columns, columns));
+				}
+				done = true;
+			}
+			catch (Exception ex) { logger.warn("Unable to create MP4", ex); }
+			finally {
+				if (out != null) {
+					try { out.finish(); }
+					catch (Exception unable) { }
+				}
+			}
+		}
+		return done;
+	}
+	*/
 
 	//*********************************************************************************************
 	//

@@ -50,7 +50,7 @@ public class MircUserManagerServlet extends Servlet {
 	public void doGet(HttpRequest req, HttpResponse res) throws Exception {
 
 		//Make sure the user is authorized to do this.
-		String home = req.getParameter("home", "/");
+		String home = filter(req.getParameter("home", "/"));
 		if (!req.userHasRole("admin")) { res.redirect(home); return; }
 
 		//Get the Users object.
@@ -123,7 +123,7 @@ public class MircUserManagerServlet extends Servlet {
 	public void doPost(HttpRequest req, HttpResponse res) {
 
 		//Make sure the user is authorized to do this.
-		String home = req.getParameter("home", "/");
+		String home = filter(req.getParameter("home", "/"));
 		if (!req.userHasRole("admin")) { res.redirect(home); return; }
 
 		boolean canShutdown = req.userHasRole("shutdown") || req.isFromLocalHost();
@@ -380,11 +380,6 @@ public class MircUserManagerServlet extends Servlet {
 			}
 		}
 		return "";
-	}
-
-	//Filter a string for cross-site scripting characters (<>)
-	private String filter(String s) {
-		return s.replaceAll("<[^>]*>","");
 	}
 
 	//Find the maximum index value of a named parameter

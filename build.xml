@@ -1,6 +1,6 @@
 <project name="MIRC" default="all" basedir=".">
 
-	<property name="version" value="Z146"/>
+	<property name="version" value="Z147"/>
 
 	<property name="build" value="${basedir}/build"/>
 	<property name="source" value="${basedir}/source"/>
@@ -22,6 +22,7 @@
 		<pathelement location="${ctp}/libraries/log4j.jar"/>
 		<pathelement location="${ctp}/libraries/jdbm.jar"/>
 		<pathelement location="${libraries}/mirc/gif.jar"/>
+	<!--<pathelement location="${libraries}/mirc/jcodec.jar"/>-->
 		<pathelement location="${libraries}/mirc/batik-rasterizer-partial.jar"/>
 	</path>
 
