@@ -544,6 +544,7 @@ var blanks = "\u00A0\u00A0";
 
 function processQueryResults(req) {
 	if (queryIsActive && req.success()) {
+		queryIsActive = false;
 		var xml = req.responseXML();
 		var qr = xml ? xml.firstChild : null;
 		if (qr) {
