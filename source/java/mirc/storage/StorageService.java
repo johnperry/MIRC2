@@ -12,6 +12,7 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URLEncoder;
 import java.util.HashSet;
+import java.util.Properties;
 import java.util.Set;
 
 import mirc.activity.ActivityDB;
@@ -24,6 +25,9 @@ import mirc.util.MyRsnaSession;
 import mirc.util.MyRsnaSessions;
 
 import org.apache.log4j.Logger;
+
+import org.rsna.ctp.stdstages.anonymizer.dicom.DAScript;
+import org.rsna.ctp.stdstages.anonymizer.dicom.DICOMAnonymizer;
 
 import org.rsna.servlets.Servlet;
 import org.rsna.server.HttpRequest;
@@ -486,6 +490,25 @@ public class StorageService extends Servlet {
 				return;
 			}
 
+			//See if the user wants to anonymize all the DicomObjects
+			if (req.hasParameter("anonymize") && userIsAuthorizedTo("update", doc, req))  {
+				File scriptFile = new File("scripts/DicomServiceAnonymizer.script");
+				DAScript dascript = DAScript.getInstance(scriptFile);
+				Properties script = dascript.toProperties();
+				NodeList nl = rootElement.getElementsByTagName("alternative-image");
+				for (int k=0; k<nl.getLength(); k++) {
+					Element alt = (Element)nl.item(k);
+					if (alt.getAttribute("role").equals("original-format")) {
+						String src = alt.getAttribute("src");
+						if (src.toLowerCase().endsWith(".dcm")) {
+							File dobFile = new File( file.getParentFile(), src);
+							DICOMAnonymizer.anonymize(dobFile, dobFile, script, null, null, false, false);
+						}
+					}
+				}
+				//When we're dcne, just go ahead and display the document
+			}
+
 			//OK, transform the document and return the result
 			String xslResource = "/storage/MIRCdocument.xsl";
 			File xslFile = new File( file.getParentFile(), "MIRCdocument.xsl" );
@@ -944,10 +967,12 @@ public class StorageService extends Servlet {
 		String addurl = "";
 		String sorturl = "";
 		String publishurl = "";
+		String anonymizeurl = "";
 		if (userIsAuthorizedTo("update", doc, req)) {
 			editurl = "/aauth" + docIndexEntry;
 			addurl = "/addimg" + docIndexEntry;
 			sorturl = "/sort" + docIndexEntry;
+			anonymizeurl = docPath + "?anonymize";
 			if (!isDraft && !doc.getDocumentElement().getAttribute("draftpath").equals("")) {
 				reverturl = "/revert" + docIndexEntry;
 			}
@@ -1015,6 +1040,7 @@ public class StorageService extends Servlet {
 			"sort-url",				sorturl,
 			"publish-url",			publishurl,
 			"delete-url",			deleteurl,
+			"anonymize-url",		anonymizeurl,
 			"ppt-export-url",		pptexporturl,
 			"zip-export-url",		zipexporturl,
 			"dicom-export-url",		dicomexporturl,

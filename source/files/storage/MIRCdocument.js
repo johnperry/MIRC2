@@ -102,6 +102,11 @@ function exportZipFile(url, target, myEvent) {
 	openURL(url, target);
 }
 
+//anonymize button handler
+function anonymizeDicomObjects(url, target) {
+	openURL(url, target);
+}
+
 var deleteURL = "";
 function deleteDocument(url) {
 	deleteURL = url;

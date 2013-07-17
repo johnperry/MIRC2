@@ -107,6 +107,8 @@ public class PresentationService extends Servlet {
 						Path path = new Path(url);
 						String ssid = path.element(1);
 						url.replace("/", File.separator);
+						int q = url.indexOf("?");
+						if (q >= 0) url = url.substring(0, q);
 						File mdFile = new File(mircRoot, url);
 						MircDocument md = new MircDocument(mdFile);
 						if (md.authorizes("export", user)) {

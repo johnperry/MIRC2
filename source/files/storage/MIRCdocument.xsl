@@ -20,6 +20,7 @@
 <xsl:param name="publish-url"/>
 <xsl:param name="delete-url"/>
 <xsl:param name="ppt-export-url"/>
+<xsl:param name="anonymize-url"/>
 <xsl:param name="zip-export-url"/>
 <xsl:param name="dicom-export-url"/>
 <xsl:param name="filecabinet-url"/>
@@ -520,6 +521,7 @@
 					<xsl:call-template name="export-to-button"/>
 					<xsl:call-template name="saveimages-button"/>
 					<xsl:call-template name="exportdicom-button"/>
+					<xsl:call-template name="anonymizedicom-button"/>
 					<xsl:call-template name="myrsna-button"/>
 					<xsl:call-template name="addimages-button"/>
 					<xsl:call-template name="sortimages-button"/>
@@ -618,6 +620,17 @@
 			<td>
 				<input type="button" value="Download Slides" title="Download this document to your browser as a slide presentation"
 					onclick="exportZipFile('{$ppt-export-url}','_self',event);"/>
+			</td>
+		</tr>
+	</xsl:if>
+</xsl:template>
+
+<xsl:template name="anonymizedicom-button">
+	<xsl:if test="string-length($anonymize-url)!=0">
+		<tr>
+			<td>
+				<input type="button" value="Anonymize DICOM" title="Anonymize the DICOM files in this document"
+					onclick="anonymizeDicomObjects('{$anonymize-url}','_self');"/>
 			</td>
 		</tr>
 	</xsl:if>
