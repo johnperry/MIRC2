@@ -220,7 +220,7 @@ function cabinetFileClicked(theEvent) {
 }
 
 function cabinetFileDblClicked(theEvent) {
-	var theEvent = getEvent(theEvent)
+	var theEvent = getEvent(theEvent);
 	stopEvent(theEvent);
 	var source = getSource(theEvent);
 	var currentClicked = getClicked(source);
@@ -238,7 +238,7 @@ function cabinetFileDblClicked(theEvent) {
 			fileURL += "?list";
 		}
 	}
-	window.open(fileURL, "_blank");
+	window.open(fileURL, (IE?"_blank":"_self"));
 }
 
 function getClicked(file) {

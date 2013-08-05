@@ -447,7 +447,6 @@ function displayImage() {
 		while (imagenumber.firstChild != null) imagenumber.removeChild(imagenumber.firstChild);
 		imagenumber.appendChild(document.createTextNode("Image: " + (IMAGES.currentIndex+1)));
 
-
 		enableButton('navpop','inline'); //enable the series panel
 
 		if (imageSet.hasVideo()) enableButton('vidbtn','inline');
@@ -669,11 +668,11 @@ function fetchOriginal() {
 function fetchModality(myEvent) {
 	if (IMAGES.hasCurrentIMAGESET()) {
 		var imageSet = IMAGES.currentIMAGESET;
-		myEvent = getEvent(myEvent)
+		myEvent = getEvent(myEvent);
 		var imagePath = dirPath + "/" + imageSet.ofImage.src;
 		if (myEvent.altKey)
 			//alt key generates a DICOM dataset dump
-			openURL(imagePath+"?dicom","_blank");
+			openURL(imagePath+"?dicom", (IE?"_blank":"_self"));
 		else if (myEvent.ctrlKey)
 			//ctrl key downloads the file
 			openURL(imagePath,"_self");

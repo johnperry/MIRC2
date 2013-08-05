@@ -38,10 +38,10 @@
 			<attr name="anonymize" required="yes" default="no" options="yes|no">
 				<helptext>Anonymize received DICOM objects</helptext>
 			</attr>
-			<attr name="script" required="no" default="scripts/TCEServiceAnonymizer.script">
+			<attr name="script" required="yes" default="scripts/TCEServiceAnonymizer.script">
 				<helptext>File name of DicomAnonymizer script</helptext>
 			</attr>
-			<attr name="lookupTable" required="no" default="scripts/TCEServiceAnonymizerLookupTable.properties">
+			<attr name="lookupTable" required="yes" default="scripts/TCEServiceAnonymizerLookupTable.properties">
 				<helptext>File name of DicomAnonymizer lookup table</helptext>
 			</attr>
 			<attr name="ssid" required="no" default="ss1">
