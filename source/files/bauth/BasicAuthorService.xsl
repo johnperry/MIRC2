@@ -9,6 +9,7 @@
 <xsl:param name="templates"/>
 <xsl:param name="textext"/>
 <xsl:param name="config"/>
+<xsl:param name="options"/>
 <xsl:variable name="localLibraries" select="$config/mirc/Libraries/Library[@local='yes' and @enabled='yes' and @authenb='yes']"/>
 
 <xsl:template match="/MIRCdocument">
@@ -153,6 +154,23 @@
 
 			</table>
 			</p>
+
+			<xsl:if test="category">
+				<p class="center">
+				<table border="1">
+					<tr>
+						<td class="text-label" valign="top">Category:</td>
+						<td class="text-field">
+							<select name="category" id="category" style="width:100%">
+								<xsl:for-each select="$options/enumerated-values/category/option">
+									<option value="{.}"><xsl:value-of select="."/></option>
+								</xsl:for-each>
+							</select>
+						</td>
+					</tr>
+				</table>
+				</p>
+			</xsl:if>
 
 			<p class="instruction">Insert any desired images and files:</p>
 			<p class="center">

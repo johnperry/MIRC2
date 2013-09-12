@@ -41,6 +41,8 @@
  <insert-megasave width="512"/>
  </image-section>
 
+ <category/>
+
  <authorization>
   <owner/>
   <read/>

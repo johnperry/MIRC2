@@ -133,6 +133,7 @@ public class BasicAuthorService extends Servlet {
 					"prefs",		prefs,
 					"templates",	getTemplates(bauth),
 					"textext",		".txt",
+					"options",		mc.enumeratedValues,
 					"config",		mc.getXML()
 				};
 				Document xsl = XmlUtil.getDocument( FileUtil.getStream( "/bauth/BasicAuthorService.xsl" ) );
@@ -236,6 +237,7 @@ public class BasicAuthorService extends Servlet {
 				setElement(root,"author/contact", contact);
 				setElement(root,"abstract", req.getParameter("abstract-text"));
 				setElement(root,"authorization/owner", req.getParameter("username"));
+				setElement(root,"category", req.getParameter("category"));
 
 				//Set the read and update privileges.
 				//In this service, the read and update privileges
@@ -420,7 +422,7 @@ public class BasicAuthorService extends Servlet {
 	//Replace the contents of an element with XML text.
 	private void setElement(Element root, String path, String text) {
 		Element target = XmlUtil.getElementViaPath(root,"MIRCdocument/"+path);
-		if (target != null) setElement(target, text);
+		if ((target != null) && (text != null)) setElement(target, text);
 	}
 
 	private void setElement(Element target, String text) {
