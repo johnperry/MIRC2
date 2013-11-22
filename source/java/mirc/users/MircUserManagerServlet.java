@@ -161,6 +161,7 @@ public class MircUserManagerServlet extends Servlet {
 				if (files.size() > 0) {
 					File csvFile = files.getFirst().getFile();
 					String csv = FileUtil.getText(csvFile);
+					csv = csv.replaceAll( "[\\n\\r]+", "\n" );
 					String[] lines = csv.split("\n");
 					CSVFields fields = new CSVFields(lines[0]);
 					for (int i=1; i<lines.length; i++) {
@@ -189,7 +190,7 @@ public class MircUserManagerServlet extends Servlet {
 						}
 					}
 				//Reset the users database from the hashtable.
-				usersXmlFileImpl.resetUsers(newUserTable);
+				if (newUserTable.size() > 0) usersXmlFileImpl.resetUsers(newUserTable);
 				}
 			}
 			catch (Exception redisplayPage) { }
