@@ -179,16 +179,16 @@ public class MircConfig {
 	}
 
 	//Load the XML and XSL objects used throughout MIRC
-	private static void loadXMLObjects() {
-		enumeratedValues	= loadXMLObject("query",	"enumerated-values.xml" );
-		speciesValues		= loadXMLObject("query",	"species-values.xml" );
-		mircqueryXSL		= loadXMLObject("query",	"MIRCquery.xsl");
+	private static synchronized void loadXMLObjects() {
+		enumeratedValues	= loadXMLObject("query", "enumerated-values.xml" );
+		speciesValues		= loadXMLObject("query", "species-values.xml" );
+		mircqueryXSL		= loadXMLObject("query", "MIRCquery.xsl");
 	}
 
 	//Reload the XML and XSL objects, only loading the files if
 	//they exist. The idea is that only files can change, so there is
 	//no point reloading from the jar.
-	private static void reloadXMLObjects() {
+	private static synchronized void reloadXMLObjects() {
 		enumeratedValues	= reloadXMLObject(enumeratedValues,	"query",	"enumerated-values.xml" );
 		speciesValues		= reloadXMLObject(speciesValues,	"query",	"species-values.xml" );
 		mircqueryXSL		= reloadXMLObject(mircqueryXSL,		"query",	"MIRCquery.xsl");

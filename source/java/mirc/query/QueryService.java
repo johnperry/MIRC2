@@ -281,10 +281,9 @@ public class QueryService extends Servlet {
 			if (server.getAttribute("enabled").equals("yes")) {
 				String address = server.getAttribute("address").trim();
 				if (address.startsWith("/")) address = siteurl + address;
-				String cookie = (mc.isLocal(address) ? sessionCookie : null);
 				String serverName = server.getTextContent().trim();
 				synchronized (this) {
-					MircServer thread = new MircServer( address, cookie, serverName, mircQueryString, this);
+					MircServer thread = new MircServer( address, req.getUser(), serverName, mircQueryString, this);
 					serverThreads.add( thread );
 					thread.start();
 				}
@@ -308,7 +307,7 @@ public class QueryService extends Servlet {
 		//Shut down any remaining serverThreads
 		synchronized (this) {
 			for (MircServer server: serverThreads) {
-				logger.warn("Aborting "+server.getServerURL());
+				logger.warn("Aborting "+server.getServerURL()+" (done="+server.done+"; len="+server.contentLength+")");
 				server.interrupt();
 			}
 			serverThreads.removeAll(serverThreads);

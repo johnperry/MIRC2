@@ -542,24 +542,10 @@ public class StorageService extends Servlet {
 	public void doPost(HttpRequest req, HttpResponse res ) throws Exception {
 
 		long currentTime = System.currentTimeMillis();
-		logger.debug("Query received for "+req.path);
+		logger.debug(Thread.currentThread().getName()+": Query received for "+req.path);
 
 		//All responses will be XML
 		res.setContentType("xml");
-
-		//Do our own authentication based on the RSNASESSION cookie.
-		//Note that the RSNASESSION cookie is a pointer into a session table
-		//maintained by the Authenticator. Each session contains the username
-		//as well as the IP address of the client. We need to know who the user
-		//is, but the Authenticator will have failed to authenticate this connection
-		//because it came from the Query Service, not the client who initiated the
-		//session. So our strategy here will be to get the cookie that was passed
-		//by the Query Service and ask the Authenticator for the username of the
-		//session, then to get the user from the Users class and force that back
-		//into the HttpRequest, thus accepting the fact that the cookie is from
-		//a different source.
-		String username = Authenticator.getInstance().getUsernameForSession(req.getCookie("RSNASESSION"));
-		if (username != null) req.setUser(Users.getInstance().getUser(username));
 
 		//Check that this is a post of a MIRCquery.
 		if (req.getContentType().toLowerCase().contains("text/xml")) {
@@ -568,15 +554,6 @@ public class StorageService extends Servlet {
 			//Note: the URL will always be /storage/{ssid}
 			Path path = req.getParsedPath();
 			String ssid = path.element(1);
-			MircConfig mc = MircConfig.getInstance();
-			Element lib = mc.getLocalLibrary(ssid);
-
-			//Make sure this query is for a known local library
-			if (lib == null) {
-				res.write( makeMQRString("Unknown index: "+ssid) );
-				res.send();
-				return;
-			}
 
 			//Get the query
 			byte[] bytes = FileUtil.getBytes( req.getInputStream(), req.getContentLength() );
@@ -584,90 +561,92 @@ public class StorageService extends Servlet {
 			try { mircQueryString = new String(bytes, "UTF-8"); }
 			catch (Exception leaveEmpty) { }
 
-			//Parse the MIRCquery
-			Query query = null;
-			try {
-				Document mircQueryXML = XmlUtil.getDocument(mircQueryString);
-				//logger.debug("Query document:\n"+XmlUtil.toPrettyString(mircQueryXML));
-				query = new Query(mircQueryXML);
-			}
-			catch (Exception e) {
-				res.write(
-					makeMQRString(
-						"Error parsing the MIRCquery:"
-						+ "<br/>Exception message: " + e.getMessage()
-						+ "<br/>MIRCquery string length: " + mircQueryString.length()
-						+ "<br/>MIRCquery string:<br/><br/>"
-						+ StringUtil.makeReadableTagString(mircQueryString)));
-				res.send();
-				return;
-			}
-
-			//Get the user.
-			User user = req.getUser();
-
-			//Get the index
-			Index index = Index.getInstance(ssid);
-
 			//Do the query
-			boolean isOpen = lib.getAttribute("mode").equals("open");
-			IndexEntry[] mies = index.query( query, isOpen, user );
-
-			//Sort the results
-			String orderBy = query.orderby;
-			if (orderBy.equals("title"))
-				index.sortByTitle(mies);
-			else if (orderBy.equals("pubdate"))
-				index.sortByPubDate(mies);
-			else
-				index.sortByLMDate(mies);
-
-			//Get a document for the MIRCqueryresult
-			Document doc = null;
-			try { doc = XmlUtil.getDocument(); }
-			catch (Exception ex) {
-				String message = "Unable to create an XML document for the MIRCqueryresult";
-				logger.error(message, ex);
-				res.write( makeMQRString(message) );
-				res.send();
-				return;
-			}
-
-			//Select the requested page
-			if (query.firstresult < 0) query.firstresult = 0;
-			if (query.maxresults <= 0) query.maxresults = 1;
-			Element root = doc.createElement("MIRCqueryresult");
-			doc.appendChild(root);
-			String tagline = XmlUtil.getTextContent(lib, "Library/tagline");
-			setPreamble(root, mies.length, tagline);
-
-			//Important note: The imported node must be passed to fixResult.
-			//Do not pass the node from the mies array (mies[i].md) and then
-			//import the returned node. This would cause fixResult to modify
-			//the object in the JDBM's cache, causing problems in the next query.
-			String docbase = mc.getLocalAddress() + "/storage/" + ssid + "/";
-			int begin = query.firstresult - 1;
-			int end = begin + query.maxresults;
-			for (int i=begin; ((i<end) && (i<mies.length)); i++) {
-				root.appendChild( fixResult(docbase, (Element)doc.importNode(mies[i].md, true), query) );
-			}
-			//Return the result.
-			res.write( XmlUtil.toString(root) );
-			res.send();
-			logger.debug("Response returned for "+req.path+" ("+(System.currentTimeMillis() - currentTime)+"ms)");
-			return;
+			//Note: queries received from the network are not authenticated
+			res.write(doQuery(ssid, mircQueryString, null));
 		}
-
 		else {
 			//Unknown content type
 			res.write(
 				makeMQRString(
 					"Unsupported Content-Type: "+req.getContentType()));
-			res.send();
 		}
+		res.send();
+		logger.debug(Thread.currentThread().getName()+": Response returned for "+req.path+" ("+(System.currentTimeMillis() - currentTime)+"ms)");
 	}
 
-	private void setPreamble(Element root, int matches, String tagline) {
+	public static String doQuery(String ssid, String mircQueryString, User user) {
+		MircConfig mc = MircConfig.getInstance();
+
+		//Parse the MIRCquery
+		Query query = null;
+		try {
+			Document mircQueryXML = XmlUtil.getDocument(mircQueryString);
+			//logger.debug("Query document:\n"+XmlUtil.toPrettyString(mircQueryXML));
+			query = new Query(mircQueryXML);
+		}
+		catch (Exception e) {
+			return
+				makeMQRString(
+					"Error parsing the MIRCquery:"
+					+ "<br/>Exception message: " + e.getMessage()
+					+ "<br/>MIRCquery string length: " + mircQueryString.length()
+					+ "<br/>MIRCquery string:<br/><br/>"
+					+ StringUtil.makeReadableTagString(mircQueryString));
+		}
+
+		//Make sure this query is for a known local library
+		Element lib = mc.getLocalLibrary(ssid);
+		if (lib == null) return makeMQRString("Unknown index: "+ssid);
+
+		//Get the index
+		Index index = Index.getInstance(ssid);
+
+		//Do the query
+		boolean isOpen = lib.getAttribute("mode").equals("open");
+		IndexEntry[] mies = index.query( query, isOpen, user );
+
+		//Sort the results
+		String orderBy = query.orderby;
+		if (orderBy.equals("title"))
+			index.sortByTitle(mies);
+		else if (orderBy.equals("pubdate"))
+			index.sortByPubDate(mies);
+		else
+			index.sortByLMDate(mies);
+
+		//Get a document for the MIRCqueryresult
+		Document doc = null;
+		try { doc = XmlUtil.getDocument(); }
+		catch (Exception ex) {
+			String message = "Unable to create an XML document for the MIRCqueryresult";
+			logger.error(message, ex);
+			return makeMQRString(message);
+		}
+
+		//Select the requested page
+		if (query.firstresult < 0) query.firstresult = 0;
+		if (query.maxresults <= 0) query.maxresults = 1;
+		Element root = doc.createElement("MIRCqueryresult");
+		doc.appendChild(root);
+		String tagline = XmlUtil.getTextContent(lib, "Library/tagline");
+		setPreamble(root, mies.length, tagline);
+
+		//Important note: The imported node must be passed to fixResult.
+		//Do not pass the node from the mies array (mies[i].md) and then
+		//import the returned node. This would cause fixResult to modify
+		//the object in the JDBM's cache, causing problems in the next query.
+		String docbase = mc.getLocalAddress() + "/storage/" + ssid + "/";
+		int begin = query.firstresult - 1;
+		int end = begin + query.maxresults;
+		for (int i=begin; ((i<end) && (i<mies.length)); i++) {
+			root.appendChild( fixResult(docbase, (Element)doc.importNode(mies[i].md, true), query) );
+		}
+		//Return the result.
+		return XmlUtil.toString(root);
+	}
+
+	private static void setPreamble(Element root, int matches, String tagline) {
 		Document doc = root.getOwnerDocument();
 		Element preamble = doc.createElement("preamble");
 		root.appendChild(preamble);
@@ -683,7 +662,7 @@ public class StorageService extends Servlet {
 		preamble.appendChild(p);
 	}
 
-	private Element fixResult( String context, Element md, Query query ) {
+	private static Element fixResult( String context, Element md, Query query ) {
 		//First fix the docref
 		String path = md.getAttribute("path").trim();
 		String docref = context + path;
@@ -742,7 +721,7 @@ public class StorageService extends Servlet {
 		return md;
 	}
 
-	private void copy(Element from, Element to, String name) {
+	private static void copy(Element from, Element to, String name) {
 		if (to == null) {
 			to = from.getOwnerDocument().createElement(name);
 			from.getParentNode().insertBefore(to,from);
@@ -756,7 +735,7 @@ public class StorageService extends Servlet {
 	}
 
 	//Make a MIRCqueryresult string with only a preamble.
-	private String makeMQRString(String preambleString) {
+	private static String makeMQRString(String preambleString) {
 		return
 			"<MIRCqueryresult>" +
 				"<preamble>" + preambleString + "</preamble>" +
