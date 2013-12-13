@@ -74,6 +74,8 @@ public class DeleteService extends Servlet {
 					int k = url.indexOf("/storage/");
 					if (k != -1) {
 						url = url.substring(k+1);
+						int kk = url.indexOf("?");
+						if (kk > 0) url = url.substring(0, kk);
 
 						Path path = new Path(url);
 						String ssid = path.element(1);
