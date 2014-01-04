@@ -79,8 +79,8 @@
 					<tr>
 						<td>Automatic indexing enabled</td>
 						<td>
-							<input type="checkbox" name="{@id}-autoindex" value="autoindex">
-								<xsl:if test="@autoindex='yes'"><xsl:attribute name="checked">checked</xsl:attribute></xsl:if>
+							<input type="checkbox" name="{@id}-autoindex" value="yes">
+								<xsl:if test="@autoindex='yes' or @autoindex='autoindex'"><xsl:attribute name="checked">checked</xsl:attribute></xsl:if>
 							</input>
 						</td>
 					</tr>
