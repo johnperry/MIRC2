@@ -1202,7 +1202,7 @@
 		</p>
 		<div>
 			<xsl:choose>
-				<xsl:when test="phi and ($draft!='yes')">
+				<xsl:when test="phi and not($draft='yes')">
 					<xsl:for-each select="phi/study">
 						<xsl:call-template name="phi-study">
 							<xsl:with-param name="study" select="."/>

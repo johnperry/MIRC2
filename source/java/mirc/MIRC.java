@@ -69,6 +69,10 @@ public class MIRC extends AbstractPlugin {
 	public MIRC(Element element) {
 		super(element);
 
+		//Preload the MIRC.jar files into the cache
+		File libraries = new File("libraries");
+		Cache.getInstance().load(new File(libraries, "MIRC.jar"));
+
 		//Install the config file if necessary.
 		configFile = new File(root, "mirc.xml");
 		FileUtil.getFile(configFile, "/mirc/mirc.xml");
@@ -211,19 +215,10 @@ public class MIRC extends AbstractPlugin {
 
 	//Copy the redirector into the root of the server
 	private void installRedirector() {
-		FileOutputStream out = null;
-		InputStream in = null;
-		try {
-			File serverRoot = Configuration.getInstance().getServer().getServletSelector().getRoot();
-			File indexHTML = new File(serverRoot, "index.html");
-			out = new FileOutputStream(indexHTML);
-			String redirector = "/mirc/redirector.html";
-			in = getClass().getResourceAsStream(redirector);
-			FileUtil.copy(in, out, -1);
-		}
-		catch (Exception ignore) { }
-		FileUtil.close(in);
-		FileUtil.close(out);
+		File serverRoot = Configuration.getInstance().getServer().getServletSelector().getRoot();
+		File indexHTML = new File(serverRoot, "index.html");
+		File resourceFile = Cache.getInstance().getFile("/mirc/redirector.html");
+		FileUtil.copy(resourceFile, indexHTML);
 	}
 
 	/**
