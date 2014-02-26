@@ -158,6 +158,10 @@ public class RadLexIndex {
 		(new File(filename + ".db")).delete();
 		(new File(filename + ".lg")).delete();
 
+		int termCount = 0;
+		int radCount = 0;
+		int nenCount = 0;
+		int synCount = 0;
 		try {
 			//Now get a new Record manager and create the (empty) index.
 			recman = JdbmUtil.getRecordManager(filename);
@@ -181,11 +185,17 @@ public class RadLexIndex {
 					Element term = (Element)child;
 					String id = term.getAttribute("id");
 					String text = term.getTextContent().trim();
-					if (!id.equals("") && !text.equals("")) addTerm( new Term(id, text) );
+					if (!id.equals("") && !text.equals("")) {
+						addTerm( new Term(id, text) );
+						termCount++;
+						String type = term.getAttribute("type");
+						if (type.equals("NEN")) nenCount++;
+						else if (type.equals("SYN")) synCount++;
+						else radCount++;
+					}
 				}
 				child = child.getNextSibling();
 			}
-			logger.info("RadLex index rebuild complete ("+index.size()+" index entries)");
 		}
 		catch (Exception quit) {
 			logger.warn("RadLex index rebuild failed.", quit);
@@ -201,6 +211,11 @@ public class RadLexIndex {
 			}
 			catch (Exception ignore) { }
 		}
+		logger.info("RadLex index rebuild complete ("+index.size()+" index entries)");
+		logger.info("...Total indexed terms: "+termCount);
+		logger.info("...RadLex terms:        "+radCount);
+		logger.info("...Synonyms:            "+synCount);
+		logger.info("...Non-English terms:   "+nenCount);
 	}
 
 	//Add a term to the index
