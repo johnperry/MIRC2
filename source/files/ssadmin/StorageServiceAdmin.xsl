@@ -77,6 +77,14 @@
 						<td><input class="text" type="text" name="{@id}-jpegquality" value="{@jpegquality}"/></td>
 					</tr>
 					<tr>
+						<td>Enable open query mode</td>
+						<td>
+							<input type="checkbox" name="{@id}-mode" value="open">
+								<xsl:if test="@mode='open'"><xsl:attribute name="checked">checked</xsl:attribute></xsl:if>
+							</input>
+						</td>
+					</tr>
+					<tr>
 						<td>Automatic indexing enabled</td>
 						<td>
 							<input type="checkbox" name="{@id}-autoindex" value="yes">

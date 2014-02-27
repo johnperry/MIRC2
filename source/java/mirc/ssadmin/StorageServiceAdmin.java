@@ -188,6 +188,7 @@ public class StorageServiceAdmin extends Servlet {
 				String maxsize = Integer.toString( StringUtil.getInt( req.getParameter(id+"-maxsize", "75"), 75) );
 				String jpegquality = Integer.toString( StringUtil.getInt( req.getParameter(id+"-jpegquality", "-1"), -1) );
 				String autoindex = req.getParameter(id+"-autoindex", "no");
+				String mode = req.getParameter(id+"-mode", "restricted");
 				String authenb = req.getParameter(id+"-authenb", "no");
 				String subenb = req.getParameter(id+"-subenb", "no");
 				String zipenb = req.getParameter(id+"-zipenb", "no");
@@ -199,6 +200,7 @@ public class StorageServiceAdmin extends Servlet {
 				lib.setAttribute( "maxsize", maxsize );
 				lib.setAttribute( "jpegquality", jpegquality );
 				lib.setAttribute( "autoindex", autoindex );
+				lib.setAttribute( "mode", mode );
 				lib.setAttribute( "authenb", authenb );
 				lib.setAttribute( "subenb", subenb );
 				lib.setAttribute( "zipenb", zipenb );
