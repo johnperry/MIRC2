@@ -64,7 +64,7 @@ function setMenuEnables() {
 	menuBar.setEnable("authorMenu", user.hasRole("author"));
 	menuBar.setEnable("approvalQueueItem", user.hasRole("publisher"));
 	menuBar.setEnable("adminMenu", user.hasRole("admin"));
-	menuBar.setEnable("userManager", (user.usersImpl="xml"));
+	menuBar.setEnable("userManager", (user.usersClass.indexOf("FileImpl") != -1));
 	menuBar.setEnable("downloadItem", (downloadenb == "yes"));
 	menuBar.setEnable("disclaimerItem", (disclaimerURL != ""));
 
