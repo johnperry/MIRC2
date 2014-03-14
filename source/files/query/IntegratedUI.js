@@ -264,8 +264,14 @@ function doAdvancedQuery() {
 //Login/Logout
 //************************************************
 function loginLogout() {
-	if (user.isLoggedIn) logout('/query');
-	else showLoginPopup('/query');
+	if (user.isLoggedIn) {
+		if (user.logoutURL == "") logout('/query');
+		else window.open(user.logoutURL, "_self");
+	}
+	else {
+		if (user.loginURL == "") showLoginPopup('/query');
+		else window.open(user.loginURL, "_self");
+	}
 }
 
 //************************************************

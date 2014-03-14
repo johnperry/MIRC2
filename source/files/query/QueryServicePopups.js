@@ -266,7 +266,7 @@ function showSessionPopup() {
 			showDisclaimerPopup();
 		}
 		else if (sessionPopup == "login") {
-			if (!user.isLoggedIn) loginLogout();
+			if (!user.isLoggedIn && (user.loginURL == "")) loginLogout();
 		}
 	}
 }

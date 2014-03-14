@@ -63,8 +63,15 @@ function createLoginDiv() {
 	}
 }
 
-function mircLogin() { showLoginPopup('/query'); }
-function mircLogout() { logout('/query'); }
+function mircLogin() {
+	if (user.loginURL == "") showLoginPopup('/query');
+	else window.open(user.loginURL, "_self");
+}
+
+function mircLogout() {
+	if (user.logoutURL == "") logout('/query');
+	else window.open(user.logoutURL, "_self");
+}
 
 function setLocalLibrariesMenu() {
 	var items = new Array();
