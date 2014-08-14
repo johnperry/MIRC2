@@ -753,11 +753,15 @@ public class MircDocument {
 							 boolean unpackZipFiles,
 							 String[] textExtensions,
 							 boolean anonymize) throws Exception {
-		object.setStandardExtension();
+
+		String ext = object.getExtension().toLowerCase();
+		boolean isPPT = (object instanceof ZipObject) && ext.equals(".pptx");
+		if (!isPPT) object.setStandardExtension();
+
 		object.filterFilename("%20","_");
 		object.filterFilename("\\s+","_");
 
-		if ((object instanceof ZipObject) && unpackZipFiles) {
+		if ((object instanceof ZipObject) && unpackZipFiles && !isPPT) {
 			ZipObject zObject = (ZipObject)object;
 			ZipEntry[] entries = zObject.getEntries();
 			for (int i=0; i<entries.length; i++) {
@@ -774,7 +778,7 @@ public class MircDocument {
 					//Insert the file. Only unpack one level deep.
 					insertFile(zFile, false, textExtensions, anonymize);
 				}
-				catch (Exception ignore) { }
+				catch (Exception ignore) { logger.debug("Unable to insert: "+entries[i].getName()); }
 			}
 			zObject.getFile().delete();
 		}
@@ -784,36 +788,42 @@ public class MircDocument {
 			//exists in the directory.
 			object.moveToDirectory(docDir);
 
-			//Anonymize it if necessary
-			if (anonymize && (object instanceof DicomObject)) {
-				DicomAnonymizer fsa = MircConfig.getInstance().getFileServiceDicomAnonymizer();
-				if (fsa != null) {
-					DAScript dascript = DAScript.getInstance(fsa.getScriptFile());
-					Properties script = dascript.toProperties();
-					Properties lookup = LookupTable.getProperties(fsa.getLookupTableFile());
-					IntegerTable intTable = fsa.getIntegerTable();
-					File file = object.getFile();
-					DICOMAnonymizer.anonymize(file, file, script, lookup, intTable, false, false);
-					object = new DicomObject(file);
-					object.renameToUID();
-				}
-			}
+			//Handle PPT file specially
+			if (isPPT) insertFileReference(object);
 
-			//See if we can instantiate it as a MircImage.
-			//If successful, add it in as an image.
-			try {
-				MircImage image = new MircImage( object.getFile() );
-				if (image.isDicomImage()) {
-					insertDicomElements( image.getDicomObject() );
+			else {
+				//Not a PPT, process it as either an image or a metadata file.
+				//Anonymize it if necessary
+				if (anonymize && (object instanceof DicomObject)) {
+					DicomAnonymizer fsa = MircConfig.getInstance().getFileServiceDicomAnonymizer();
+					if (fsa != null) {
+						DAScript dascript = DAScript.getInstance(fsa.getScriptFile());
+						Properties script = dascript.toProperties();
+						Properties lookup = LookupTable.getProperties(fsa.getLookupTableFile());
+						IntegerTable intTable = fsa.getIntegerTable();
+						File file = object.getFile();
+						DICOMAnonymizer.anonymize(file, file, script, lookup, intTable, false, false);
+						object = new DicomObject(file);
+						object.renameToUID();
+					}
 				}
-				insert(image);
-			}
-			catch (Exception notImage) {
-				//The file is not an image that can be inserted,
-				//Insert it into the document as a metadata object.
-				insert( object, object.getFile().getName() );
-				if (object.hasMatchingExtension( textExtensions, true )) {
-					insert( object.getFile() );
+
+				//See if we can instantiate it as a MircImage.
+				//If successful, add it in as an image.
+				try {
+					MircImage image = new MircImage( object.getFile() );
+					if (image.isDicomImage()) {
+						insertDicomElements( image.getDicomObject() );
+					}
+					insert(image);
+				}
+				catch (Exception notImage) {
+					//The file is not an image that can be inserted,
+					//Insert it into the document as a metadata object.
+					insert( object, object.getFile().getName() );
+					if (object.hasMatchingExtension( textExtensions, true )) {
+						insert( object.getFile() );
+					}
 				}
 			}
 		}
@@ -959,6 +969,26 @@ public class MircDocument {
 		Element child = el.getOwnerDocument().createElement(name);
 		child.setTextContent(value);
 		el.appendChild(child);
+	}
+
+	/**
+	 * Insert a reference to a FileObject's file into the MIRCdocument.
+	 * The reference is inserted as a hypertext anchor in a paragraph
+	 * in the first section in the document.
+	 */
+	public void insertFileReference(FileObject object) {
+		String name = object.getFile().getName();
+		Element root = doc.getDocumentElement();
+		NodeList nl = root.getElementsByTagName("section");
+		if (nl.getLength() > 0) {
+			Element section = (Element)nl.item(0);
+			Element p = doc.createElement("p");
+			Element a = doc.createElement("a");
+			a.setAttribute("href", name);
+			a.appendChild( doc.createTextNode(name) );
+			p.appendChild(a);
+			section.appendChild(p);
+		}
 	}
 
 	/**

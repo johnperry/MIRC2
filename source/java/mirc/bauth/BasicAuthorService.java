@@ -242,7 +242,7 @@ public class BasicAuthorService extends Servlet {
 
 				//******************************************
 				//This code was removed intentionally to
-				//allow admins to preload all  permissions
+				//allow admins to preload all permissions
 				//******************************************
 				//Set the read and update privileges.
 				//In this service, the read and update privileges
@@ -287,6 +287,7 @@ public class BasicAuthorService extends Servlet {
 				File parentDir = storageDir.getParentFile();
 				if (!parentDir.exists()) logger.debug("...parentDir could not be created: "+parentDir);
 
+				if (storageDir.exists()) logger.debug("...storageDir exists: "+storageDir);
 				logger.debug("...about to rename the document to "+storageDir);
 				if (!dir.renameTo(storageDir)) {
 					logger.warn("...rename FAILED");
@@ -457,6 +458,7 @@ public class BasicAuthorService extends Servlet {
 
 		//Now add in all the files.
 		for ( UploadedFile file: files.toArray( new UploadedFile[files.size()] ) ) {
+			logger.debug("......inserting "+file.getFile());
 			md.insertFile(file.getFile(), true, textExtensions, anonymize);
 		}
 
