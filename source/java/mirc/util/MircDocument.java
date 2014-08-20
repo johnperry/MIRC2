@@ -974,7 +974,8 @@ public class MircDocument {
 	/**
 	 * Insert a reference to a FileObject's file into the MIRCdocument.
 	 * The reference is inserted as a hypertext anchor in a paragraph
-	 * in the first section in the document.
+	 * in the first section in the document. If the object parses as
+	 * a PPTXFile, then add the slide text into the Invisible section.
 	 */
 	public void insertFileReference(FileObject object) {
 		String name = object.getFile().getName();
@@ -988,6 +989,32 @@ public class MircDocument {
 			a.appendChild( doc.createTextNode(name) );
 			p.appendChild(a);
 			section.appendChild(p);
+
+			//Now put in the slide text
+			try {
+				PPTXFile pptx = new PPTXFile(object.getFile());
+				String slideText = pptx.getSlideText().trim();
+				if (!slideText.equals("")) {
+					Element slideTextSection = null;
+					for (int i=0; i<nl.getLength(); i++) {
+						section = (Element)nl.item(i);
+						if (section.getAttribute("heading").equals("Slide Text"))  {
+							slideTextSection = section;
+							break;
+						}
+					}
+					if (slideTextSection == null) {
+						slideTextSection = doc.createElement("section");
+						slideTextSection.setAttribute("heading", "Slide Text");
+						slideTextSection.setAttribute("visible", "no");
+						root.appendChild(slideTextSection);
+					}
+					p = doc.createElement("p");
+					p.setTextContent(slideText);
+					slideTextSection.appendChild(p);
+				}
+			}
+			catch (Exception skip) { }
 		}
 	}
 
@@ -2056,7 +2083,9 @@ public class MircDocument {
 	public static void insertRadLexTerms(Node node) {
 		short type = node.getNodeType();
 		if (type == Node.ELEMENT_NODE) {
-			if (node.getNodeName().equals("term")) {
+			String nodeName = node.getNodeName();
+			Element element = (Element)node;
+			if (nodeName.equals("term")) {
 				//Replace the term node with its contents
 				//and then process it. This will allow for
 				//spelling corrections and changes in the
@@ -2068,7 +2097,10 @@ public class MircDocument {
 				parent.replaceChild(text, node);
 				insertRadLexTerms(text);
 			}
-			else if (!skip.contains(node.getNodeName())) {
+			else if (nodeName.equals("section") && element.getAttribute("visible").equals("no")) {
+				//don't insert RadLex term elements in invisible sections
+			}
+			else if (!skip.contains(nodeName)) {
 				Node child = node.getFirstChild();
 				while (child != null) {
 					//Note: get the next node now, before
