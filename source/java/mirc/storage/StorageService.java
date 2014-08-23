@@ -1005,6 +1005,7 @@ public class StorageService extends Servlet {
 
 			"prefs",				userPrefs.getOwnerDocument(),
 
+			"username",				username,
 			"user-is-authenticated",userisauthenticated,
 			"user-has-myrsna-acct",	userhasmyrsnaacct,
 			"user-is-owner",		userisowner,

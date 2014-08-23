@@ -5,6 +5,7 @@
 
 <xsl:param name="prefs"/>
 
+<xsl:param name="username"/>
 <xsl:param name="user-is-authenticated"/>
 <xsl:param name="user-has-myrsna-acct"/>
 <xsl:param name="user-is-owner"/>
@@ -732,6 +733,20 @@
 </xsl:template>
 
 <xsl:template match="iframe">
+	<xsl:variable name="src1">
+		<xsl:call-template name="replace">
+			<xsl:with-param name="text" select="@src"/>
+			<xsl:with-param name="target" select="concat('{','$','username','}')"/>
+			<xsl:with-param name="replacement" select="$username"/>
+		</xsl:call-template>
+	</xsl:variable>
+	<xsl:variable name="src2">
+		<xsl:call-template name="replace">
+			<xsl:with-param name="text" select="$src1"/>
+			<xsl:with-param name="target" select="concat('{','$','fullname','}')"/>
+			<xsl:with-param name="replacement" select="$prefs/User/@name"/>
+		</xsl:call-template>
+	</xsl:variable>
 	<xsl:element name="iframe">
 		<xsl:choose>
 			<xsl:when test="$display='page'">
@@ -751,16 +766,18 @@
 			</xsl:when>
 			<xsl:otherwise>
 				<xsl:apply-templates select="@*[not(name()='src')]"/>
-				<xsl:attribute name="src"></xsl:attribute>
+				<!--<xsl:attribute name="src"></xsl:attribute>-->
 				<xsl:if test="src">
-					<xsl:attribute name="longdesc">
+					<xsl:attribute name="src">
 						<xsl:call-template name="escape">
 							<xsl:with-param name="text" select="normalize-space(src)"/>
 						</xsl:call-template>
 					</xsl:attribute>
 				</xsl:if>
 				<xsl:if test="not(src)">
-					<xsl:attribute name="longdesc"><xsl:value-of select="@src"/></xsl:attribute>
+					<xsl:attribute name="src">
+						<xsl:value-of select="$src2"/>
+					</xsl:attribute>
 				</xsl:if>
 			</xsl:otherwise>
 		</xsl:choose>
@@ -775,6 +792,26 @@
 			<xsl:text>&amp;</xsl:text>
 			<xsl:call-template name="escape">
 				<xsl:with-param name="text" select="substring-after($text,'|')"/>
+			</xsl:call-template>
+		</xsl:when>
+		<xsl:otherwise>
+			<xsl:value-of select="$text"/>
+		</xsl:otherwise>
+	</xsl:choose>
+</xsl:template>
+
+<xsl:template name="replace">
+	<xsl:param name="text"/>
+	<xsl:param name="target"/>
+	<xsl:param name="replacement"/>
+	<xsl:choose>
+		<xsl:when test="contains($text,$target)">
+			<xsl:value-of select="substring-before($text,$target)"/>
+			<xsl:value-of select="$replacement"/>
+			<xsl:call-template name="replace">
+				<xsl:with-param name="text" select="substring-after($text,$target)"/>
+				<xsl:with-param name="target" select="$target"/>
+				<xsl:with-param name="replacement" select="$replacement"/>
 			</xsl:call-template>
 		</xsl:when>
 		<xsl:otherwise>
