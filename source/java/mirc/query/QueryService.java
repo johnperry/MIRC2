@@ -207,7 +207,7 @@ public class QueryService extends Servlet {
 		}
 
 		logger.debug("Query serviced ("+(System.currentTimeMillis() - currentTime)+"ms)");
-		logger.debug("Query complete: "+System.currentTimeMillis()+"ms)");
+		logger.debug("Query complete: "+System.currentTimeMillis()+"ms");
 		logger.debug("");
 	}
 

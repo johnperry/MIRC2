@@ -1,5 +1,7 @@
 <Configuration log="yes">
-    <Server port="80"/>
+    <Server
+    	port="80"
+    	maxThreads="20"/>
     <Plugin
         class="mirc.MIRC"
         name="MIRC Site"
