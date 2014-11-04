@@ -1,6 +1,6 @@
 <project name="MIRC" default="all" basedir=".">
 
-	<property name="version" value="Z180"/>
+	<property name="version" value="Z181"/>
 
 	<property name="build" value="${basedir}/build"/>
 	<property name="source" value="${basedir}/source"/>
