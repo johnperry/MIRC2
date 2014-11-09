@@ -224,6 +224,7 @@
 		<div class="L2"><a href="/level">Logger Levels</a><br/></div>
 		<div class="L2"><a href="javascript:listCookies();">List Cookies</a><br/></div>
 		<div class="L2"><a href="/svrsts">Server Status</a></div>
+		<div class="L2"><a href="/attacklog">Attack Log</a></div>
 		<div class="L2"><a href="/ping">Ping</a></div>
 		<hr/>
 		<div class="L2"><a href="/reset" title="Reset the DICOM and TCE Service templates and clear the cache">Reset Templates</a><br/></div>
