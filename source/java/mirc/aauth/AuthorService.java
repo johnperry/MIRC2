@@ -254,6 +254,7 @@ public class AuthorService extends Servlet {
 				catch (Exception ignoreFile) { }
 			}
 		}
+		logger.debug("Templates document\n"+XmlUtil.toPrettyString(doc));
 		return doc;
 	}
 
@@ -307,6 +308,7 @@ public class AuthorService extends Servlet {
 
 						//Get the template file name
 						String template = req.getParameter("templatename");
+						logger.debug("Template parameter: "+template);
 
 						//Process the template with the editor-form transform file.
 						Document templateXML = XmlUtil.getDocument( new File(aauth, template) );
@@ -328,6 +330,7 @@ public class AuthorService extends Servlet {
 								"version",	mc.getVersion(),
 								"activetab","1"
 							};
+						logger.debug("Template\n"+XmlUtil.toPrettyString(templateXML));
 						res.write( XmlUtil.getTransformedText( templateXML, xsl, params ) );
 						res.setContentType("html");
 						res.send();

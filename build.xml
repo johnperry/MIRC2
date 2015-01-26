@@ -1,6 +1,6 @@
 <project name="MIRC" default="all" basedir=".">
 
-	<property name="version" value="Z185"/>
+	<property name="version" value="Z187"/>
 
 	<property name="build" value="${basedir}/build"/>
 	<property name="source" value="${basedir}/source"/>
@@ -12,7 +12,7 @@
 	<property name="products" value="${basedir}/products"/>
 	<property name="documentation" value="${basedir}/documentation"/>
 	<property name="title" value="MIRC"/>
-	<property name="copyright" value="Copyright 2013 Radiological Society of North America"/>
+	<property name="copyright" value="Copyright 2015 Radiological Society of North America"/>
 	<property name="description" value="CTP/TFS for teaching files"/>
 
 	<path id="classpath">
