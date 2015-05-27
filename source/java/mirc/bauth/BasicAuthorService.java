@@ -275,7 +275,7 @@ public class BasicAuthorService extends Servlet {
 				boolean anonymize = req.hasParameter("anonymize");
 
 				//Save the file and then insert all the files.
-				logger.debug("...about to insert the files");
+				logger.debug("...about to insert the files - anonymize="+anonymize);
 				FileUtil.setText(mdFile, XmlUtil.toString(mdXML));
 				MircDocument md = insertFiles(mdFile, files, anonymize);
 

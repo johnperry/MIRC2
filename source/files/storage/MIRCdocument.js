@@ -70,8 +70,8 @@ function mirc_onload() {
 	}
 	setWheelDriver();
 	window.focus();
-	if (imageSection) IMAGES.load();
 	setupScoredQuiz();
+	//if (imageSection) IMAGES.load(); //TEST to see the effect on performance
 }
 
 function splitHandler() {
