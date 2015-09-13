@@ -47,6 +47,8 @@ document.onkeyup = keyUp;
 var horizontalSplit = null;
 var verticalSplit = null;
 var lastSliderPosition = 0;
+var currentPage;
+var currentButton;
 
 function mirc_onload() {
 	setBackground();
@@ -187,7 +189,7 @@ function getPreviousNamedSibling(start,name) {
 function initTabs() {
 	currentPage = document.getElementById('tab'+firstTab);
 	currentButton = document.getElementById('b'+firstTab);
-	if (currentPage == null) {
+	if ((currentPage == null) || (currentButton == null)) {
 		currentPage = document.getElementById('tab1');
 		currentButton = document.getElementById('b1');
 	}
@@ -265,10 +267,8 @@ function getText(d) {
 }
 
 //tab button event handler
-var currentPage;
-var currentButton;
 function bclick(b,np) {
-	currentButton.className = "u";
+	if (currentButton) currentButton.className = "u";
 	currentButton = document.getElementById(b);
 	currentButton.className = "s";
 	var nextPage = document.getElementById(np);

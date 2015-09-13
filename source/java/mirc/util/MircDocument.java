@@ -2004,7 +2004,8 @@ public class MircDocument {
 			if ((c = compareText(aOrderBy, bOrderBy, "study")) != 0) return c;
 			if ((c = compareInt(aOrderBy, bOrderBy, "series")) != 0) return c;
 			if ((c = compareInt(aOrderBy, bOrderBy, "acquisition")) != 0) return c;
-			return compareInt(aOrderBy, bOrderBy, "instance");
+			if ((c = compareInt(aOrderBy, bOrderBy, "instance")) != 0) return c;
+			return compareInt(aOrderBy, bOrderBy, "frame");
 		}
 
 		//Compare an attribute of two elements as text.
@@ -2048,6 +2049,7 @@ public class MircDocument {
 		orderBy.setAttribute("series", dicomObject.getSeriesNumber());
 		orderBy.setAttribute("acquisition", dicomObject.getAcquisitionNumber());
 		orderBy.setAttribute("instance", dicomObject.getInstanceNumber());
+		orderBy.setAttribute("frame", dicomObject.getRepresentativeFrameNumber());
 
 		String studyDesc = dicomObject.getStudyDescription().replace("\"", "").replace("\'", "");
 		orderBy.setAttribute("study-desc", studyDesc);
