@@ -80,6 +80,7 @@ public class QueryService extends Servlet {
 	 * @throws Exception if the servlet cannot handle the request.
 	 */
 	public void doGet(HttpRequest req, HttpResponse res) throws Exception {
+		res.setContentEncoding(req);
 
 		MircConfig mc = MircConfig.getInstance();
 		Path path = req.getParsedPath();
@@ -185,6 +186,7 @@ public class QueryService extends Servlet {
 	 * @throws Exception if the servlet cannot handle the request.
 	 */
 	public void doPost(HttpRequest req, HttpResponse res) throws Exception {
+		res.setContentEncoding(req);
 
 		long currentTime = System.currentTimeMillis();
 		logger.debug("");
@@ -192,7 +194,7 @@ public class QueryService extends Servlet {
 		logger.debug("Query content: "+req.content);
 
 		String requestContentType = req.getContentType();
-		if (requestContentType.toLowerCase().indexOf("application/x-www-form-urlencoded") >= 0) {
+		if (requestContentType.toLowerCase().contains("application/x-www-form-urlencoded")) {
 
 			//Create a UID for this query to help storage services that cache query results.
 			String queryUID = req.getRemoteAddress() + "." + (new Date()).getTime();

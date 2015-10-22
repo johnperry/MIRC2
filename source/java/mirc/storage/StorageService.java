@@ -506,7 +506,7 @@ public class StorageService extends Servlet {
 						}
 					}
 				}
-				//When we're dcne, just go ahead and display the document
+				//When we're done, just go ahead and display the document
 			}
 
 			//OK, transform the document and return the result
@@ -515,6 +515,7 @@ public class StorageService extends Servlet {
 			Document xsl = XmlUtil.getDocument( FileUtil.getStream( xslFile, xslResource ) );
 			Object[] params = getParams( req, doc );
 			res.write( XmlUtil.getTransformedText( doc, xsl, params ) );
+			res.setContentEncoding(req);
 			res.setContentType("html");
 			res.send();
 
