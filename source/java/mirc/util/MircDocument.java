@@ -1079,7 +1079,18 @@ public class MircDocument {
 				try { insertAdditionalTFInfo(dicomObject); }
 				catch (Exception ex) { }
 			}
+			//This instruction is commented out to ensure that we
+			//don't store an object in the MIRCdocument that isn't
+			//fully anonymized. The problem is that non-image objects
+			//can have PHI buried deeply in SQ element item datasets
+			//and most people don't know how to configure the anonymizer
+			//to handle that case:
 			//insert(dicomObject, dicomObject.getFile().getName());
+			
+			//Instead, we just delete the object, secure in the knowledge
+			//that we have already extracted any TCE manifest or ATFI\
+			//information.
+			dicomObject.getFile().delete();
 			return;
 		}
 
