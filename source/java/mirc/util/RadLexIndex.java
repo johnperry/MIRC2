@@ -212,10 +212,10 @@ public class RadLexIndex {
 			catch (Exception ignore) { }
 		}
 		logger.info("RadLex index rebuild complete ("+index.size()+" index entries)");
-		logger.info("...Total indexed terms: "+termCount);
-		logger.info("...RadLex terms:        "+radCount);
-		logger.info("...Synonyms:            "+synCount);
-		logger.info("...Obsolete terms:      "+obsCount);
+		logger.info("...Total indexed terms: "+String.format("%7d",termCount));
+		logger.info("...RadLex terms:        "+String.format("%7d",radCount));
+		logger.info("...Synonyms:            "+String.format("%7d",synCount));
+		logger.info("...Obsolete terms:      "+String.format("%7d",obsCount));
 	}
 
 	//Add a term to the index
