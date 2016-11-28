@@ -160,7 +160,7 @@ public class RadLexIndex {
 
 		int termCount = 0;
 		int radCount = 0;
-		int nenCount = 0;
+		int obsCount = 0;
 		int synCount = 0;
 		try {
 			//Now get a new Record manager and create the (empty) index.
@@ -189,7 +189,7 @@ public class RadLexIndex {
 						addTerm( new Term(id, text) );
 						termCount++;
 						String type = term.getAttribute("type");
-						if (type.equals("NEN")) nenCount++;
+						if (type.equals("OBS")) obsCount++;
 						else if (type.equals("SYN")) synCount++;
 						else radCount++;
 					}
@@ -215,7 +215,7 @@ public class RadLexIndex {
 		logger.info("...Total indexed terms: "+termCount);
 		logger.info("...RadLex terms:        "+radCount);
 		logger.info("...Synonyms:            "+synCount);
-		logger.info("...Non-English terms:   "+nenCount);
+		logger.info("...Obsolete terms:      "+obsCount);
 	}
 
 	//Add a term to the index
