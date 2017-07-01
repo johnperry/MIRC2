@@ -889,7 +889,7 @@ public class FileService extends Servlet {
 			if (anonymize) {
 				DicomAnonymizer fsa = MircConfig.getInstance().getFileServiceDicomAnonymizer();
 				if (fsa != null) {
-					DAScript dascript = DAScript.getInstance(fsa.getScriptFile());
+					DAScript dascript = DAScript.getInstance(fsa.getDAScriptFile());
 					Properties script = dascript.toProperties();
 					Properties lookup = LookupTable.getProperties(fsa.getLookupTableFile());
 					IntegerTable intTable = fsa.getIntegerTable();

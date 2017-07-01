@@ -95,7 +95,7 @@ public class TCEStorageService extends AbstractPipelineStage implements StorageS
 	/**
 	 * Get the script file.
 	 */
-	public File getScriptFile() {
+	public File getDAScriptFile() {
 		return scriptFile;
 	}
 
