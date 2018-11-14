@@ -33,51 +33,51 @@
 			<title>My Teaching Files</title>
 		</Library>
 
-        <Library address="http://mirc.childrensmemorial.org/storage/ss12" enabled="yes">
+        <Library address="http://mirc.luriechildrens.org/storage/ss12" enabled="yes">
             <title>CMH: Children&apos;s Memorial Hospital General Pediatric Cases</title>
         </Library>
 
-        <Library address="http://mirc.childrensmemorial.org/storage/ss10" enabled="yes">
+        <Library address="http://mirc.luriechildrens.org/storage/ss10" enabled="yes">
             <title>CMH: Fourth Year Board Review Cases</title>
         </Library>
 
-        <Library address="http://mirc.childrensmemorial.org/storage/ss6" enabled="yes">
+        <Library address="http://mirc.luriechildrens.org/storage/ss6" enabled="yes">
             <title>CMH: Module 1: Emergency Radiology</title>
         </Library>
 
-        <Library address="http://mirc.childrensmemorial.org/storage/ss13" enabled="yes">
+        <Library address="http://mirc.luriechildrens.org/storage/ss13" enabled="yes">
             <title>CMH: Module 2: Chest and Airway</title>
         </Library>
 
-        <Library address="http://mirc.childrensmemorial.org/storage/ss4" enabled="yes">
+        <Library address="http://mirc.luriechildrens.org/storage/ss4" enabled="yes">
             <title>CMH: Module 3: Cardiovascular</title>
         </Library>
 
-        <Library address="http://mirc.childrensmemorial.org/storage/ss7" enabled="yes">
+        <Library address="http://mirc.luriechildrens.org/storage/ss7" enabled="yes">
             <title>CMH: Module 4: Musculoskeletal System</title>
         </Library>
 
-        <Library address="http://mirc.childrensmemorial.org/storage/ss3" enabled="yes">
+        <Library address="http://mirc.luriechildrens.org/storage/ss3" enabled="yes">
             <title>CMH: Module 5: GI Tract</title>
         </Library>
 
-        <Library address="http://mirc.childrensmemorial.org/storage/ss8" enabled="yes">
+        <Library address="http://mirc.luriechildrens.org/storage/ss8" enabled="yes">
             <title>CMH: Module 6: GU Tract</title>
         </Library>
 
-        <Library address="http://mirc.childrensmemorial.org/storage/ss11" enabled="yes">
+        <Library address="http://mirc.luriechildrens.org/storage/ss11" enabled="yes">
             <title>CMH: Module 7: Neuroradiology</title>
         </Library>
 
-        <Library address="http://mirc.childrensmemorial.org/storage/ss5" enabled="yes">
+        <Library address="http://mirc.luriechildrens.org/storage/ss5" enabled="yes">
             <title>CMH: Module 8: Oncology</title>
         </Library>
 
-        <Library address="http://mirc.childrensmemorial.org/storage/ss2" enabled="yes">
+        <Library address="http://mirc.luriechildrens.org/storage/ss2" enabled="yes">
             <title>CMH: Module 9: Intensive Care Units</title>
         </Library>
 
-        <Library address="http://mirc.childrensmemorial.org/storage/ss9" enabled="yes">
+        <Library address="http://mirc.luriechildrens.org/storage/ss9" enabled="yes">
             <title>CMH: Module10: Systemic Diseases and Syndromes</title>
         </Library>
 
