@@ -5,7 +5,9 @@
 		<Plugin>
 			<attr name="name" required="yes" default="MIRC"/>
 			<attr name="class" required="yes" default="mirc.MIRC" editable="no"/>
-			<attr name="root" required="yes" default="mircsite"/>
+			<attr name="root" required="yes" default="mircsite">
+				<helptext>Storage directory for use by the plugin for storage (must be unique)</helptext>
+			</attr>
 		</Plugin>
 
 		<StorageService>

@@ -53,6 +53,7 @@ public class StorageServiceRebuilder extends Thread {
 	 * Start the StorageServiceRebuilder.
 	 */
 	public void run() {
+		int count = 0;
 		isBusy = true;
 
 		//Rebuild all the indexes.
@@ -61,10 +62,10 @@ public class StorageServiceRebuilder extends Thread {
 		for (String id : ids) {
 			logger.info("Rebuilding "+id);
 			Index index = Index.getInstance(id);
-			index.rebuild();
+			count = index.rebuild();
+			logger.info(id+" rebuild complete: "+count+" documents indexed");
 		}
 		logger.info("Rebuild complete");
-
 		isBusy = false;
 	}
 }

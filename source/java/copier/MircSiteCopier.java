@@ -475,7 +475,7 @@ public class MircSiteCopier extends JFrame {
 				Index index = Index.getInstance(ssid);
 				if (index != null) {
 					cp.print(" got index instance...");
-					boolean ok = index.rebuild(interval);
+					boolean ok = (index.rebuild(interval) != 0);
 					if (ok) cp.println(" OK");
 					else cp.println(Color.red, " FAILED");
 				}

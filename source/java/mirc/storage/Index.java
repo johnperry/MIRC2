@@ -197,7 +197,7 @@ public class Index {
 	 * Rebuild the index. This method is equivalent to
 	 * <code>rebuild(20)</code>..
 	 */
-	public synchronized boolean rebuild() {
+	public synchronized int rebuild() {
 		return rebuild(20);
 	}
 
@@ -209,18 +209,19 @@ public class Index {
 	 * the operation failed in any way, the index is left in an
 	 * indeterminate state.
 	 */
-	public synchronized boolean rebuild(int interval) {
+	public synchronized int rebuild(int interval) {
+		int count = 0;
 		try {
 			close();
 			delete();
 			openIndex();
-			indexDirectory(documentsDir, 0, interval);
+			count = indexDirectory(documentsDir, 0, interval);
 			recman.commit();
-			return true;
+			return count;
 		}
 		catch (Exception ex) {
 			logger.warn("Unable to rebuild the index: "+indexFile+".", ex);
-			return false;
+			return 0;
 		}
 	}
 
@@ -231,12 +232,13 @@ public class Index {
 		for (File file : files) {
 			if (file.isFile() && file.getName().toLowerCase().endsWith(".xml")) {
 				logger.debug("...indexing "+file.getAbsolutePath());
-				indexDocument(file);
-				if ((count % interval) == 0) {
-					System.gc();
-					recman.commit();
+				if (indexDocument(file)) {
+					if ((count % interval) == 0) {
+						System.gc();
+						recman.commit();
+					}
+					count++;
 				}
-				count++;
 			}
 			else if (file.isDirectory()) count = indexDirectory(file, count, interval);
 		}
@@ -245,18 +247,20 @@ public class Index {
 
 	//Check whether a file parses as a MIRCdocument
 	//and add it to the index if it does.
-	private void indexDocument(File file) {
+	private boolean indexDocument(File file) {
 		try {
 			Document doc = XmlUtil.getDocument(file);
 			if (doc.getDocumentElement().getTagName().equals("MIRCdocument")) {
 				String path = file.getPath();
 				path = path.substring(path.indexOf(documentsDir.getName()));
 				addDocument(file, path, doc);
+				return true;
 			}
 		}
 		catch (Exception skip) {
 			logger.warn("\nException caught while parsing " + file + "\n", skip);
 		}
+		return false;
 	}
 
 	/**
